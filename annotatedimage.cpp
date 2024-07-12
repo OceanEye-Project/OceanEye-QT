@@ -24,8 +24,6 @@ void AnnotatedImage::resizeEvent(QResizeEvent* e) {
 }
 
 void AnnotatedImage::paintEvent(QPaintEvent* e) {
-    QRect rect(10, 20, 80, 60);
-
     QPainter painter(this);
 
     QPen pen {};
@@ -49,7 +47,9 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
 
     painter.drawPixmap(0, 0, pixmap);
 
-    painter.drawRect(rect);
+    for (auto& annotation : annotations) {
+        painter.drawRect(annotation.box);
+    }
 
     painter.restore();
 

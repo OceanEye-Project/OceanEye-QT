@@ -132,10 +132,12 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
 
         result.confidence = confidences[idx];
 
-        result.box.x = boxes[idx].x;
-        result.box.y = boxes[idx].y;
-        result.box.w = boxes[idx].width;
-        result.box.h = boxes[idx].height;
+        result.box.setRect(
+            boxes[idx].x,
+            boxes[idx].y,
+            boxes[idx].width,
+            boxes[idx].height
+        );
 
         annotations.push_back(result);
     }
@@ -192,10 +194,10 @@ void YOLOv8::drawDetections(const std::vector<Annotation>& annotations, cv::Mat&
     for (auto& annotation: annotations) {
         cv::Rect box {};
 
-        box.x = annotation.box.x;
-        box.y = annotation.box.y;
-        box.width = annotation.box.w;
-        box.height = annotation.box.h;
+        box.x = annotation.box.x();
+        box.y = annotation.box.y();
+        box.width = annotation.box.width();
+        box.height = annotation.box.height();
 
         cv::Scalar color {255, 0, 0, 255};
 

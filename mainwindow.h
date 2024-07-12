@@ -29,5 +29,7 @@ private:
     Ui::MainWindow *ui;
     void updateImageUI();
     void addMedia();
+    void loadModel();
+    void runDetection();
 };
 #endif // MAINWINDOW_H

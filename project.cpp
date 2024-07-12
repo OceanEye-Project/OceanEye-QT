@@ -15,8 +15,8 @@ Project::Project(const QString project_path) : settings(QDir::cleanPath(project_
 std::vector<Annotation> Project::getAnnotation(const QString image_path) {
     std::vector<Annotation> annotations {};
 
-    if (!settings.contains("annotations/" + image_path))
-        return annotations;
+    // if (!settings.contains("annotations/" + image_path))
+        // return annotations;
 
     int size = settings.beginReadArray("annotations/" + image_path);
 
@@ -28,10 +28,12 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
         annotation.classId = settings.value("classId").toInt();
         annotation.className = settings.value("className").toString();
         annotation.confidence = settings.value("confidence").toFloat();
-        annotation.box.x = settings.value("x").toFloat();
-        annotation.box.y = settings.value("y").toFloat();
-        annotation.box.w = settings.value("w").toFloat();
-        annotation.box.h = settings.value("h").toFloat();
+        annotation.box.setRect(
+            settings.value("x").toFloat(),
+            settings.value("y").toFloat(),
+            settings.value("w").toFloat(),
+            settings.value("h").toFloat()
+        );
 
         annotations.push_back(annotation);
     }
@@ -41,8 +43,6 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
 }
 
 void Project::setAnnotation(const QString image_path, const std::vector<Annotation>& annotations) {
-
-    settings.endArray();
 
     settings.beginWriteArray("annotations/" + image_path);
     settings.setValue("size", 0);
@@ -54,10 +54,10 @@ void Project::setAnnotation(const QString image_path, const std::vector<Annotati
         settings.setValue("classId", annotation.classId);
         settings.setValue("className", annotation.className);
         settings.setValue("confidence", annotation.confidence);
-        settings.setValue("x", annotation.box.x);
-        settings.setValue("y", annotation.box.y);
-        settings.setValue("w", annotation.box.w);
-        settings.setValue("h", annotation.box.h);
+        settings.setValue("x", annotation.box.x());
+        settings.setValue("y", annotation.box.y());
+        settings.setValue("w", annotation.box.width());
+        settings.setValue("h", annotation.box.height());
 
     }
 
@@ -65,7 +65,8 @@ void Project::setAnnotation(const QString image_path, const std::vector<Annotati
 }
 
 bool Project::isModelLoaded() {
-    return model == nullptr;
+    if (model) return true;
+    return false;
 }
 
 void Project::loadModel(const QString modelPath) {
@@ -76,8 +77,10 @@ void Project::loadModel(const QString modelPath) {
 }
 
 void Project::runDetection(const QString imagePath) {
-    if (!isModelLoaded())
+    if (!isModelLoaded()) {
+        std::cout << "No Model Loaded!" << std::endl;
         return;
+    }
 
     cv::Mat img = cv::imread(imagePath.toStdString());
 

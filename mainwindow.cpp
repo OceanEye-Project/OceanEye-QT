@@ -13,6 +13,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     ui->mainImageContainer->layout()->addWidget(&mainImage);
 
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
+    connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
+    connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         currentImg--;
         updateImageUI();
@@ -27,6 +29,17 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::loadModel() {
+    QString file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
+    currentProject->loadModel(file);
+}
+
+void MainWindow::runDetection() {
+    currentProject->runDetection(currentProject->media.at(currentImg));
+
+    updateImageUI();
 }
 
 void MainWindow::updateImageUI() {

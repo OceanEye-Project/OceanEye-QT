@@ -10,16 +10,13 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
 #include <QString>
-
-struct Box {
-    float x, y, w, h;
-};
+#include <QRect>
 
 struct Annotation {
     int classId;
     QString className;
     float confidence;
-    Box box;
+    QRect box;
 };
 
 
