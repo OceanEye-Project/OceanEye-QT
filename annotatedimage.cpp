@@ -10,6 +10,7 @@ AnnotatedImage::AnnotatedImage(std::shared_ptr<Project>& project, QWidget *paren
 
 void AnnotatedImage::setImage(QString path) {
     annotations = currentProject->getAnnotation(path);
+    emit annotationsChanged();
 
     pixmap = QPixmap(path);
     zoom = 1;
@@ -25,25 +26,29 @@ void AnnotatedImage::resizeEvent(QResizeEvent* e) {
 
 void AnnotatedImage::paintEvent(QPaintEvent* e) {
     QPainter painter(this);
-
-    QPen pen {};
-    QBrush brush {};
-
-    painter.setPen(pen);
-    painter.setBrush(brush);
     painter.setRenderHint(QPainter::Antialiasing, true);
+
+    painter.setPen(Qt::black);
+
+    painter.save();
+
+    const QColor backgoundColor {127, 127, 127, 127};
+    QBrush backgroundBrush {backgoundColor};
+    backgroundBrush.setStyle(Qt::BrushStyle::CrossPattern);
+    painter.setBrush(backgroundBrush);
+    painter.drawRect(0, 0, width(), height());
 
     QRect source {
         0, 0, pixmap.width(), pixmap.height()
     };
-
-    painter.save();
 
     painter.setViewport(target);
     painter.setWindow(source);
 
     painter.translate(imagePos);
     painter.scale(zoom, zoom);
+
+    painter.setBrush(Qt::transparent);
 
     painter.drawPixmap(0, 0, pixmap);
 

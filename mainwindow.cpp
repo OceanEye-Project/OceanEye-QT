@@ -9,8 +9,12 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 {
     ui->setupUi(this);
 
+    connect(&mainImage, &AnnotatedImage::annotationsChanged, this, &MainWindow::updateTable);
+
     ui->mainImageContainer->setLayout(new QHBoxLayout());
     ui->mainImageContainer->layout()->addWidget(&mainImage);
+
+    ui->dataTable->setModel(model);
 
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
@@ -29,6 +33,33 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateTable() {
+    model->clear();
+
+    model->setColumnCount(6);
+    model->setHorizontalHeaderItem(0, new QStandardItem("Class"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("Confidence"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("X"));
+    model->setHorizontalHeaderItem(3, new QStandardItem("Y"));
+    model->setHorizontalHeaderItem(4, new QStandardItem("Width"));
+    model->setHorizontalHeaderItem(5, new QStandardItem("Height"));
+
+    for (auto& annotation : mainImage.annotations) {
+        QList<QStandardItem *> items;
+
+        items.append(new QStandardItem(QString(annotation.className)));
+        items.append(new QStandardItem(QString::number(annotation.confidence)));
+        items.append(new QStandardItem(QString::number(annotation.box.x())));
+        items.append(new QStandardItem(QString::number(annotation.box.y())));
+        items.append(new QStandardItem(QString::number(annotation.box.width())));
+        items.append(new QStandardItem(QString::number(annotation.box.height())));
+
+        model->appendRow(items);
+    }
+
+    // ui->dataTable->setModel(model);
 }
 
 void MainWindow::loadModel() {

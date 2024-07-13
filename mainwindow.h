@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QStandardItemModel>
 
 #include "project.h"
 #include "annotatedimage.h"
@@ -25,11 +26,16 @@ private:
     std::shared_ptr<Project>& currentProject;
     int currentImg {};
     AnnotatedImage mainImage;
+    QStandardItemModel* model {new QStandardItemModel()};
 
     Ui::MainWindow *ui;
     void updateImageUI();
     void addMedia();
     void loadModel();
     void runDetection();
+
+public slots:
+    void updateTable();
+
 };
 #endif // MAINWINDOW_H

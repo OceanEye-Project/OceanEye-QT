@@ -13,7 +13,6 @@ class AnnotatedImage : public QWidget
     void setMargins();
     void enforceBoundryConditions();
     std::shared_ptr<Project>& currentProject;
-    std::vector<Annotation> annotations {};
     QPointF mousePos {};
     QPointF imagePos {0, 0};
     float zoom {1};
@@ -21,6 +20,7 @@ class AnnotatedImage : public QWidget
     QRect target {};
 
 public:
+    std::vector<Annotation> annotations {};
     void setImage(QString);
     explicit AnnotatedImage(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
 
@@ -30,6 +30,9 @@ public slots:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
+
+signals:
+    void annotationsChanged();
 
 };
 
