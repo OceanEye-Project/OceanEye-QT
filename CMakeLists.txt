@@ -35,6 +35,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resources.qrc
         yolov8.h yolov8.cpp
         annotatedimage.h annotatedimage.cpp
+        styles.qss
+        exportdialog.h exportdialog.cpp
+        exportdialog.ui
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET OceanEye APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

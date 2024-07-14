@@ -287,6 +287,15 @@
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
+                    <property name="invertedAppearance">
+                     <bool>false</bool>
+                    </property>
+                    <property name="invertedControls">
+                     <bool>false</bool>
+                    </property>
+                    <property name="tickPosition">
+                     <enum>QSlider::TicksBelow</enum>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -414,6 +423,9 @@
   <action name="actionExport">
    <property name="text">
     <string>Export</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="actionNextImage">

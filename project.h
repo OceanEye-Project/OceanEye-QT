@@ -10,23 +10,29 @@
 
 #include "yolov8.h"
 
-class Project
+class Project : public QObject
 {
-    QSettings settings;
-    std::unique_ptr<YOLOv8> model {nullptr};
+    Q_OBJECT
 
 public:
     Project(const QString project_path);
 
     std::vector<Annotation> getAnnotation(const QString image_path);
     std::vector<QString> media {};
-    void setAnnotation(const QString image_path, const std::vector<Annotation>& annotations);
+    std::unique_ptr<YOLOv8> model {nullptr};
 
+    void setAnnotation(const QString image_path, const std::vector<Annotation>& annotations);
     bool isModelLoaded();
     void loadModel(const QString modelPath);
     void runDetection(const QString imagePath);
     void loadMedia();
     void saveMedia();
+    void setModelConf(int conf);
+    QSettings settings;
+
+signals:
+    void modelLoaded(QString modelPath);
+
 };
 
 #endif // PROJECT_H

@@ -6,7 +6,7 @@ Project::Project(const QString project_path) : settings(QDir::cleanPath(project_
         loadModel(settings.value("modelPath").toString());
 
     if (settings.contains("modelConf"))
-        model->modelScoreThreshold = settings.value("modelConf").toDouble();
+        setModelConf(settings.value("modelConf").toInt());
 
     loadMedia();
 
@@ -45,7 +45,7 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
 void Project::setAnnotation(const QString image_path, const std::vector<Annotation>& annotations) {
 
     settings.beginWriteArray("annotations/" + image_path);
-    settings.setValue("size", 0);
+    settings.remove("");
 
     for (int i=0; i<annotations.size(); i++) {
         auto annotation = annotations.at(i);
@@ -64,6 +64,13 @@ void Project::setAnnotation(const QString image_path, const std::vector<Annotati
     settings.endArray();
 }
 
+void Project::setModelConf(int conf) {
+    if (isModelLoaded())
+        model->modelScoreThreshold = (float) conf / 100.0f;
+
+    settings.setValue("modelConf", conf);
+}
+
 bool Project::isModelLoaded() {
     if (model) return true;
     return false;
@@ -74,6 +81,12 @@ void Project::loadModel(const QString modelPath) {
 
     model->modelPath = modelPath.toStdString();
     model->loadOnnxNetwork();
+
+    model->modelScoreThreshold = settings.value("modelConf").toInt() / 100.0f;
+
+    settings.setValue("modelPath", modelPath);
+
+    emit modelLoaded(modelPath);
 }
 
 void Project::runDetection(const QString imagePath) {

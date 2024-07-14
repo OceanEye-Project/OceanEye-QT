@@ -6,6 +6,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , ui(new Ui::MainWindow)
     , currentProject(project)
     , mainImage(project)
+    , exportDialog(project)
 {
     ui->setupUi(this);
 
@@ -19,6 +20,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
+    connect(ui->actionExport, &QAction::triggered, this, [this]{exportDialog.show();});
+
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         currentImg--;
         updateImageUI();
@@ -27,6 +30,21 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
         currentImg++;
         updateImageUI();
     });
+    connect(ui->modelConfSlider, &QSlider::valueChanged, this, [project](int conf){
+        project->setModelConf(conf);
+    });
+    connect(project.get(), &Project::modelLoaded, this, [this](QString modelPath){ ui->modelPathLabel->setText(modelPath); });
+
+    if (project->isModelLoaded()) {
+        ui->modelPathLabel->setText(QString::fromStdString(project->model->modelPath));
+    }
+    if (project->settings.contains("modelConf")) {
+        int conf = project->settings.value("modelConf").toInt();
+        ui->modelConfSlider->setValue(conf);
+    } else {
+        ui->modelConfSlider->setValue(70);
+    }
+
     updateImageUI();
 }
 

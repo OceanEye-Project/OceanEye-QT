@@ -29,6 +29,8 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
 
     QSettings settings {"oceaneye", "oceaneye"};
 
+    std::cout << settings.fileName().toStdString() << std::endl;
+
     QLabel* settingsPathLabel = new QLabel(settings.fileName());
     settingsPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
@@ -53,8 +55,13 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath) {
 
     currentProject = std::make_shared<Project>(projectPath);
 
-    if (std::find(projects.begin(), projects.end(), projectPath) == projects.end())
-        projects.push_back(projectPath);
+    auto projectPos = std::find(projects.begin(), projects.end(), projectPath);
+
+    if (projectPos != projects.end()) {
+        projects.erase(projectPos);
+    }
+
+    projects.push_back(projectPath);
 
     saveProjectPaths();
 
@@ -71,10 +78,12 @@ void WelcomeWindow::loadProjectPaths() {
     int size = settings.beginReadArray("projects");
 
     QVBoxLayout* projectArrayLayout = new QVBoxLayout();
-    // QWidget* projectArray = new QWidget();
+
     ui->projectArray->setLayout(projectArrayLayout);
 
-    for (int i = 0; i < size; ++i) {
+    projects.clear();
+
+    for (int i = size - 1; i >= 0; --i) {
         settings.setArrayIndex(i);
 
         QString projectPath = settings.value("path").toString();
@@ -112,7 +121,7 @@ void WelcomeWindow::saveProjectPaths() {
     QSettings settings {"oceaneye", "oceaneye"};
 
     settings.beginWriteArray("projects");
-    settings.setValue("size", 0);
+    settings.remove("");
 
     for (int i=0; i<projects.size(); i++) {
         settings.setArrayIndex(i);

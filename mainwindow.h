@@ -7,6 +7,7 @@
 
 #include "project.h"
 #include "annotatedimage.h"
+#include "exportdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,6 +28,7 @@ private:
     int currentImg {};
     AnnotatedImage mainImage;
     QStandardItemModel* model {new QStandardItemModel()};
+    ExportDialog exportDialog;
 
     Ui::MainWindow *ui;
     void updateImageUI();
