@@ -1,6 +1,9 @@
 #include "project.h"
 
-Project::Project(const QString project_path) : settings(QDir::cleanPath(project_path + QDir::separator() + ".oceaneye.ini"), QSettings::Format::IniFormat) {
+Project::Project(const QString project_path)
+    : settings(QDir::cleanPath(project_path + QDir::separator() + ".oceaneye.ini")
+    , QSettings::Format::IniFormat)
+    , projectPath(project_path) {
 
     if (settings.contains("modelPath"))
         loadModel(settings.value("modelPath").toString());
@@ -105,6 +108,7 @@ void Project::runDetection(const QString imagePath) {
 void Project::saveMedia() {
     settings.beginWriteArray("media");
     settings.setValue("size", 0);
+    settings.remove("");
 
     for (int i=0; i<media.size(); i++) {
         settings.setArrayIndex(i);

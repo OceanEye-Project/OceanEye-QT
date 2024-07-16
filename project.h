@@ -17,6 +17,7 @@ class Project : public QObject
 public:
     Project(const QString project_path);
 
+    QString projectPath;
     std::vector<Annotation> getAnnotation(const QString image_path);
     std::vector<QString> media {};
     std::unique_ptr<YOLOv8> model {nullptr};
