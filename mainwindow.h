@@ -11,6 +11,7 @@
 #include "project.h"
 #include "annotatedimage.h"
 #include "exportdialog.h"
+#include "editmediadialog.h"
 #include "videoslicer.h"
 
 QT_BEGIN_NAMESPACE
@@ -33,6 +34,7 @@ private:
     AnnotatedImage mainImage;
     QStandardItemModel* model {new QStandardItemModel()};
     ExportDialog exportDialog;
+    EditMediaDialog editMediaDialog;
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;

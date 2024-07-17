@@ -7,6 +7,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , currentProject(project)
     , mainImage(project)
     , exportDialog(project)
+    , editMediaDialog(project)
     , videoSlicer(project)
 {
     ui->setupUi(this);
@@ -22,6 +23,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
     connect(ui->actionExport, &QAction::triggered, this, [this]{exportDialog.show();});
+    connect(ui->actionEditMedia, &QAction::triggered, this, [this]{editMediaDialog.show();});
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         currentImg--;
