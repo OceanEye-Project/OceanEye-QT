@@ -1,4 +1,4 @@
-// Executable command: ./build/OceanEyeTest.app/Contents/MacOS/OceanEyeTest
+// Executable command: ./build/OceanEyeWelcomeWindowTest.app/Contents/MacOS/OceanEyeWelcomeWindowTest
 #include <QtTest/QtTest>
 #include "../welcomewindow.h"
 
@@ -7,22 +7,11 @@ class WelcomeWindowTest : public QObject
     Q_OBJECT
 
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
     void testConstructor();
     void testLoadProjectPaths();
     void testSaveProjectPaths();
     void testLoadProjectFromPath();
 };
-
-// Define the test functions
-void WelcomeWindowTest::initTestCase() {
-    // Initialization code here
-}
-
-void WelcomeWindowTest::cleanupTestCase() {
-    // Cleanup code here
-}
 
 void WelcomeWindowTest::testConstructor() {
     std::shared_ptr<Project> project;
@@ -47,7 +36,7 @@ void WelcomeWindowTest::testLoadProjectPaths() {
 
     // Add a project path and save settings
     settings.beginGroup("projects");
-    settings.setValue("path0", "test_path");
+    settings.setValue("path", "test_path");
     settings.endGroup();
 
     welcomeWindow.loadProjectFromPath("test_path");
@@ -67,11 +56,34 @@ void WelcomeWindowTest::testLoadProjectPaths() {
 }
 
 void WelcomeWindowTest::testSaveProjectPaths() {
-    // Test code here
+    std::shared_ptr<Project> project;
+    WelcomeWindow welcomeWindow(project);
+
+    welcomeWindow.projects = {"test_path1", "test_path2"};
+    welcomeWindow.saveProjectPaths();
+
+    QSettings settings("oceaneye", "oceaneye");
+    settings.beginReadArray("projects");
+
+    QCOMPARE(settings.value("path").toString(), QString("test_path1"));
+    settings.setArrayIndex(1); // Move to the next item in the array
+    QCOMPARE(settings.value("path").toString(), QString("test_path2"));
+
+    settings.endArray();
 }
 
 void WelcomeWindowTest::testLoadProjectFromPath() {
-    // Test code here
+    std::shared_ptr<Project> project;
+    WelcomeWindow welcomeWindow(project);
+
+    QSignalSpy spy(&welcomeWindow, &WelcomeWindow::projectOpened);
+
+    welcomeWindow.loadProjectFromPath("test_project_path");
+
+    QVERIFY(welcomeWindow.getCurrentProject() != nullptr);
+    QCOMPARE(welcomeWindow.getCurrentProject()->projectPath, QString("test_project_path"));
+
+    QVERIFY(spy.count() == 1); // Ensure the signal is emitted
 }
 
 // Register the test class

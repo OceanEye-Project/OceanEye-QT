@@ -72,7 +72,7 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath) {
     mainWindow = new MainWindow(currentProject);
     mainWindow->setWindowTitle("OceanEye");
     mainWindow->show();
-
+    
     emit projectOpened();
 }
 

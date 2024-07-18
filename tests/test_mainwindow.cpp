@@ -1,4 +1,4 @@
-// Executable command: ./build/OceanEyeTest.app/Contents/MacOS/OceanEyeTest
+// Executable command: ./build/OceanEyeTest.app/Contents/MacOS/OceanEyeMainWindowTest
 #include <QtTest/QtTest>
 #include "../mainwindow.h"
 
@@ -12,11 +12,11 @@ private slots:
 };
 
 // Define the test functions
-void WelcomeWindowTest::initTestCase() {
+void MainWindowTest::initTestCase() {
     // Initialization code here
 }
 
-void mainWindowTest(){
+void MainWindowTest::mainWindowTest(){
     // code here
 }
 
