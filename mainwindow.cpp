@@ -7,6 +7,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , currentProject(project)
     , mainImage(project)
     , exportDialog(project)
+    , editMediaDialog(project)
+    , videoSlicer(project)
 {
     ui->setupUi(this);
 
@@ -21,6 +23,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
     connect(ui->actionExport, &QAction::triggered, this, [this]{exportDialog.show();});
+    connect(ui->actionEditMedia, &QAction::triggered, this, [this]{editMediaDialog.show();});
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         currentImg--;
@@ -45,28 +48,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
         ui->modelConfSlider->setValue(70);
     }
 
- // TODO https://www.francescmm.com/non-closable-qdialog/
-    videoSliceDialog = new QDialog();
-    videoSliceDialog->setWindowFlags(Qt::FramelessWindowHint);
-    videoSliceDialog->setWindowModality(Qt::ApplicationModal);
-    QVBoxLayout* videoSliceDialogLayout = new QVBoxLayout();
-    videoSliceDialog->setLayout(videoSliceDialogLayout);
-
-    QProgressBar* videoSliceProgress = new QProgressBar();
-    videoSliceProgress->setRange(0, 0);
-    videoSliceDialogLayout->addWidget(new QLabel("Slicing Video(s)..."));
-    videoSliceDialogLayout->addWidget(videoSliceProgress);
-
-    connect(&slicerWatcher, &QFutureWatcher<std::vector<QString>>::finished, this, [this]{
-        std::cout << "all threads done, resuts: " << videoSliceFuture.resultCount() << std::endl;
-        for (int i=0; i<videoSliceFuture.resultCount(); i++) {
-            std::vector<QString> newImages = videoSliceFuture.resultAt(i);
-            currentProject->media.insert(currentProject->media.end(), newImages.begin(), newImages.end());
-        }
-        currentProject->saveMedia();
-        videoSliceDialog->hide();
-        updateImageUI();
-    });
+    connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::updateImageUI);
 
     updateImageUI();
 }
@@ -134,62 +116,6 @@ void MainWindow::updateImageUI() {
     mainImage.setImage(currentProject->media.at(currentImg));
 }
 
-std::vector<QString> sliceVideo (const QString& video, const QString& projectPath) {
-    std::cout << "Slicing " << video.toStdString() << std::endl;
-
-    cv::Mat frame;
-    std::string framePath;
-
-    std::vector<QString> savedFrames {};
-
-    cv::VideoCapture cap(video.toStdString());
-
-    if (!cap.isOpened()) {
-        std::cerr << "error opening video file";
-    }
-
-    double fps = cap.get(cv::CAP_PROP_FPS);
-    int skipSeconds = 5;
-    int frameInterval = static_cast<int>(fps * skipSeconds);
-
-    bool result;
-    int currentFrame = 0;
-
-    std::filesystem::path videoPath(video.toStdString());
-    std::filesystem::path stillsPath(projectPath.toStdString());
-
-    while (cap.read(frame)) {
-        cap.set(cv::CAP_PROP_POS_FRAMES, currentFrame);
-        currentFrame += frameInterval;
-
-        framePath = (stillsPath / (videoPath.stem().string() + "_" + std::to_string(currentFrame) + ".jpeg")).string();
-
-        // Check if the file already exists
-        // If it doesn't, continue writing
-        if (!std::filesystem::exists(framePath))
-        {
-            result = cv::imwrite(framePath, frame);
-            if (!result) {
-                std::cerr << "Failed to save frame: " << framePath << std::endl;
-            } else {
-                savedFrames.push_back(QString::fromStdString(framePath));
-                std::cout << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << framePath << std::endl;
-            }
-        }
-        else {
-            std::cout << "Frame already exists: " << framePath << std::endl;
-        }
-            // if (result) {
-            //     savedFrames.push_back(QString::fromStdString(framePath));
-            // }
-        // }
-        // progress = (double)currentFrame / cap.get(cv::CAP_PROP_FRAME_COUNT);
-    }
-    std::cout << "Done slicing video" << std::endl;
-
-    return savedFrames;
-}
-
 void MainWindow::addMedia() {
     QStringList files = QFileDialog::getOpenFileNames(this, "Select one or more files to open", "", "Image/Video (*.png *.xpm *.jpg *.mp4 *.mov *.avi *.webm)");
 
@@ -208,16 +134,7 @@ void MainWindow::addMedia() {
 
     currentProject->saveMedia();
 
-    if (videosToSlice.size() > 0) {
-        videoSliceDialog->show();
-
-        std::function<std::vector<QString>(const QString&)> sliceVideoWithProject = [this](const QString& video) {
-            return sliceVideo(video, currentProject->projectPath);
-        };
-
-        videoSliceFuture = QtConcurrent::mapped(videosToSlice, sliceVideoWithProject);
-        slicerWatcher.setFuture(videoSliceFuture);
-    }
+    videoSlicer.slice(videosToSlice);
 
     updateImageUI();
 }

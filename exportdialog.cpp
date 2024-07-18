@@ -15,7 +15,7 @@ ExportDialog::ExportDialog(std::shared_ptr<Project>& project, QWidget *parent)
     int totalAnnotations = 0;
 
     for (auto& image : currentProject->media) {
-        annotations.at(image) = currentProject->getAnnotation(image);
+        annotations.insert({image, currentProject->getAnnotation(image)});
         totalAnnotations += annotations.at(image).size();
     }
 

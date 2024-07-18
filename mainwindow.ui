@@ -394,6 +394,7 @@
     <addaction name="actionNew_Project"/>
     <addaction name="actionOpen_Recent"/>
     <addaction name="actionExport"/>
+    <addaction name="actionEditMedia"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -453,6 +454,11 @@
   <action name="actionLoad_Model">
    <property name="text">
     <string>Load Model</string>
+   </property>
+  </action>
+  <action name="actionEditMedia">
+   <property name="text">
+    <string>Edit Media</string>
    </property>
   </action>
  </widget>

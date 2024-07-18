@@ -90,14 +90,18 @@ void AnnotatedImage::mousePressEvent(QMouseEvent* event) {
     mousePos = event->position();
 }
 void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
-    QPointF newPos = event->position();
-    QPointF delta = newPos - mousePos;
-    imagePos += delta / imageScale;
-    mousePos = newPos;
+    Qt::MouseButtons buttons = event->buttons();
 
-    enforceBoundryConditions();
+    if (buttons & Qt::LeftButton) {
+        QPointF newPos = event->position();
+        QPointF delta = newPos - mousePos;
+        imagePos += delta / imageScale;
+        mousePos = newPos;
 
-    repaint();
+        enforceBoundryConditions();
+
+        repaint();
+    }
 }
 
 void AnnotatedImage::wheelEvent(QWheelEvent *event) {

@@ -38,6 +38,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         styles.qss
         exportdialog.h exportdialog.cpp
         exportdialog.ui
+        waitingdialog.h waitingdialog.cpp
+        videoslicer.h videoslicer.cpp
+        editmedia.ui
+        editmediadialog.h editmediadialog.cpp
+        flowlayout.h flowlayout.cpp
 
 
     )

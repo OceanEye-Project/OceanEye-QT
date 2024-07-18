@@ -6,12 +6,13 @@
 #include <QStandardItemModel>
 #include <QImageReader>
 #include <QProgressBar>
-#include <QtConcurrent/QtConcurrent>
 
 #include "opencv2/opencv.hpp"
 #include "project.h"
 #include "annotatedimage.h"
 #include "exportdialog.h"
+#include "editmediadialog.h"
+#include "videoslicer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,10 +34,8 @@ private:
     AnnotatedImage mainImage;
     QStandardItemModel* model {new QStandardItemModel()};
     ExportDialog exportDialog;
-
-    QFutureWatcher<std::vector<QString>> slicerWatcher;
-    QFuture<std::vector<QString>> videoSliceFuture;
-    QDialog* videoSliceDialog;
+    EditMediaDialog editMediaDialog;
+    VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;
     void updateImageUI();
