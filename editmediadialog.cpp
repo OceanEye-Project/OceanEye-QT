@@ -36,11 +36,14 @@ void EditMediaDialog::refreshMedia() {
         ImageThumbnail* thumbnail = new ImageThumbnail();
 
         thumbnail->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        thumbnail->setMinimumHeight(size);
+        // thumbnail->setMinimumHeight(size);
         thumbnail->setMinimumWidth(size);
 
         QPixmap pixmap {file};
-        thumbnail->setPixmap(pixmap.scaled(size, size, Qt::KeepAspectRatio));
+        QPixmap scaledPixmap = pixmap.scaled(size, size, Qt::KeepAspectRatio);
+        QIcon icon(scaledPixmap);
+        thumbnail->setIcon(icon);
+        thumbnail->setIconSize(scaledPixmap.size());
 
         connect(thumbnail, &ImageThumbnail::hover, this, [this, i] {
             setPreview(i);

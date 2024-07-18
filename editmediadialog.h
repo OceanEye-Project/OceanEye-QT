@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QPushButton>
+
 #include "project.h"
 #include "flowlayout.h"
 
@@ -36,17 +38,19 @@ signals:
 };
 
 
-class ImageThumbnail : public QLabel {
+class ImageThumbnail : public QPushButton {
     Q_OBJECT
 public:
-    ImageThumbnail() : QLabel() {
+    ImageThumbnail() : QPushButton() {
         setAttribute(Qt::WA_Hover, true);
+        setCheckable(true);
+        setObjectName("thumbnail");
     }
 
 private:
     void enterEvent(QEnterEvent* event) {
         emit hover();
-        QLabel::enterEvent(event);
+        QPushButton::enterEvent(event);
     }
 
 signals:
