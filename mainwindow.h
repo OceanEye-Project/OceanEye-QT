@@ -28,6 +28,8 @@ public:
     MainWindow(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
     ~MainWindow();
 
+    friend class MainWindowTest;
+
 private:
     std::shared_ptr<Project>& currentProject;
     int currentImg {};

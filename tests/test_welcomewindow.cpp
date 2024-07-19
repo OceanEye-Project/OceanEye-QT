@@ -6,61 +6,68 @@ class WelcomeWindowTest : public QObject
 {
     Q_OBJECT
 
+private:
+    std::shared_ptr<Project> project;
+    WelcomeWindow* welcomeWindow;
+
 private slots:
+    void init();
+    void cleanup();
     void testConstructor();
     void testLoadProjectPaths();
     void testSaveProjectPaths();
     void testLoadProjectFromPath();
 };
 
-void WelcomeWindowTest::testConstructor() {
-    std::shared_ptr<Project> project;
-    WelcomeWindow welcomeWindow(project);
+void WelcomeWindowTest::init(){
+    project = nullptr;
+    welcomeWindow = new WelcomeWindow(project);
+}
 
-    QVERIFY(welcomeWindow.getUI() != nullptr);
-    QVERIFY(welcomeWindow.getCurrentProject() == project);
+void WelcomeWindowTest::cleanup(){
+    delete welcomeWindow;
+    welcomeWindow = nullptr;
+}
+
+void WelcomeWindowTest::testConstructor() {
+    QVERIFY(welcomeWindow->ui != nullptr);
+    QVERIFY(welcomeWindow->currentProject == project);
 }
 
 void WelcomeWindowTest::testLoadProjectPaths() {
-    std::shared_ptr<Project> project;
-    WelcomeWindow welcomeWindow(project);
-
     // Clear project paths and save settings
     QSettings settings("oceaneye", "oceaneye");
     settings.beginGroup("projects");
     settings.remove("");
     settings.endGroup();
 
-    welcomeWindow.loadProjectPaths();
-    QCOMPARE(welcomeWindow.getProjects().size(), 0);
+    welcomeWindow->loadProjectPaths();
+    QCOMPARE(welcomeWindow->projects.size(), 0);
 
     // Add a project path and save settings
     settings.beginGroup("projects");
     settings.setValue("path", "test_path");
     settings.endGroup();
 
-    welcomeWindow.loadProjectFromPath("test_path");
-    welcomeWindow.loadProjectPaths();
+    welcomeWindow->loadProjectFromPath("test_path");
+    welcomeWindow->loadProjectPaths();
 
     // Clear project paths and save settings
-    QCOMPARE(welcomeWindow.getProjects().size(), 1);
-    QCOMPARE(welcomeWindow.getProjects()[0], QString("test_path"));
+    QCOMPARE(welcomeWindow->projects.size(), 1);
+    QCOMPARE(welcomeWindow->projects[0], QString("test_path"));
 
     // Clear project paths and save settings again after verification
     settings.beginGroup("projects");
     settings.remove("");
     settings.endGroup();
 
-    welcomeWindow.loadProjectPaths();
-    QCOMPARE(welcomeWindow.getProjects().size(), 0);
+    welcomeWindow->loadProjectPaths();
+    QCOMPARE(welcomeWindow->projects.size(), 0);
 }
 
 void WelcomeWindowTest::testSaveProjectPaths() {
-    std::shared_ptr<Project> project;
-    WelcomeWindow welcomeWindow(project);
-
-    welcomeWindow.projects = {"test_path1", "test_path2"};
-    welcomeWindow.saveProjectPaths();
+    welcomeWindow->projects = {"test_path1", "test_path2"};
+    welcomeWindow->saveProjectPaths();
 
     QSettings settings("oceaneye", "oceaneye");
     settings.beginReadArray("projects");
@@ -73,15 +80,12 @@ void WelcomeWindowTest::testSaveProjectPaths() {
 }
 
 void WelcomeWindowTest::testLoadProjectFromPath() {
-    std::shared_ptr<Project> project;
-    WelcomeWindow welcomeWindow(project);
+    QSignalSpy spy(welcomeWindow, &WelcomeWindow::projectOpened);
 
-    QSignalSpy spy(&welcomeWindow, &WelcomeWindow::projectOpened);
+    welcomeWindow->loadProjectFromPath("test_project_path");
 
-    welcomeWindow.loadProjectFromPath("test_project_path");
-
-    QVERIFY(welcomeWindow.getCurrentProject() != nullptr);
-    QCOMPARE(welcomeWindow.getCurrentProject()->projectPath, QString("test_project_path"));
+    QVERIFY(welcomeWindow->currentProject != nullptr);
+    QCOMPARE(welcomeWindow->currentProject->projectPath, QString("test_project_path"));
 
     QVERIFY(spy.count() == 1); // Ensure the signal is emitted
 }

@@ -21,9 +21,6 @@ public:
     WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *parent = nullptr);
     ~WelcomeWindow();
 
-    Ui::WelcomeWindow* getUI() const { return ui; }
-    std::shared_ptr<Project> getCurrentProject() const { return currentProject; }
-    std::vector<QString> getProjects() const { return projects; }
     friend class WelcomeWindowTest;
 
 private:
