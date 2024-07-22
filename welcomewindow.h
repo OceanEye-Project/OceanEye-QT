@@ -21,6 +21,11 @@ public:
     WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *parent = nullptr);
     ~WelcomeWindow();
 
+    Ui::WelcomeWindow* getUI() const { return ui; }
+    std::shared_ptr<Project> getCurrentProject() const { return currentProject; }
+    std::vector<QString> getProjects() const { return projects; }
+    friend class WelcomeWindowTest;
+
 private:
     std::shared_ptr<Project>& currentProject;
     std::vector<QString> projects {};
@@ -28,11 +33,13 @@ private:
     Ui::WelcomeWindow *ui;
 
     void loadProjectPaths();
-    void saveProjectPaths();
-
     void loadProjectFromPath(QString projectPath);
+    void saveProjectPaths();
 
 public slots:
     void openProject();
+
+signals:
+    void projectOpened();
 };
 #endif // WELCOMEWINDOW_H
