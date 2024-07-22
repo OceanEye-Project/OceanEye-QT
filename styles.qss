@@ -1005,6 +1005,12 @@ QProgressBar::chunk:disabled {
 https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qpushbutton
 
 --------------------------------------------------------------------------- */
+QPushButton#thumbnail {
+    padding: 2px;
+}
+QPushButton#thumbnail:checked {
+    background-color: #D37462;
+}
 QPushButton {
   background-color: #455364;
   color: #DFE1E2;

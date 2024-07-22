@@ -16,7 +16,8 @@ EditMediaDialog::EditMediaDialog(std::shared_ptr<Project>& project)
     connect(ui->clearSelection, &QPushButton::clicked, this, &EditMediaDialog::clearSelection);
     ui->mediaBox->setLayout(mediaLayout);
 
-    setPreview(0);
+    if (!currentProject->media.empty())
+        setPreview(0);
 }
 
 void EditMediaDialog::showEvent(QShowEvent* event) {
@@ -29,6 +30,8 @@ void EditMediaDialog::refreshMedia() {
     while ((wItem = mediaLayout->takeAt(0)) != 0)
         delete wItem;
 
+    selectedImages.clear();
+
     int size = 150;
     for (int i=0; i<currentProject->media.size(); i++) {
         auto& file = currentProject->media.at(i);
@@ -36,14 +39,20 @@ void EditMediaDialog::refreshMedia() {
         ImageThumbnail* thumbnail = new ImageThumbnail();
 
         thumbnail->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        thumbnail->setMinimumHeight(size);
+        // thumbnail->setMinimumHeight(size);
         thumbnail->setMinimumWidth(size);
 
         QPixmap pixmap {file};
-        thumbnail->setPixmap(pixmap.scaled(size, size, Qt::KeepAspectRatio));
+        QPixmap scaledPixmap = pixmap.scaled(size, size, Qt::KeepAspectRatio);
+        QIcon icon(scaledPixmap);
+        thumbnail->setIcon(icon);
+        thumbnail->setIconSize(scaledPixmap.size());
 
         connect(thumbnail, &ImageThumbnail::hover, this, [this, i] {
             setPreview(i);
+        });
+        connect(thumbnail, &ImageThumbnail::clicked, this, [this, i](bool checked) {
+            selectedImages.push_back(i);
         });
         mediaLayout->addWidget(thumbnail);
     }
@@ -64,13 +73,37 @@ void EditMediaDialog::updateImages() {
 }
 
 void EditMediaDialog::removeSelected() {
-
+    for (auto index : selectedImages) {
+        currentProject->media.at(index) = currentProject->media.back();
+        currentProject->media.pop_back();
+    }
+    currentProject->saveMedia();
+    selectedImages.clear();
+    QLayoutItem* wItem;
+    while((wItem = mediaLayout->takeAt(0)) != 0) {
+        if (ImageThumbnail* thumbnail = dynamic_cast<ImageThumbnail*>(wItem->widget())) {
+            if (thumbnail->isChecked()) {
+                thumbnail->setParent(nullptr);
+                delete thumbnail;
+            }
+        }
+    }
 }
 
 void EditMediaDialog::removeAll() {
-
+    currentProject->media.clear();
+    currentProject->saveMedia();
+    selectedImages.clear();
+    refreshMedia();
 }
 
 void EditMediaDialog::clearSelection() {
+    QLayoutItem* wItem;
+    while((wItem = mediaLayout->takeAt(0)) != 0) {
+        if (ImageThumbnail* thumbnail = dynamic_cast<ImageThumbnail*>(wItem->widget())) {
+            thumbnail->setChecked(false);
+        }
+    }
 
+    selectedImages.clear();
 }

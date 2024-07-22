@@ -23,7 +23,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
     connect(ui->actionExport, &QAction::triggered, this, [this]{exportDialog.show();});
-    connect(ui->actionEditMedia, &QAction::triggered, this, [this]{editMediaDialog.show();});
+    connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
+    connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         currentImg--;

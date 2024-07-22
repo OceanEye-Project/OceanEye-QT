@@ -52,6 +52,10 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
 
     painter.drawPixmap(0, 0, pixmap);
 
+    QPen pen {Qt::red};
+    pen.setWidth(2);
+    painter.setPen(pen);
+
     for (auto& annotation : annotations) {
         painter.drawRect(annotation.box);
     }
