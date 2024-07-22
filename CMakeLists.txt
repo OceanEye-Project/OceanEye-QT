@@ -22,15 +22,6 @@ set(PROJECT_SOURCES
         welcomewindow.cpp
         welcomewindow.h
         welcomewindow.ui
-)
-
-
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(OceanEye
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
         project.h project.cpp
         resources.qrc
         yolov8.h yolov8.cpp
@@ -43,7 +34,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         editmedia.ui
         editmediadialog.h editmediadialog.cpp
         flowlayout.h flowlayout.cpp
+)
 
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(OceanEye
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
 
     )
 # Define target properties for Android with Qt 6 as:

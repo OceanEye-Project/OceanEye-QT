@@ -20,6 +20,7 @@ class EditMediaDialog : public QWidget
     Ui::EditMediaDialog *ui;
     FlowLayout* mediaLayout = new FlowLayout();
     QPixmap previewPixmap {};
+    std::vector<int> selectedImages {};
 
     void updateImages();
     void removeSelected();
