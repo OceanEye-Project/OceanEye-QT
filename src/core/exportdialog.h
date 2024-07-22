@@ -4,7 +4,7 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QDialog>
-#include "project.h"
+#include "../util/project.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QtConcurrent/QtConcurrent>
-#include "waitingdialog.h"
+#include "../gui/waitingdialog.h"
 #include "project.h"
 
 class VideoSlicer : public QObject

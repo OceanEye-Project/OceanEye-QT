@@ -8,11 +8,11 @@
 #include <QProgressBar>
 
 #include "opencv2/opencv.hpp"
-#include "project.h"
-#include "annotatedimage.h"
+#include "../util/project.h"
+#include "../gui/annotatedimage.h"
 #include "exportdialog.h"
 #include "editmediadialog.h"
-#include "videoslicer.h"
+#include "../util/videoslicer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

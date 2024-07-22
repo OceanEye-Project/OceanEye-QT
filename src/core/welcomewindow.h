@@ -5,7 +5,7 @@
 #include <QFileDialog>
 
 #include "mainwindow.h"
-#include "project.h"
+#include "../util/project.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

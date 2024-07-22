@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
-#include "project.h"
+#include "../util/project.h"
 
 class AnnotatedImage : public QWidget
 {

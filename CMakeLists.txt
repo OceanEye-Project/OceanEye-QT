@@ -15,25 +15,23 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent)
 find_package(OpenCV REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        welcomewindow.cpp
-        welcomewindow.h
-        welcomewindow.ui
-        project.h project.cpp
-        resources.qrc
-        yolov8.h yolov8.cpp
-        annotatedimage.h annotatedimage.cpp
-        styles.qss
-        exportdialog.h exportdialog.cpp
-        exportdialog.ui
-        waitingdialog.h waitingdialog.cpp
-        videoslicer.h videoslicer.cpp
-        editmedia.ui
-        editmediadialog.h editmediadialog.cpp
-        flowlayout.h flowlayout.cpp
+    src/main.cpp
+
+    src/core/mainwindow.cpp src/core/mainwindow.h src/core/mainwindow.ui
+    src/core/exportdialog.cpp src/core/exportdialog.h src/core/exportdialog.ui
+    src/core/editmediadialog.h src/core/editmediadialog.cpp src/core/editmedia.ui
+    src/core/welcomewindow.cpp src/core/welcomewindow.h src/core/welcomewindow.ui
+    
+    src/gui/annotatedimage.cpp src/gui/annotatedimage.h
+    src/gui/flowlayout.cpp src/gui/flowlayout.h
+    src/gui/waitingdialog.cpp src/gui/waitingdialog.h
+
+    src/util/yolov8.cpp src/util/yolov8.h
+    src/util/project.cpp src/util/project.h
+    src/util/videoslicer.cpp src/util/videoslicer.h
+
+    src/resources/resources.qrc
+    src/resources/styles.qss
 )
 
 
