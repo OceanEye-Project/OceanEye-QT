@@ -105,5 +105,6 @@
         "thread": "cpp",
         "cfenv": "cpp",
         "qjsondocument": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
