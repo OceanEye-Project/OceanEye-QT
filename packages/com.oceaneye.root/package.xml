@@ -1,0 +1,7 @@
+<Package>
+    <DisplayName>OceanEye</DisplayName>
+    <Description>OceanEye</Description>
+    <Version>0.1</Version>
+    <ReleaseDate>2024-07-26</ReleaseDate>
+    <Default>true</Default>
+</Package>
