@@ -2,8 +2,11 @@
 #include "exportdialog.h"
 #include "./ui_exportdialog.h"
 #include <fstream>
-#include <iostream>
 #include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 ExportDialog::ExportDialog(std::shared_ptr<Project>& project, QWidget *parent)
     : QDialog{parent}
     , ui(new Ui::ExportDialog)
@@ -24,8 +27,6 @@ ExportDialog::ExportDialog(std::shared_ptr<Project>& project, QWidget *parent)
     ui->exportCount->setText(QString("Exporting %1 annotations").arg(totalAnnotations));
 
 }
-
-// TODO: Add dynamic export functionality
 
 /**
  * Export CSV
@@ -55,27 +56,55 @@ void exportCSV(QString filename, std::map<QString, std::vector<Annotation>>& ann
     }
     // Close file
     outFile.close();
-
-    // Debug: Output CSV to console
-    std::ifstream inFile (saveLocation.toStdString());
-    std::string line;
-    while (std::getline(inFile, line)) {
-        std::cout << line << std::endl;
-    }
-
-    // Download the file
 }
 
-
-void exportJSON(QString filename, std::map<QString, std::vector<Annotation>>& annotations) {
-// TODO
-}
-/** Export Window
+/** Export JSON Window
  * 
  * @brief: When the user clicks the export button, this function is called.
  * It checks the selected format and calls the appropriate export function.
  * 
- * Options: All CSV or ALL JSON
+ * Options: All JSON
+ * @param: None
+ */
+void exportJSON(QString filename, std::map<QString, std::vector<Annotation>>& annotations) {
+    QString saveLocation = QFileDialog::getSaveFileName(nullptr, "Save JSON", filename, "JSON Files (*.json)");
+    if (saveLocation.isEmpty()) {
+        return; // User canceled the save dialog
+    }
+
+    QJsonArray jsonAnnotations;
+
+    // Loop through annotations and create JSON objects
+    for (auto& [image, anns] : annotations) {
+        for (auto& ann : anns) {
+            QJsonObject jsonAnn;
+            jsonAnn["frame_name"] = image;
+            jsonAnn["class"] = ann.className;
+            jsonAnn["confidence"] = ann.confidence;
+            jsonAnn["x"] = ann.box.x();
+            jsonAnn["y"] = ann.box.y();
+            jsonAnn["width"] = ann.box.width();
+            jsonAnn["height"] = ann.box.height();
+            jsonAnnotations.append(jsonAnn);
+        }
+    }
+
+    QJsonDocument jsonDoc(jsonAnnotations);
+    QFile jsonFile(saveLocation);
+    if (!jsonFile.open(QIODevice::WriteOnly)) {
+        return; // Failed to open file
+    }
+
+    jsonFile.write(jsonDoc.toJson());
+    jsonFile.close();
+}
+
+/** Export CSV Window
+ * 
+ * @brief: When the user clicks the export button, this function is called.
+ * It checks the selected format and calls the appropriate export function.
+ * 
+ * Options: All CSV
  * @param: None
  */
 void ExportDialog::doExport() {
