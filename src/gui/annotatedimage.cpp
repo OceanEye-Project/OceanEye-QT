@@ -1,12 +1,20 @@
 #include "annotatedimage.h"
 
-AnnotatedImage::AnnotatedImage(std::shared_ptr<Project>& project, QWidget *parent)
+// TODO better way to pass widgets through
+AnnotatedImage::AnnotatedImage(
+    std::shared_ptr<Project>& project,
+    QWidget *parent
+    )
     : QWidget{parent}
     , currentProject(project)
 {
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
+
+void AnnotatedImage::triggerRepaint() {
+    repaint();
+}
 
 void AnnotatedImage::setImage(QString path) {
     annotations = currentProject->getAnnotation(path);
@@ -48,48 +56,59 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     painter.translate(imagePos);
     painter.scale(zoom, zoom);
 
+    worldToImageTransform = painter.combinedTransform().inverted();
+
     painter.setBrush(Qt::transparent);
 
     painter.drawPixmap(0, 0, pixmap);
 
-    QPen pen {Qt::red};
+    QPen pen {};
     pen.setWidth(3);
     painter.setPen(pen);
 
     auto handlesize = 15;
-    auto imageMousePos = painter.combinedTransform().inverted().map(mousePos);
+    auto imageMousePos = worldToImageTransform.map(mousePos);
 
-    for (auto& annotation : annotations) {
-        pen.setColor(Qt::red);
+    for (int i=0; i<annotations.size(); i++) {
+        auto& annotation = annotations.at(i);
+
+        int hue = (255 * annotation.classId) / model_classes.size();
+
+        pen.setColor(QColor::fromHsv(hue, 245, 245, 255));
+        painter.setPen(pen);
+
         painter.setBrush(Qt::transparent);
 
         painter.drawRect(annotation.box);
 
         pen.setColor(Qt::black);
+        painter.setPen(pen);
 
-        
         for (auto& handle : annotationHandles) {
-            if (selectedHandle && selectedHandle->point == handle.point && selectedAnnotation && selectedAnnotation->box == annotation.box) {
-                painter.setBrush(Qt::red);
-            } else {
-                painter.setBrush(Qt::white);
-            }
-
             auto point = annotation.box.topLeft() + QPointF(annotation.box.width() * handle.point.x(), annotation.box.height() * handle.point.y());
-            painter.drawEllipse(point, handlesize, handlesize);
 
-            // distance from the mouse to the handle
-            // auto distance = (point - (mousePos - target.topLeft()) / imageScale).manhattanLength();
-            // if (distance < handlesize * handlesize) {
-            //     std::cout << "Selected handle" << mousePos.x() << " " << mousePos.y() << std::endl;
-            // }
             auto distance = (point - imageMousePos).manhattanLength();
-            if (distance * distance < handlesize * handlesize && mouseWasPressed) {
-                selectedHandle = std::make_shared<AnnotationHandle>(handle);
-                selectedAnnotation = std::make_shared<Annotation>(annotation);
+
+            painter.setBrush(Qt::white);
+
+            if (distance * distance < handlesize * handlesize) {
+                // need to call redraw on mouse move for this to work :(
+                // painter.setBrush(Qt::red);
+                if (mouseWasPressed) {
+                    selectedHandle = std::make_shared<AnnotationHandle>(handle);
+                    selectedAnnotation = i;
+                }
             }
+
+            if (selectedHandle && selectedHandle->point == handle.point && selectedAnnotation == i) {
+                painter.setBrush(QColor::fromHsv(hue, 245, 127, 255));
+            }
+
+            if (annotationEditBtn->isChecked())
+                painter.drawEllipse(point, handlesize, handlesize);
         }
     }
+
 
     painter.restore();
     painter.drawRect(0, 0, width(), height());
@@ -123,8 +142,41 @@ void AnnotatedImage::enforceBoundryConditions() {
 
 }
 void AnnotatedImage::mousePressEvent(QMouseEvent* event) {
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
     mousePos = event->position();
-    mouseWasPressed = true;
+    if (annotationEditBtn->isChecked()) {
+        mouseWasPressed = true;
+    } else if (annotationNewBtn->isChecked()) {
+        QPointF imageMousePos = worldToImageTransform.map(mousePos);
+        Annotation annotation {
+            annotationClassCombo->currentData().toInt(),
+            annotationClassCombo->currentText(),
+            1.0f,
+            {
+                imageMousePos.toPoint(),
+                QSize(1, 1)
+            }
+        };
+        selectedAnnotation = annotations.size();
+        annotations.push_back(annotation);
+
+        // bottom right handle
+        selectedHandle = std::make_unique<AnnotationHandle>(annotationHandles.at(4));
+
+    } else if (annotationDeleteBtn->isChecked()) {
+
+        QPointF imageMousePos = worldToImageTransform.map(mousePos);
+        for (int i=0; i<annotations.size(); i++) {
+            if (annotations.at(i).box.contains(imageMousePos.toPoint(), true)) {
+                annotations.erase(annotations.begin() + i);
+                emit annotationsChanged();
+                break;
+            }
+        }
+    }
+
     repaint();
 }
 
@@ -132,8 +184,14 @@ void AnnotatedImage::mouseReleaseEvent(QMouseEvent* event) {
     if (selectedHandle) {
         selectedHandle = nullptr;
     }
-    if (selectedAnnotation) {
-        selectedAnnotation = nullptr;
+    if (selectedAnnotation >= 0) {
+        selectedAnnotation = -1;
+
+        for (auto& annotation : annotations) {
+            annotation.box = annotation.box.normalized();
+        }
+
+        emit annotationsChanged();
     }
     repaint();
 }
@@ -142,39 +200,33 @@ void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
     Qt::MouseButtons buttons = event->buttons();
     QPointF delta = event->position() - mousePos;
 
-    if (buttons & Qt::LeftButton) {
-        if (selectedHandle && selectedAnnotation) {
-            std::cout << "Moving annotation" << std::endl;
+    if (buttons & Qt::RightButton) {
+        imagePos += delta / imageScale;
+        enforceBoundryConditions();
+        repaint();
+
+    } else if (buttons & Qt::LeftButton) {
+        if (selectedHandle && selectedAnnotation >= 0) {
+            Annotation& annotation = annotations.at(selectedAnnotation);
+
+            QPointF imageMousePos = worldToImageTransform.map(event->position());
+            QPointF boundedMousePos = QPoint(
+                std::clamp(imageMousePos.x(), 0.0, (double) pixmap.width()),
+                std::clamp(imageMousePos.y(), 0.0, (double) pixmap.height())
+            );
 
             if (selectedHandle->T)
-                selectedAnnotation->box.moveTop(delta.y());
+                annotation.box.setTop(boundedMousePos.y());
 
             if (selectedHandle->L)
-                selectedAnnotation->box.moveLeft(delta.x());
+                annotation.box.setLeft(boundedMousePos.x());
 
             if (selectedHandle->B)
-                selectedAnnotation->box.moveBottom(delta.y());
+                annotation.box.setBottom(boundedMousePos.y());
 
             if (selectedHandle->R)
-                selectedAnnotation->box.moveRight(delta.x());
+                annotation.box.setRight(boundedMousePos.x());
 
-            std::cout << "Moved annotation" << std::endl;
-
-
-            // if (modifier.left()) {
-            //     box.setLeft(std::max(0.0, box.left() + delta.x() / imageScale));
-            // }
-            // if (modifier.top()) {
-            //     box.setTop(std::max(0.0, box.top() + delta.y() / imageScale));
-            // }
-            // if (modifier.right()) {
-            //     box.setRight(std::min((double)pixmap.width(), box.right() + delta.x() / imageScale));
-            // }
-            // if (modifier.bottom()) {
-            //     box.setBottom(std::min((double)pixmap.height(), box.bottom() + delta.y() / imageScale));
-            // }
-
-            // emit annotationsChanged();
         } else {
             imagePos += delta / imageScale;
             enforceBoundryConditions();

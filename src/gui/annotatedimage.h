@@ -4,7 +4,13 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QComboBox>
+#include <algorithm>
 #include "../util/project.h"
+#include "../util/yolov8.h"
+#include "qcombobox.h"
 
 struct AnnotationHandle {
     // Where the handle is drawn, relative to the annotation box (0-1)
@@ -16,13 +22,13 @@ struct AnnotationHandle {
 
 static const std::vector<AnnotationHandle> annotationHandles = {
     {{0.0, 0.0}, 1, 1, 0, 0},
-    {{0.0, 0.5}, 1, 0, 0, 0},
-    {{0.0, 1.0}, 1, 0, 0, 1},
-    {{0.5, 1.0}, 0, 0, 0, 1},
+    {{0.0, 0.5}, 0, 1, 0, 0},
+    {{0.0, 1.0}, 0, 1, 1, 0},
+    {{0.5, 1.0}, 0, 0, 1, 0},
     {{1.0, 1.0}, 0, 0, 1, 1},
-    {{1.0, 0.5}, 0, 0, 1, 0},
-    {{1.0, 0.0}, 0, 1, 1, 0},
-    {{0.5, 0.0}, 0, 1, 0, 0}
+    {{1.0, 0.5}, 0, 0, 0, 1},
+    {{1.0, 0.0}, 1, 0, 0, 1},
+    {{0.5, 0.0}, 1, 0, 0, 0}
 };
 
 class AnnotatedImage : public QWidget
@@ -39,12 +45,24 @@ class AnnotatedImage : public QWidget
     QRect target {};
     bool mouseWasPressed {false};
     std::shared_ptr<AnnotationHandle> selectedHandle {nullptr};
-    std::shared_ptr<Annotation> selectedAnnotation {nullptr};
+    int selectedAnnotation {-1};
+    QTransform worldToImageTransform {};
 
 public:
+
+    QPushButton* annotationEditBtn;
+    QPushButton* annotationDeleteBtn;
+    QPushButton* annotationNewBtn;
+    QComboBox* annotationClassCombo;
+
     std::vector<Annotation> annotations {};
     void setImage(QString);
-    explicit AnnotatedImage(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
+    explicit AnnotatedImage(
+        std::shared_ptr<Project>& project,
+        QWidget *parent = nullptr
+        );
+
+    void triggerRepaint();
 
 public slots:
     void resizeEvent(QResizeEvent* event) override;
