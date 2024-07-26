@@ -6,6 +6,25 @@
 #include <QMouseEvent>
 #include "../util/project.h"
 
+struct AnnotationHandle {
+    // Where the handle is drawn, relative to the annotation box (0-1)
+    QPointF point;
+    // When the annotation is being modified
+    // This value masks out which sides are modified by the handle
+    bool T, L, B, R;
+};
+
+static const std::vector<AnnotationHandle> annotationHandles = {
+    {{0.0, 0.0}, 1, 1, 0, 0},
+    {{0.0, 0.5}, 1, 0, 0, 0},
+    {{0.0, 1.0}, 1, 0, 0, 1},
+    {{0.5, 1.0}, 0, 0, 0, 1},
+    {{1.0, 1.0}, 0, 0, 1, 1},
+    {{1.0, 0.5}, 0, 0, 1, 0},
+    {{1.0, 0.0}, 0, 1, 1, 0},
+    {{0.5, 0.0}, 0, 1, 0, 0}
+};
+
 class AnnotatedImage : public QWidget
 {
     Q_OBJECT
@@ -18,6 +37,9 @@ class AnnotatedImage : public QWidget
     float zoom {1};
     float imageScale {1};
     QRect target {};
+    bool mouseWasPressed {false};
+    std::shared_ptr<AnnotationHandle> selectedHandle {nullptr};
+    std::shared_ptr<Annotation> selectedAnnotation {nullptr};
 
 public:
     std::vector<Annotation> annotations {};
@@ -29,6 +51,7 @@ public slots:
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
 signals:
