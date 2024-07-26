@@ -27,7 +27,14 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
-        currentImg--;
+        // If currentImg is 0, set it to the last image
+        if(currentImg < 1){
+            currentImg = currentProject->media.size() - 1;
+        }
+        // Else reverse one image
+        else{
+            currentImg--;
+        }
         updateImageUI();
     });
     connect(ui->imgNextBtn, &QPushButton::clicked, this, [this]{
