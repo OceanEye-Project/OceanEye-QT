@@ -46,11 +46,9 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     std::filesystem::path videoPath(video.toStdString());
     std::filesystem::path stillsPath(projectPath.toStdString());
 
+
     while (cap.read(frame)) {
         emit updateProgress(frameInterval);
-        cap.set(cv::CAP_PROP_POS_FRAMES, currentFrame);
-        currentFrame += frameInterval;
-
         framePath = (stillsPath / (videoPath.stem().string() + "_" + std::to_string(currentFrame) + ".jpeg")).string();
 
         // Check if the file already exists
@@ -69,11 +67,9 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
             std::cout << "Frame already exists: " << framePath << std::endl;
             savedFrames.push_back(QString::fromStdString(framePath));
         }
-        // if (result) {
-        //     savedFrames.push_back(QString::fromStdString(framePath));
-        // }
-        // }
-        // progress = (double)currentFrame / cap.get(cv::CAP_PROP_FRAME_COUNT);
+
+        currentFrame += frameInterval;
+        cap.set(cv::CAP_PROP_POS_FRAMES, currentFrame);
     }
     std::cout << "Done slicing video" << std::endl;
 

@@ -19,9 +19,6 @@ struct Annotation {
     QRect box;
 };
 
-
-inline static std::array<std::string, 5> model_classes = {"Kelp", "Sea Urchin", "Sea Star", "Fish", "Sea Cucumber"};
-
 class YOLOv8 {
 public:
     YOLOv8(
@@ -38,7 +35,7 @@ public:
     float modelConfidenceThreshold {0.25};
     float modelScoreThreshold      {0.45};
     float modelNMSThreshold        {0.50};
-    inline static std::array<std::string, 5> classes = model_classes;
+    inline static std::array<std::string, 5> classes = {"Kelp", "Sea Urchin", "Sea Star", "Fish", "Sea Cucumber"};
     void loadClasses();
 private:
     //        void loadClassesFromFile();
