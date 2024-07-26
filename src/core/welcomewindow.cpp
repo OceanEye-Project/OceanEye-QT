@@ -51,7 +51,6 @@ WelcomeWindow::~WelcomeWindow()
 void WelcomeWindow::openProject() {
     QString projectDir = QFileDialog::getExistingDirectory(this, "Open Project", "", QFileDialog::ShowDirsOnly);
 
-    loadProjectFromPath(QFileInfo(projectDir).absoluteFilePath());
     if (!projectDir.isEmpty()) {
         loadProjectFromPath(QFileInfo(projectDir).absoluteFilePath());
         emit projectOpened(); // Emit the signal when a project is opened
@@ -76,6 +75,8 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath) {
     mainWindow = new MainWindow(currentProject);
     mainWindow->setWindowTitle("OceanEye");
     mainWindow->show();
+
+    close();
     
     emit projectOpened();
 }
@@ -104,8 +105,8 @@ void WelcomeWindow::loadProjectPaths() {
         QPushButton* projectBtn = new QPushButton(projectPath);
         QPushButton* closeBtn = new QPushButton("x");
 
-        connect(closeBtn, &QPushButton::clicked, this, [this, i] {
-            projects.erase(projects.begin() + i);
+        connect(closeBtn, &QPushButton::clicked, this, [this, index=projects.size() - 1] {
+            projects.erase(projects.begin() + index);
             saveProjectPaths();
             loadProjectPaths();
         });

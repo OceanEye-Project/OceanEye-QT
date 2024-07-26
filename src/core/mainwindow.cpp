@@ -12,6 +12,15 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 {
     ui->setupUi(this);
 
+    mainImage.annotationEditBtn = ui->annotationEditBtn;
+    mainImage.annotationDeleteBtn = ui->annotationDeleteBtn;
+    mainImage.annotationNewBtn = ui->annotationNewBtn;
+    mainImage.annotationClassCombo = ui->annotationClassCombo;
+
+    connect(ui->annotationEditBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
+    connect(ui->annotationNewBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
+    connect(ui->annotationDeleteBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
+
     connect(&mainImage, &AnnotatedImage::annotationsChanged, this, &MainWindow::updateTable);
 
     ui->mainImageContainer->setLayout(new QHBoxLayout());
@@ -35,9 +44,10 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
         else{
             currentImg--;
         }
+
         updateImageUI();
     });
-    connect(ui->imgNextBtn, &QPushButton::clicked, this, [this]{
+    connect(ui->imgNextBtn, &QPushButton::clicked, this, [&]{
         currentImg++;
         updateImageUI();
     });
@@ -57,7 +67,14 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     }
 
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::updateImageUI);
+    connect(&editMediaDialog, &EditMediaDialog::mediaChanged, this, &MainWindow::updateImageUI);
 
+    for (int i=0; i<model_classes.size();i++) {
+        ui->annotationClassCombo->addItem(
+            QString::fromStdString(model_classes.at(i)),
+            QVariant(i)
+            );
+    }
     updateImageUI();
 }
 
@@ -67,6 +84,8 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::updateTable() {
+    currentProject->setAnnotation(currentProject->media.at(currentImg), mainImage.annotations);
+
     model->clear();
 
     model->setColumnCount(6);
@@ -99,6 +118,9 @@ void MainWindow::loadModel() {
 }
 
 void MainWindow::runDetection() {
+    if (currentProject->media.empty())
+        return;
+
     currentProject->runDetection(currentProject->media.at(currentImg));
 
     updateImageUI();
@@ -108,6 +130,7 @@ void MainWindow::updateImageUI() {
     if (currentProject->media.empty()) {
         ui->imgPathLabel->setText("No Images Loaded");
         ui->imgCountLabel->setText("0 / 0");
+        mainImage.setImage();
         currentImg = 0;
         return;
     }

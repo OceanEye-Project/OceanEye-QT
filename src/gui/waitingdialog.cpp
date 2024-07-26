@@ -20,6 +20,7 @@ void WaitingDialog::setRange(int min, int max) {
 }
 
 void WaitingDialog::updateProgress(int value) {
+    currentProgress = value;
     progress->setValue(value);
 }
 

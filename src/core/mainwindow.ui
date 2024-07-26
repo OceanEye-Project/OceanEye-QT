@@ -84,7 +84,7 @@
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_6">
                   <item>
-                   <widget class="QPushButton" name="pushButton_3">
+                   <widget class="QPushButton" name="annotationEditBtn">
                     <property name="text">
                      <string>Edit</string>
                     </property>
@@ -100,7 +100,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton_2">
+                   <widget class="QPushButton" name="annotationNewBtn">
                     <property name="text">
                      <string>New</string>
                     </property>
@@ -113,7 +113,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton">
+                   <widget class="QPushButton" name="annotationDeleteBtn">
                     <property name="text">
                      <string>Delete</string>
                     </property>
@@ -134,27 +134,8 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="annotationClassCombo">
-                    <item>
-                     <property name="text">
-                      <string>Sea Urchin</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Kelp</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Sea Star</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="showAnnotationCheckBox">
-                    <property name="text">
-                     <string>Show Annotations</string>
+                    <property name="currentText">
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -402,32 +383,17 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_Project"/>
-    <addaction name="actionOpen_Recent"/>
     <addaction name="actionExport"/>
     <addaction name="actionEditMedia"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuModel">
-    <property name="title">
-     <string>Model</string>
-    </property>
-    <addaction name="actionLoad_Model"/>
-   </widget>
    <addaction name="menuOceanEye"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuModel"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">
