@@ -13,6 +13,7 @@
 #include "exportdialog.h"
 #include "editmediadialog.h"
 #include "../util/videoslicer.h"
+#include "../util/yolov8.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

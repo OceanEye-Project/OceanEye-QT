@@ -56,6 +56,7 @@ public:
     QComboBox* annotationClassCombo;
 
     std::vector<Annotation> annotations {};
+    void setImage();
     void setImage(QString);
     explicit AnnotatedImage(
         std::shared_ptr<Project>& project,

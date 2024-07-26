@@ -122,7 +122,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
         {
             float *classes_scores = data+4;
 
-            cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
+            cv::Mat scores(1, model_classes.size(), CV_32FC1, classes_scores);
             cv::Point class_id;
             double maxClassScore;
 
@@ -154,7 +154,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
             {
                 float *classes_scores = data+5;
 
-                cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
+                cv::Mat scores(1, model_classes.size(), CV_32FC1, classes_scores);
                 cv::Point class_id;
                 double max_class_score;
 
@@ -194,7 +194,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
 
         Annotation result {};
         result.classId = class_ids[idx];
-        result.className = QString::fromStdString(classes[class_ids[idx]]);
+        result.className = QString::fromStdString(model_classes[class_ids[idx]]);
 
         result.confidence = confidences[idx];
 

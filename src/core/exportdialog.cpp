@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QPushButton>
 
 ExportDialog::ExportDialog(std::shared_ptr<Project>& project, QWidget *parent)
     : QDialog{parent}
@@ -14,17 +15,8 @@ ExportDialog::ExportDialog(std::shared_ptr<Project>& project, QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(this, &QDialog::accepted, this, &ExportDialog::doExport);
-
-    annotations = {};
-    int totalAnnotations = 0;
-
-    for (auto& image : currentProject->media) {
-        annotations.insert({image, currentProject->getAnnotation(image)});
-        totalAnnotations += annotations.at(image).size();
-    }
-
-    ui->exportCount->setText(QString("Exporting %1 annotations").arg(totalAnnotations));
+    connect(ui->okBtn, &QPushButton::clicked, this, &ExportDialog::doExport);
+    connect(ui->cancelBtn, &QPushButton::clicked, this, &ExportDialog::close);
 
 }
 
@@ -108,6 +100,16 @@ void exportJSON(QString filename, std::map<QString, std::vector<Annotation>>& an
  * @param: None
  */
 void ExportDialog::doExport() {
+    annotations = {};
+    int totalAnnotations = 0;
+
+    for (auto& image : currentProject->media) {
+        annotations.insert({image, currentProject->getAnnotation(image)});
+        totalAnnotations += annotations.at(image).size();
+    }
+
+    ui->exportCount->setText(QString("Exporting %1 annotations").arg(totalAnnotations));
+
     if (ui->formatCombo->currentText() == "CSV") {
         exportCSV("all_annotations.csv", annotations);
     } else if (ui->formatCombo->currentText() == "JSON") {
