@@ -11,6 +11,10 @@ AnnotatedImage::AnnotatedImage(
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
+void AnnotatedImage::setImage() {
+    pixmap = QPixmap();
+    repaint();
+}
 
 void AnnotatedImage::triggerRepaint() {
     repaint();

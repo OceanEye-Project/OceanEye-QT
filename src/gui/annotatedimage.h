@@ -64,6 +64,7 @@ public:
 
     void triggerRepaint();
 
+
 public slots:
     void resizeEvent(QResizeEvent* event) override;
     void paintEvent(QPaintEvent* event) override;

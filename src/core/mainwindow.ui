@@ -390,25 +390,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_Project"/>
-    <addaction name="actionOpen_Recent"/>
     <addaction name="actionExport"/>
     <addaction name="actionEditMedia"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuModel">
-    <property name="title">
-     <string>Model</string>
-    </property>
-    <addaction name="actionLoad_Model"/>
-   </widget>
    <addaction name="menuOceanEye"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuModel"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">

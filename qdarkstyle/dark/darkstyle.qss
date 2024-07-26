@@ -1005,12 +1005,6 @@ QProgressBar::chunk:disabled {
 https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qpushbutton
 
 --------------------------------------------------------------------------- */
-QPushButton#thumbnail {
-    padding: 2px;
-}
-QPushButton#thumbnail:checked {
-    background-color: #D37462;
-}
 QPushButton {
   background-color: #455364;
   color: #DFE1E2;
@@ -2127,18 +2121,18 @@ https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qsplitter
 
 --------------------------------------------------------------------------- */
 QSplitter {
-  background-color: #455364;
+  background-color: #19232D;
   spacing: 0px;
   padding: 0px;
   margin: 0px;
 }
 
 QSplitter::handle {
-  background-color: #455364;
+  background-color: #19232D;
   border: 0px solid #19232D;
   spacing: 0px;
-  padding: 1px;
-  margin: 0px;
+  padding: 0px;
+  margin: 3px;
 }
 
 QSplitter::handle:hover {
@@ -2146,12 +2140,12 @@ QSplitter::handle:hover {
 }
 
 QSplitter::handle:horizontal {
-  width: 5px;
+  width: 2px;
   image: url(":/qss_icons/dark/rc/line_vertical.png");
 }
 
 QSplitter::handle:vertical {
-  height: 5px;
+  height: 2px;
   image: url(":/qss_icons/dark/rc/line_horizontal.png");
 }
 

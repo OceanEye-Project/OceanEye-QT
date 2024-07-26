@@ -13,7 +13,8 @@ int main(int argc, char *argv[])
 
     app.setStyle("Fusion");
 
-    QFile file(":/styles.qss");
+    // can be changed to light theme just by replacing "dark" with "light"
+    QFile file(":qdarkstyle/dark/darkstyle.qss");
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
 
