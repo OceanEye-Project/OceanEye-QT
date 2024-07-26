@@ -19,7 +19,6 @@ struct Annotation {
     QRect box;
 };
 
-
 inline static std::array<std::string, 5> model_classes = {"Kelp", "Sea Urchin", "Sea Star", "Fish", "Sea Cucumber"};
 
 class YOLOv8 {
@@ -33,12 +32,12 @@ public:
     void drawDetections(const std::vector<Annotation>& annotations, cv::Mat &input);
     void loadOnnxNetwork();
     bool loaded {false};
+    std::map<int, std::string> classMap;
     std::string modelPath{};
     float modelConfidenceThreshold {0.25};
     float modelScoreThreshold      {0.45};
     float modelNMSThreshold        {0.50};
-    inline static std::array<std::string, 5> classes = model_classes;
-
+    void loadClasses();
 private:
     //        void loadClassesFromFile();
     cv::Mat formatToSquare(const cv::Mat &source);

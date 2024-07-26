@@ -1,5 +1,71 @@
 #include "yolov8.h"
 
+std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int length, const std::function <bool (char)>& f) {
+    std::string value {};
+    char byte;
+    inputFile.read(reinterpret_cast<char*>(&byte), 1);
+    i++;
+    while (byte != pattern && i < length) {
+        if (f(byte)) {
+            value += byte;
+        }
+        inputFile.read(reinterpret_cast<char*>(&byte), 1);
+        i++;
+    }
+    return value;
+}
+
+std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int length) {
+    return scanUntil(inputFile, pattern, i, length, [](char c) { return true; });
+}
+
+void YOLOv8::loadClasses() {
+    bool match = false;
+
+    // https://protobuf.dev/programming-guides/encoding/
+    // https://onnx.ai/onnx/api/classes.html#modelproto
+    // "Names", plus the start of the next item
+    std::array<uint8_t, 6> magicNumber = {0x6e, 0x61, 0x6d, 0x65, 0x73, 0x12};
+    std::array<uint8_t, 6> fileMagicNumber;
+    
+    classMap.clear();
+
+    std::ifstream inputFile(modelPath);
+
+    if (inputFile.is_open()) {
+        inputFile.read(reinterpret_cast<char*>(fileMagicNumber.data()), 6);
+
+        while (inputFile) {
+            if (fileMagicNumber == magicNumber) {
+                match = true;
+                uint8_t length;
+                inputFile.read(reinterpret_cast<char*>(&length), 1);
+                inputFile.seekg(1, std::ios::cur);
+                // skip one byte "{"
+                // dont read the last byte "}"
+                int i = 1;
+                while (i < length-1) {
+                    auto key = scanUntil(inputFile, ':', i, length, [](char c) { return ('0' <= c && c <= '9'); });
+                    scanUntil(inputFile, '\'', i, length);
+                    auto value = scanUntil(inputFile, '\'', i, length);
+                    classMap[std::stoi(key)] = value;
+                    std::cout << "Class " << key << ": " << value << std::endl;
+                }
+                break;
+            }
+            uint8_t byte;
+            inputFile.read(reinterpret_cast<char*>(&byte), 1);
+            for (int i = 0; i < 5; i++) {
+                fileMagicNumber[i] = fileMagicNumber[i+1];
+            }
+            fileMagicNumber[5] = byte;
+        }
+        inputFile.close();
+    } else {
+        std::cerr << "Error opening the file: " << modelPath << std::endl;
+    }
+}
+
 YOLOv8::YOLOv8(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile, const bool &runWithCuda)
 {
     modelPath = onnxModelPath;
@@ -56,7 +122,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
         {
             float *classes_scores = data+4;
 
-            cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
+            cv::Mat scores(1, model_classes.size(), CV_32FC1, classes_scores);
             cv::Point class_id;
             double maxClassScore;
 
@@ -88,7 +154,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
             {
                 float *classes_scores = data+5;
 
-                cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
+                cv::Mat scores(1, model_classes.size(), CV_32FC1, classes_scores);
                 cv::Point class_id;
                 double max_class_score;
 
@@ -128,7 +194,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
 
         Annotation result {};
         result.classId = class_ids[idx];
-        result.className = QString::fromStdString(classes[class_ids[idx]]);
+        result.className = QString::fromStdString(model_classes[class_ids[idx]]);
 
         result.confidence = confidences[idx];
 
@@ -145,17 +211,6 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
     return annotations;
 }
 
-//void YOLOv8::loadClassesFromFile()
-//{
-//    std::ifstream inputFile(classesPath);
-//    if (inputFile.is_open())
-//    {
-//        std::string classLine;
-//        while (std::getline(inputFile, classLine))
-//            classes.push_back(classLine);
-//        inputFile.close();
-//    }
-//}
 
 void YOLOv8::loadOnnxNetwork() {
     std::cout << "Loading ONNX model from: " << modelPath << std::endl;
@@ -179,6 +234,10 @@ void YOLOv8::loadOnnxNetwork() {
 
     loaded = true;
     std::cout << "Model loaded successfully." << std::endl;
+
+    loadClasses();
+
+    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 }
 
 cv::Mat YOLOv8::formatToSquare(const cv::Mat &source) {
