@@ -92,6 +92,9 @@ void MainWindow::loadModel() {
 }
 
 void MainWindow::runDetection() {
+    if (currentProject->media.empty())
+        return;
+
     currentProject->runDetection(currentProject->media.at(currentImg));
 
     updateImageUI();
