@@ -17,7 +17,7 @@ VideoSlicer::VideoSlicer(std::shared_ptr<Project>& project)
     });
 
     connect(this, &VideoSlicer::updateProgress, this, [this](int progress){
-        dialog.updateProgress(progress);
+        dialog.updateProgress(dialog.currentProgress + progress);
     });
 
 }
@@ -47,7 +47,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     std::filesystem::path stillsPath(projectPath.toStdString());
 
     while (cap.read(frame)) {
-        emit updateProgress(currentFrame);
+        emit updateProgress(frameInterval);
         cap.set(cv::CAP_PROP_POS_FRAMES, currentFrame);
         currentFrame += frameInterval;
 
@@ -67,6 +67,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
         }
         else {
             std::cout << "Frame already exists: " << framePath << std::endl;
+            savedFrames.push_back(QString::fromStdString(framePath));
         }
         // if (result) {
         //     savedFrames.push_back(QString::fromStdString(framePath));

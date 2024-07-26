@@ -7,6 +7,10 @@ AnnotatedImage::AnnotatedImage(std::shared_ptr<Project>& project, QWidget *paren
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
+void AnnotatedImage::setImage() {
+    pixmap = QPixmap();
+    repaint();
+}
 
 void AnnotatedImage::setImage(QString path) {
     annotations = currentProject->getAnnotation(path);

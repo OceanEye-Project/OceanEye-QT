@@ -26,11 +26,11 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
 
-    connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
+    connect(ui->imgPrevBtn, &QPushButton::clicked, this, [&]{
         currentImg--;
         updateImageUI();
     });
-    connect(ui->imgNextBtn, &QPushButton::clicked, this, [this]{
+    connect(ui->imgNextBtn, &QPushButton::clicked, this, [&]{
         currentImg++;
         updateImageUI();
     });
@@ -50,6 +50,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     }
 
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::updateImageUI);
+    connect(&editMediaDialog, &EditMediaDialog::mediaChanged, this, &MainWindow::updateImageUI);
 
     updateImageUI();
 }
@@ -104,6 +105,7 @@ void MainWindow::updateImageUI() {
     if (currentProject->media.empty()) {
         ui->imgPathLabel->setText("No Images Loaded");
         ui->imgCountLabel->setText("0 / 0");
+        mainImage.setImage();
         currentImg = 0;
         return;
     }

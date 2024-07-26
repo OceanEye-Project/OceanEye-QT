@@ -15,7 +15,7 @@ public:
     void hide();
     void updateProgress(int value);
     void setRange(int min, int max);
-
+    int currentProgress {};
 protected:
 
     void keyPressEvent(QKeyEvent *e) override;

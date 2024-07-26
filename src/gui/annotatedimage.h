@@ -22,6 +22,7 @@ class AnnotatedImage : public QWidget
 public:
     std::vector<Annotation> annotations {};
     void setImage(QString);
+    void setImage();
     explicit AnnotatedImage(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
 
 public slots:
