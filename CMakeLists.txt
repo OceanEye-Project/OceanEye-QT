@@ -31,7 +31,8 @@ set(PROJECT_SOURCES
     src/util/videoslicer.cpp src/util/videoslicer.h
 
     src/resources/resources.qrc
-    src/resources/styles.qss
+    qdarkstyle/dark/darkstyle.qrc
+    qdarkstyle/light/lightstyle.qrc
 )
 
 
