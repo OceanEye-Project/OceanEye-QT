@@ -37,7 +37,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     }
 
     double fps = cap.get(cv::CAP_PROP_FPS);
-    int skipSeconds = 5;
+    int skipSeconds = currentProject->settings.value("Slice Interval").toInt();
     int frameInterval = static_cast<int>(fps * skipSeconds);
 
     bool result;

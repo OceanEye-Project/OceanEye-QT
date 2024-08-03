@@ -149,6 +149,9 @@ void AnnotatedImage::mousePressEvent(QMouseEvent* event) {
     if (!(event->buttons() & Qt::LeftButton))
         return;
 
+    if (currentProject->media.empty())
+        return;
+
     mousePos = event->position();
     if (annotationEditBtn->isChecked()) {
         mouseWasPressed = true;

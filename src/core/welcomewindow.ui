@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="layoutDirection">
+   <enum>Qt::LayoutDirection::LeftToRight</enum>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -71,7 +74,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/logo.png&quot; width=&quot;40&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="textFormat">
-            <enum>Qt::RichText</enum>
+            <enum>Qt::TextFormat::RichText</enum>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -92,7 +95,7 @@
               <string>### OceanEye</string>
              </property>
              <property name="textFormat">
-              <enum>Qt::MarkdownText</enum>
+              <enum>Qt::TextFormat::MarkdownText</enum>
              </property>
             </widget>
            </item>
@@ -152,7 +155,7 @@
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -174,7 +177,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="loadProjectPage">
        <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -217,7 +220,7 @@
         <item>
          <widget class="Line" name="line">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -230,7 +233,7 @@
               <string>Projects Couldn't Load!</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignHCenter|Qt::AlignTop</set>
+              <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
              </property>
             </widget>
            </item>
@@ -250,7 +253,7 @@
         <item>
          <spacer name="verticalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -269,13 +272,13 @@
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt; font-weight:700;&quot;&gt;OceanEye&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="textFormat">
-           <enum>Qt::RichText</enum>
+           <enum>Qt::TextFormat::RichText</enum>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -285,7 +288,7 @@
            <string>Image annotation software for academics</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -301,7 +304,7 @@
            <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -319,7 +322,7 @@
                 <string>New Project</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignmentFlag::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -329,7 +332,7 @@
                 <string>Open</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignmentFlag::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -352,7 +355,7 @@
            <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -368,7 +371,7 @@
         <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -381,41 +384,79 @@
        </layout>
       </widget>
       <widget class="QWidget" name="settingsPage">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::RichText</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QVBoxLayout" name="verticalLayout_4"/>
       </widget>
       <widget class="QWidget" name="aboutPage">
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLabel" name="label_8">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;About&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OceanEye is an application built by students at the University of Victoria.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
           </property>
-          <property name="textFormat">
-           <enum>Qt::RichText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <property name="wordWrap">
+          <property name="widgetResizable">
            <bool>true</bool>
           </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>621</width>
+             <height>559</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QLabel" name="aboutText">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::TextFormat::MarkdownText</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>## Licence</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::TextFormat::MarkdownText</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="licenceText">
+              <property name="html">
+               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -430,7 +471,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>37</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

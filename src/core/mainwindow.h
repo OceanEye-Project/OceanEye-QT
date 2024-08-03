@@ -8,8 +8,9 @@
 #include <QProgressBar>
 
 #include "opencv2/opencv.hpp"
-#include "../util/project.h"
 #include "../gui/annotatedimage.h"
+#include "../gui/settings/settings.h"
+#include "../util/project.h"
 #include "exportdialog.h"
 #include "editmediadialog.h"
 #include "../util/videoslicer.h"
@@ -36,6 +37,7 @@ private:
     QStandardItemModel* model {new QStandardItemModel()};
     ExportDialog exportDialog;
     EditMediaDialog editMediaDialog;
+    Settings settingsDialog;
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;

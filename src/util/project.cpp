@@ -5,11 +5,10 @@ Project::Project(const QString project_path)
     , QSettings::Format::IniFormat)
     , projectPath(project_path) {
 
-    if (settings.contains("modelPath"))
-        loadModel(settings.value("modelPath").toString());
+    loadModel(settings.value("Model Path").toString());
 
-    if (settings.contains("modelConf"))
-        setModelConf(settings.value("modelConf").toInt());
+    if (settings.contains("Model Confidence"))
+        setModelConf(settings.value("Model Confidence").toInt());
 
     loadMedia();
 
@@ -71,7 +70,7 @@ void Project::setModelConf(int conf) {
     if (isModelLoaded())
         model->modelScoreThreshold = (float) conf / 100.0f;
 
-    settings.setValue("modelConf", conf);
+    settings.setValue("Model Confidence", conf);
 }
 
 bool Project::isModelLoaded() {
@@ -80,14 +79,17 @@ bool Project::isModelLoaded() {
 }
 
 void Project::loadModel(const QString modelPath) {
+    if (modelPath.isEmpty())
+        return;
+
     model = std::make_unique<YOLOv8>(YOLOv8());
 
     model->modelPath = modelPath.toStdString();
     model->loadOnnxNetwork();
 
-    model->modelScoreThreshold = settings.value("modelConf").toInt() / 100.0f;
+    model->modelScoreThreshold = settings.value("Model Confidence").toInt() / 100.0f;
 
-    settings.setValue("modelPath", modelPath);
+    settings.setValue("Model Path", modelPath);
 
     emit modelLoaded(modelPath);
 }

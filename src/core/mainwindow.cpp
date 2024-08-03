@@ -8,6 +8,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , mainImage(project)
     , exportDialog(project)
     , editMediaDialog(project)
+    , settingsDialog(project)
     , videoSlicer(project)
 {
     ui->setupUi(this);
@@ -31,9 +32,10 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
-    connect(ui->actionExport, &QAction::triggered, this, [this]{exportDialog.show();});
+    connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
+    connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         // If currentImg is 0, set it to the last image
@@ -59,8 +61,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     if (project->isModelLoaded()) {
         ui->modelPathLabel->setText(QString::fromStdString(project->model->modelPath));
     }
-    if (project->settings.contains("modelConf")) {
-        int conf = project->settings.value("modelConf").toInt();
+    if (project->settings.contains("Model Confidence")) {
+        int conf = project->settings.value("Model Confidence").toInt();
         ui->modelConfSlider->setValue(conf);
     } else {
         ui->modelConfSlider->setValue(70);

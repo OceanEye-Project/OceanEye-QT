@@ -11,7 +11,11 @@ int main(int argc, char *argv[])
     WelcomeWindow window(project);
     window.setWindowTitle("OceanEye");
 
-    app.setStyle("Fusion");
+    // app.setStyle("Fusion");
+    // QPalette palette = app.palette();
+    // palette.setColor(QPalette::ColorRole::Link, QColor(82, 166, 227));
+
+    // app.setPalette(palette);
 
     // can be changed to light theme just by replacing "dark" with "light"
     QFile file(":qdarkstyle/dark/darkstyle.qss");

@@ -31,16 +31,21 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     connect(ui->settingsBtn, &QPushButton::clicked, this, [this]{ui->welcomeStack->setCurrentIndex(2);});
     connect(ui->aboutBtn, &QPushButton::clicked, this, [this]{ui->welcomeStack->setCurrentIndex(3);});
 
-    QSettings settings {"oceaneye", "oceaneye"};
-
-    std::cout << settings.fileName().toStdString() << std::endl;
-
-    QLabel* settingsPathLabel = new QLabel(settings.fileName());
-    settingsPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-    ui->settingsPage->layout()->addWidget(new QLabel("Global Settings Path"));
-    ui->settingsPage->layout()->addWidget(settingsPathLabel);
+    GlobalSettings* globalSettings = new GlobalSettings();
+    ui->settingsPage->layout()->addWidget(globalSettings);
     ui->settingsPage->layout()->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+    QFile aboutFile(":about.md");
+    aboutFile.open(QFile::ReadOnly);
+    QString aboutText = QLatin1String(aboutFile.readAll());
+
+    ui->aboutText->setText(aboutText);
+
+    QFile licenceFile(":licence.txt");
+    licenceFile.open(QFile::ReadOnly);
+    QString licenceText = QLatin1String(licenceFile.readAll());
+
+    ui->licenceText->setText(licenceText);
 }
 
 WelcomeWindow::~WelcomeWindow()

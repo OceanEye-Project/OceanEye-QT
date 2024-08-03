@@ -3,7 +3,7 @@
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -51,10 +51,10 @@
           <bool>false</bool>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="opaqueResize">
           <bool>true</bool>
@@ -73,7 +73,7 @@
            <item>
             <widget class="QSplitter" name="splitter_2">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <widget class="QWidget" name="widget_4" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -193,7 +193,7 @@
                   <item>
                    <widget class="QSlider" name="modelConfSlider">
                     <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                     <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                     <property name="invertedAppearance">
                      <bool>false</bool>
@@ -202,7 +202,7 @@
                      <bool>false</bool>
                     </property>
                     <property name="tickPosition">
-                     <enum>QSlider::TicksBelow</enum>
+                     <enum>QSlider::TickPosition::TicksBelow</enum>
                     </property>
                    </widget>
                   </item>
@@ -237,7 +237,7 @@
                <item>
                 <spacer name="verticalSpacer_2">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -325,7 +325,7 @@
                   <item>
                    <spacer name="horizontalSpacer">
                     <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                     <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                     <property name="sizeHint" stdset="0">
                      <size>
@@ -364,7 +364,7 @@
               </sizepolicy>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
+              <enum>QFrame::Shadow::Sunken</enum>
              </property>
             </widget>
            </item>
@@ -392,6 +392,7 @@
     </property>
     <addaction name="actionExport"/>
     <addaction name="actionEditMedia"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuOceanEye"/>
   </widget>
@@ -410,7 +411,7 @@
     <string>Export</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+    <enum>QAction::MenuRole::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="actionNextImage">
@@ -421,7 +422,7 @@
     <string>Next Image</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionPreviousImage">
@@ -432,7 +433,7 @@
     <string>Previous Image</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionLoad_Model">
@@ -443,6 +444,11 @@
   <action name="actionEditMedia">
    <property name="text">
     <string>Edit Media</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

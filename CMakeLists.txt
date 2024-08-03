@@ -43,6 +43,11 @@ set(PROJECT_SOURCES
     src/util/project.cpp src/util/project.h
     src/util/videoslicer.cpp src/util/videoslicer.h
 
+    src/gui/settings/settings.h src/gui/settings/settings.cpp
+    src/gui/settings/projectsettings.h src/gui/settings/projectsettings.cpp
+    src/gui/settings/globalsettings.h src/gui/settings/globalsettings.cpp
+    src/util/settings.h
+
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
     qdarkstyle/light/lightstyle.qrc
@@ -55,7 +60,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         packages/com.oceaneye.root/package.xml
-        licence.txt
+        src/resources/licence.txt
+        src/resources/about.md
     )
     
 # Define target properties for Android with Qt 6 as:

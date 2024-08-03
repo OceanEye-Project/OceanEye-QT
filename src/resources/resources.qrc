@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>logo.png</file>
+        <file>about.md</file>
+        <file>licence.txt</file>
     </qresource>
 </RCC>
