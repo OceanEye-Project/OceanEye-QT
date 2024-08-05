@@ -33,18 +33,23 @@ void MainWindowTest::testConstructor() {
     QVERIFY(mainWindow->currentProject == project);
 }
 
-void MainWindowTest::testUpdateTable(){
+void MainWindowTest::testUpdateTable() {
     mainWindow->updateTable();
-    QVERIFY(mainWindow->model->horizontalHeaderItem(0) == new QStandardItem("Class"));
-    QVERIFY(mainWindow->model->horizontalHeaderItem(1) == new QStandardItem("Confidence"));
-    QVERIFY(mainWindow->model->horizontalHeaderItem(2) == new QStandardItem("X"));
-    QVERIFY(mainWindow->model->horizontalHeaderItem(3) == new QStandardItem("Y"));
-    QVERIFY(mainWindow->model->horizontalHeaderItem(4) == new QStandardItem("Width"));
-    QVERIFY(mainWindow->model->horizontalHeaderItem(5) == new QStandardItem("Height"));
+    QVERIFY(mainWindow->model->horizontalHeaderItem(0)->text() == "Class");
+    QVERIFY(mainWindow->model->horizontalHeaderItem(1)->text() == "Confidence");
+    QVERIFY(mainWindow->model->horizontalHeaderItem(2)->text() == "X");
+    QVERIFY(mainWindow->model->horizontalHeaderItem(3)->text() == "Y");
+    QVERIFY(mainWindow->model->horizontalHeaderItem(4)->text() == "Width");
+    QVERIFY(mainWindow->model->horizontalHeaderItem(5)->text() == "Height");
 }
 
-void MainWindow::testLoadModel(){
+void MainWindowTest::testLoadModel()
+{
+    
+}
 
+void testLoadModel(){
+    
 }
 
 // Register the test class
