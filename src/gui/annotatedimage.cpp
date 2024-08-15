@@ -70,7 +70,7 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     pen.setWidth(3);
     painter.setPen(pen);
 
-    auto handlesize = 15;
+    auto handlesize = 7;
     auto imageMousePos = worldToImageTransform.map(mousePos);
 
     for (int i=0; i<annotations.size(); i++) {
