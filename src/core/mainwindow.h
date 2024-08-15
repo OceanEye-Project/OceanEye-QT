@@ -46,6 +46,8 @@ private:
     void loadModel();
     void runDetection();
 
+    friend class WelcomeWindow;
+
 public slots:
     void updateTable();
 

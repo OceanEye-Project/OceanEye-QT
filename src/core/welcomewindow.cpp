@@ -15,7 +15,9 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     // Add additional logic to newProjectBtn
     // Currently mimic the behavior of openProjectBtn
     connect(ui->newProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
-    connect(ui->newProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
+    connect(ui->newProjectBtn2, &QPushButton::clicked, this, [this]() {
+        openProject(true);
+    });
     // End of additional logic
     
     loadProjectPaths();
@@ -53,16 +55,19 @@ WelcomeWindow::~WelcomeWindow()
     delete ui;
 }
 
-void WelcomeWindow::openProject() {
+void WelcomeWindow::openProject(bool isNewProject) {
     QString projectDir = QFileDialog::getExistingDirectory(this, "Open Project", "", QFileDialog::ShowDirsOnly);
-
     if (!projectDir.isEmpty()) {
-        loadProjectFromPath(QFileInfo(projectDir).absoluteFilePath());
+        // Logic to open settings dialog upon new project creation
+        if (isNewProject)
+            loadProjectFromPath(QFileInfo(projectDir).absoluteFilePath(), true);
+        else
+            loadProjectFromPath(QFileInfo(projectDir).absoluteFilePath());
         emit projectOpened(); // Emit the signal when a project is opened
     }
 }
 
-void WelcomeWindow::loadProjectFromPath(QString projectPath) {
+void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) {
     std::cout << projectPath.toStdString() << std::endl;
 
     currentProject = std::make_shared<Project>(projectPath);
@@ -80,6 +85,9 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath) {
     mainWindow = new MainWindow(currentProject);
     mainWindow->setWindowTitle("OceanEye");
     mainWindow->show();
+    
+    if (isNewProject)
+        mainWindow->settingsDialog.show();
 
     close();
     

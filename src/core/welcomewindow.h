@@ -34,11 +34,11 @@ private:
     Ui::WelcomeWindow *ui;
 
     void loadProjectPaths();
-    void loadProjectFromPath(QString projectPath);
+    void loadProjectFromPath(QString projectPath, bool isNewProject = false);
     void saveProjectPaths();
 
 public slots:
-    void openProject();
+    void openProject(bool isNewProject = false);
 
 signals:
     void projectOpened();
