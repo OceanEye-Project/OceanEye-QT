@@ -97,7 +97,6 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
             for(auto image : currentProject->media) {
                 currentProject->runDetection(image);
             }
-        // TODO:
-        // Find a way to call MainWindow::updateImageUI() from here
+        updateImageUI();
     });
 }

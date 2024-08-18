@@ -41,7 +41,6 @@ private:
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;
-    void updateImageUI();
     void addMedia();
     void loadModel();
     void runDetection();
@@ -50,6 +49,7 @@ private:
 
 public slots:
     void updateTable();
+    void updateImageUI();
 
 };
 #endif // MAINWINDOW_H
