@@ -1,5 +1,7 @@
 #include "editmediadialog.h"
 #include "./ui_editmedia.h"
+#include <QApplication>
+#include <QScreen>
 
 EditMediaDialog::EditMediaDialog(std::shared_ptr<Project>& project)
     : QWidget{}
@@ -9,6 +11,17 @@ EditMediaDialog::EditMediaDialog(std::shared_ptr<Project>& project)
     ui->setupUi(this);
 
     setWindowTitle("Edit Media");
+
+    // Set window size
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int screenWidth = screenGeometry.width()*0.8;
+    int screenHeight = screenGeometry.height()*0.8;
+    resize(screenWidth, screenHeight);
+
+    ui->scrollArea->resize(screenWidth*0.095, screenHeight);
+    ui->mediaBox->resize(screenWidth*0.5, screenHeight);
+
 
     // connect(ui->addMedia, &QPushButton::clicked, currentProject.get(), &Project::addMedia);
     connect(ui->removeSelected, &QPushButton::clicked, this, &EditMediaDialog::removeSelected);

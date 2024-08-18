@@ -12,6 +12,11 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , videoSlicer(project)
 {
     ui->setupUi(this);
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int screenWidth = screenGeometry.width();
+    int screenHeight = screenGeometry.height();
+    resize(screenWidth, screenHeight);
 
     mainImage.annotationEditBtn = ui->annotationEditBtn;
     mainImage.annotationDeleteBtn = ui->annotationDeleteBtn;
