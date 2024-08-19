@@ -11,6 +11,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , settingsDialog(project)
     , videoSlicer(project)
 {
+    
     ui->setupUi(this);
     QScreen* screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();
