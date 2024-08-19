@@ -55,6 +55,15 @@ set(PROJECT_SOURCES
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+if(APPLE)
+    execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
+                    OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
+        message(FATAL_ERROR "The detected macOS SDK path does not exist: ${CMAKE_OSX_SYSROOT}")
+    endif()
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(OceanEye
         MANUAL_FINALIZATION
