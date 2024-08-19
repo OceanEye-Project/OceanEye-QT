@@ -36,6 +36,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
+    connect(&settingsDialog.projectSettings, &ProjectSettings::updateImageUI, this, &MainWindow::updateImageUI);
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         // If currentImg is 0, set it to the last image

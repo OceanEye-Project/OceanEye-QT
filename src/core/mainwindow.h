@@ -41,13 +41,15 @@ private:
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;
-    void updateImageUI();
     void addMedia();
     void loadModel();
     void runDetection();
 
+    friend class WelcomeWindow;
+
 public slots:
     void updateTable();
+    void updateImageUI();
 
 };
 #endif // MAINWINDOW_H

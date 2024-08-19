@@ -20,6 +20,7 @@ public:
     explicit ProjectSettings(std::shared_ptr<Project>& project);
     std::shared_ptr<Project>& currentProject;
 signals:
+    void updateImageUI();
 };
 
 #endif // PROJECTSETTINGS_H

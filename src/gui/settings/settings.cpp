@@ -9,7 +9,6 @@ Settings::Settings(std::shared_ptr<Project>& currentProject)
     setLayout(layout);
 
     QTabWidget* tabs = new QTabWidget();
-
     layout->addWidget(tabs);
 
     tabs->addTab(&globalSettings, "Application");
