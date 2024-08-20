@@ -34,6 +34,7 @@ set(PROJECT_SOURCES
     src/core/exportdialog.cpp src/core/exportdialog.h src/core/exportdialog.ui
     src/core/editmediadialog.h src/core/editmediadialog.cpp src/core/editmedia.ui
     src/core/welcomewindow.cpp src/core/welcomewindow.h src/core/welcomewindow.ui
+    src/core/detectoptions.h src/core/detectoptions.cpp src/core/detectoptions.ui
     
     src/gui/annotatedimage.cpp src/gui/annotatedimage.h
     src/gui/flowlayout.cpp src/gui/flowlayout.h

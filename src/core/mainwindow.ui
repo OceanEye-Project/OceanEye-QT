@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>790</height>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -383,7 +383,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">

@@ -26,6 +26,7 @@ public:
     bool isModelLoaded();
     void loadModel(const QString modelPath);
     void runDetection(const QString imagePath);
+    void runSpecificDetection(const QString imagePath, const QString classType);
     void loadMedia();
     void saveMedia();
     void setModelConf(int conf);

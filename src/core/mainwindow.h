@@ -13,6 +13,7 @@
 #include "../util/project.h"
 #include "exportdialog.h"
 #include "editmediadialog.h"
+#include "detectoptions.h"
 #include "../util/videoslicer.h"
 #include "../util/yolov8.h"
 
@@ -37,19 +38,22 @@ private:
     QStandardItemModel* model {new QStandardItemModel()};
     ExportDialog exportDialog;
     EditMediaDialog editMediaDialog;
+    DetectOptions detectOptions;
     Settings settingsDialog;
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;
     void addMedia();
     void loadModel();
-    void runDetection();
 
     friend class WelcomeWindow;
+    friend class DetectOptions;
 
 public slots:
     void updateTable();
     void updateImageUI();
+    void runDetection();
+    void runSpecificDetection(QString classType);
 
 };
 #endif // MAINWINDOW_H

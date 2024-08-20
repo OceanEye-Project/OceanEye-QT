@@ -7,6 +7,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , currentProject(project)
     , mainImage(project)
     , exportDialog(project)
+    , detectOptions(project)
     , editMediaDialog(project)
     , settingsDialog(project)
     , videoSlicer(project)
@@ -34,8 +35,11 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 
     ui->dataTable->setModel(model);
 
+    connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
+    connect(&detectOptions, &DetectOptions::runDetection, this, &MainWindow::runDetection);
+    connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
+
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
-    connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
@@ -130,6 +134,15 @@ void MainWindow::runDetection() {
         return;
 
     currentProject->runDetection(currentProject->media.at(currentImg));
+
+    updateImageUI();
+}
+
+void MainWindow::runSpecificDetection(QString classType) { 
+    if (currentProject->media.empty())
+        return;
+
+    currentProject->runSpecificDetection(currentProject->media.at(currentImg), classType);
 
     updateImageUI();
 }

@@ -107,6 +107,26 @@ void Project::runDetection(const QString imagePath) {
     setAnnotation(imagePath, annotations);
 }
 
+void Project::runSpecificDetection(const QString imagePath, const QString classType) {
+    std::__1::vector<Annotation> specificAnnotations = {};
+    if (!isModelLoaded()) {
+        std::cout << "No Model Loaded!" << std::endl;
+        return;
+    }
+
+    cv::Mat img = cv::imread(imagePath.toStdString());
+
+    auto annotations = model->runInference(img);
+
+    for (auto annotation : annotations) {
+        if (annotation.className == classType) {
+            specificAnnotations.push_back(annotation);
+        }
+    }
+
+    setAnnotation(imagePath, specificAnnotations);
+}
+
 void Project::saveMedia() {
     settings.beginWriteArray("media");
     settings.setValue("size", 0);
