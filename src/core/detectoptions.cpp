@@ -1,8 +1,6 @@
 #include "detectoptions.h"
 #include "./ui_detectoptions.h"
 
-#include <QPushButton>
-
 DetectOptions::DetectOptions(std::shared_ptr<Project>& project)
     : QWidget{}
     , ui(new Ui::DetectOptions)
@@ -10,22 +8,23 @@ DetectOptions::DetectOptions(std::shared_ptr<Project>& project)
 {
     ui->setupUi(this);
     setWindowTitle("Detection Options");
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    ui->classList->setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Populate the drop down menu
-    ui->classSelect->addItem("All");
+    ui->classList->addItem("All");
     for (int i=0; i<model_classes.size();i++) {
-        ui->classSelect->addItem(
-            QString::fromStdString(model_classes.at(i)),
-            QVariant(i)
-            );
+        ui->classList->addItem(
+            QString::fromStdString(model_classes.at(i))
+        );
     }
 
     connect(ui->cancelBtn, &QPushButton::clicked, this, &DetectOptions::close);
     connect(ui->okBtn, &QPushButton::clicked, this, [this]() {
-        if (ui->classSelect->currentText() == "All")
+        if (ui->classList->findItems("All", Qt::MatchExactly).first()->isSelected())
             emit runDetection();
-        else
-            emit runSpecificDetection(ui->classSelect->currentText());
+        else if (ui->classList->selectedItems().size() > 0)
+            emit runSpecificDetection(ui->classList->selectedItems());
 
         DetectOptions::close();
     });

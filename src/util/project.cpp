@@ -107,8 +107,9 @@ void Project::runDetection(const QString imagePath) {
     setAnnotation(imagePath, annotations);
 }
 
-void Project::runSpecificDetection(const QString imagePath, const QString classType) {
+void Project::runSpecificDetection(const QString imagePath, const QList<QListWidgetItem *> classTypes) {
     std::__1::vector<Annotation> specificAnnotations = {};
+    std::set<QString> classTypesSet = {};
     if (!isModelLoaded()) {
         std::cout << "No Model Loaded!" << std::endl;
         return;
@@ -118,8 +119,13 @@ void Project::runSpecificDetection(const QString imagePath, const QString classT
 
     auto annotations = model->runInference(img);
 
+    for (auto classType: classTypes) {
+        QString className = classType->text();
+        classTypesSet.insert(className);
+    }
+
     for (auto annotation : annotations) {
-        if (annotation.className == classType) {
+        if (classTypesSet.find(annotation.className) != classTypesSet.end()) {
             specificAnnotations.push_back(annotation);
         }
     }

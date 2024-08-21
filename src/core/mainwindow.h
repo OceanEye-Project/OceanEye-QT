@@ -53,7 +53,7 @@ public slots:
     void updateTable();
     void updateImageUI();
     void runDetection();
-    void runSpecificDetection(QString classType);
+    void runSpecificDetection(QList<QListWidgetItem *> classTypes);
 
 };
 #endif // MAINWINDOW_H

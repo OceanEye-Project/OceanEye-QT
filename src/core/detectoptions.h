@@ -20,7 +20,7 @@ public:
 
 signals:
     void runDetection();
-    void runSpecificDetection(QString classType);
+    void runSpecificDetection(QList<QListWidgetItem *> classType);
 };
 
 #endif // DETECTOPTIONS_H

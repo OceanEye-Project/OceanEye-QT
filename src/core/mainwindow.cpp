@@ -138,11 +138,11 @@ void MainWindow::runDetection() {
     updateImageUI();
 }
 
-void MainWindow::runSpecificDetection(QString classType) { 
+void MainWindow::runSpecificDetection(QList<QListWidgetItem *> classTypes) { 
     if (currentProject->media.empty())
         return;
 
-    currentProject->runSpecificDetection(currentProject->media.at(currentImg), classType);
+    currentProject->runSpecificDetection(currentProject->media.at(currentImg), classTypes);
 
     updateImageUI();
 }
