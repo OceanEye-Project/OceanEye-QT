@@ -186,8 +186,7 @@ void MainWindow::addMedia() {
     }
 
     currentProject->saveMedia();
-
-    videoSlicer.slice(videosToSlice);
+    QFuture<std::__1::vector<QString>> slicedVideos = videoSlicer.slice(videosToSlice);
 
     updateImageUI();
 }

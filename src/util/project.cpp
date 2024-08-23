@@ -94,17 +94,23 @@ void Project::loadModel(const QString modelPath) {
     emit modelLoaded(modelPath);
 }
 
-void Project::runDetection(const QString imagePath) {
+// Returns true if there are more than 0 annotations, false otherwise
+bool Project::runDetection(const QString imagePath) {
     if (!isModelLoaded()) {
         std::cout << "No Model Loaded!" << std::endl;
-        return;
+        return false;
     }
 
     cv::Mat img = cv::imread(imagePath.toStdString());
 
     auto annotations = model->runInference(img);
 
-    setAnnotation(imagePath, annotations);
+    if (annotations.size() > 0) {
+        setAnnotation(imagePath, annotations);
+        return true;
+    }
+
+    return false;
 }
 
 void Project::runSpecificDetection(const QString imagePath, const QList<QListWidgetItem *> classTypes) {
