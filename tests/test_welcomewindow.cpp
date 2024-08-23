@@ -1,6 +1,6 @@
 // Executable command: ./build/OceanEyeWelcomeWindowTest.app/Contents/MacOS/OceanEyeWelcomeWindowTest
 #include <QtTest/QtTest>
-#include "../welcomewindow.h"
+#include "../src/core/welcomewindow.h"
 
 class WelcomeWindowTest : public QObject
 {
