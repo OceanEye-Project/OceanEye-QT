@@ -38,9 +38,14 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
     connect(&detectOptions, &DetectOptions::runDetection, this, &MainWindow::runDetection);
     connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
+    connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::doneSlicing);
 
-    connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
-    connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
+    connect(ui->AddMediaBtn, &QPushButton::clicked, this, [this]() {
+        addMedia();
+    });
+    connect(ui->loadModelBtn, &QPushButton::clicked, this, [this]() {
+        loadModel();
+    });
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
@@ -125,8 +130,9 @@ void MainWindow::updateTable() {
     // ui->dataTable->setModel(model);
 }
 
-void MainWindow::loadModel() {
-    QString file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
+void MainWindow::loadModel(QString file) {
+    if (file == "") 
+        file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
     currentProject->loadModel(file);
 }
 
@@ -169,8 +175,10 @@ void MainWindow::updateImageUI() {
     mainImage.setImage(currentProject->media.at(currentImg));
 }
 
-void MainWindow::addMedia() {
-    QStringList files = QFileDialog::getOpenFileNames(this, "Select one or more files to open", "", "Image/Video (*.png *.xpm *.jpg *.mp4 *.mov *.avi *.webm)");
+void MainWindow::addMedia(QStringList files) {
+    if (files.isEmpty()) {
+        files = QFileDialog::getOpenFileNames(this, "Select one or more files to open", "", "Image/Video (*.png *.xpm *.jpg *.mp4 *.mov *.avi *.webm)");
+    }
 
     QStringList videosToSlice {};
 
@@ -189,5 +197,9 @@ void MainWindow::addMedia() {
     QFuture<std::__1::vector<QString>> slicedVideos = videoSlicer.slice(videosToSlice);
 
     updateImageUI();
+}
+
+void MainWindow::doneSlicing() {
+
 }
 

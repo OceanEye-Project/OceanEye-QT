@@ -74,8 +74,18 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
             }
         }
         else {
-            std::cout << "Frame already exists: " << framePath << std::endl;
-            savedFrames.push_back(QString::fromStdString(framePath));
+            if (currentProject->settings.contains("Automatically Filter Dead Video")) {
+                if (currentProject->settings.value("Automatically Filter Dead Video") == true) {
+                    bool annotationsExist = currentProject->runDetection(QString::fromStdString(framePath));
+                    if (annotationsExist) {
+                        savedFrames.push_back(QString::fromStdString(framePath));
+                        std::cout << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << framePath << std::endl;
+                    }
+                } else {
+                    savedFrames.push_back(QString::fromStdString(framePath));
+                    std::cout << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << framePath << std::endl;
+                }
+            }
         }
 
         currentFrame += frameInterval;

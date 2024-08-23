@@ -26,6 +26,8 @@ public:
     std::shared_ptr<Project> getCurrentProject() const { return currentProject; }
     std::vector<QString> getProjects() const { return projects; }
     friend class WelcomeWindowTest;
+    friend class MainWindowTest;
+    friend class MainWindow;
 
 private:
     std::shared_ptr<Project>& currentProject;

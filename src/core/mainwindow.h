@@ -43,10 +43,11 @@ private:
     VideoSlicer videoSlicer;
 
     Ui::MainWindow *ui;
-    void addMedia();
-    void loadModel();
+    void addMedia(QStringList files = {});
+    void loadModel(QString file = "");
 
     friend class WelcomeWindow;
+    friend class MainWindowTest;
     friend class DetectOptions;
 
 public slots:
@@ -54,6 +55,7 @@ public slots:
     void updateImageUI();
     void runDetection();
     void runSpecificDetection(QList<QListWidgetItem *> classTypes);
+    void doneSlicing();
 
 };
 #endif // MAINWINDOW_H
