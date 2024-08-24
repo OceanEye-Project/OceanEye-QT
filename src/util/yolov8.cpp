@@ -1,4 +1,7 @@
 #include "yolov8.h"
+#include <qDebug>
+#include <QString>
+
 
 std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int length, const std::function <bool (char)>& f) {
     std::string value {};
@@ -10,7 +13,7 @@ std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int 
             value += byte;
         }
         inputFile.read(reinterpret_cast<char*>(&byte), 1);
-        i++;
+        ++i;
     }
     return value;
 }
@@ -20,6 +23,8 @@ std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int 
 }
 
 void YOLOv8::loadClasses() {
+    qInfo() << "Beginning to load classes... ";
+
     bool match = false;
 
     // https://protobuf.dev/programming-guides/encoding/
@@ -31,8 +36,11 @@ void YOLOv8::loadClasses() {
     classMap.clear();
 
     std::ifstream inputFile(modelPath);
+    qInfo() << "Attempting to open model: " << QString::fromStdString(modelPath);
+
 
     if (inputFile.is_open()) {
+        qInfo()<< "Successfully Opened Model: " << QString::fromStdString(modelPath);
         inputFile.read(reinterpret_cast<char*>(fileMagicNumber.data()), 6);
 
         while (inputFile) {
@@ -49,7 +57,8 @@ void YOLOv8::loadClasses() {
                     scanUntil(inputFile, '\'', i, length);
                     auto value = scanUntil(inputFile, '\'', i, length);
                     classMap[std::stoi(key)] = value;
-                    std::cout << "Class " << key << ": " << value << std::endl;
+                    // Print classes and values
+                    qInfo() << "Class " << QString::fromStdString(key) << ": " << QString::fromStdString(value);
                 }
                 break;
             }
@@ -62,7 +71,7 @@ void YOLOv8::loadClasses() {
         }
         inputFile.close();
     } else {
-        std::cerr << "Error opening the file: " << modelPath << std::endl;
+        qCritical() << "Error opening the file" << QString::fromStdString(modelPath);
     }
 }
 
@@ -77,7 +86,7 @@ YOLOv8::YOLOv8(const std::string &onnxModelPath, const cv::Size &modelInputShape
 
 std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
     if (!loaded) {
-        std::cout << "Error: Model is not loaded" << std::endl;
+        qWarning() << "Error: Model is not loaded";
         return {};
     }
 
@@ -186,6 +195,8 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
 
     std::vector<int> nms_result;
     cv::dnn::NMSBoxes(boxes, confidences, modelScoreThreshold, modelNMSThreshold, nms_result);
+    
+    qInfo() << "Beginning detections...";
 
     std::vector<Annotation> annotations {};
     for (unsigned long i = 0; i < nms_result.size(); ++i)
@@ -204,36 +215,39 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
             boxes[idx].width,
             boxes[idx].height
         );
-
+        // Out results
+        qInfo() << "Detected: " << result.className << " ID: " << result.classId << " Conf: " << result.confidence;
         annotations.push_back(result);
     }
-
+    
+    qInfo() << "Completed annotation for current media";
     return annotations;
 }
 
 
 void YOLOv8::loadOnnxNetwork() {
-    std::cout << "Loading ONNX model from: " << modelPath << std::endl;
+    qInfo() << "Loading ONNX model from: " << QString::fromStdString(modelPath);
     try {
         net = cv::dnn::readNetFromONNX(modelPath);
     } catch (const cv::Exception &e) {
-        std::cerr << "Error loading the ONNX model: " << e.what() << std::endl;
+        qCritical() << "Error loading the ONNX model: " << QString::fromStdString(e.what()); 
         loaded = false;
         return;
     }
 
     if (cudaEnabled) {
-        std::cout << "\nRunning on CUDA" << std::endl;
+        qInfo() << "Running on CUDA";
+
         net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
         net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
     } else {
-        std::cout << "\nRunning on CPU" << std::endl;
+        qInfo() << "Running on CPU";
         net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
         net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
     }
 
     loaded = true;
-    std::cout << "Model loaded successfully." << std::endl;
+    qInfo() << "Model loaded successfully.";
 
     loadClasses();
 
