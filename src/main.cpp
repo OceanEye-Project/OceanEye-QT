@@ -2,11 +2,15 @@
 #include "core/mainwindow.h"
 #include <QApplication>
 #include "util/project.h"
+#include "logger.h"
 
 std::shared_ptr<Project> project = nullptr;
 
 int main(int argc, char *argv[])
-{
+{   
+    // Initialize Logger
+    Logger::Logger::init("log.txt");
+
     QApplication app(argc, argv);
     WelcomeWindow window(project);
     window.setWindowTitle("OceanEye");
@@ -24,6 +28,13 @@ int main(int argc, char *argv[])
 
     app.setStyleSheet(styleSheet);
 
+    // Execute app and capture return
     window.show();
-    return app.exec();
+    int result = app.exec();
+
+    // Cleanup after logger.
+    Logger::Logger::cleanup();
+
+    // Return exit status
+    return result;
 }
