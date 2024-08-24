@@ -237,3 +237,4 @@ build/
 tests/build/
 .vscode
 .idea
+log.txt
