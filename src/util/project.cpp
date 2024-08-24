@@ -1,4 +1,6 @@
 #include "project.h"
+#include <QDebug>
+#include <QString>
 
 Project::Project(const QString project_path)
     : settings(QDir::cleanPath(project_path + QDir::separator() + ".oceaneye.ini")
@@ -96,9 +98,10 @@ void Project::loadModel(const QString modelPath) {
 
 void Project::runDetection(const QString imagePath) {
     if (!isModelLoaded()) {
-        std::cout << "No Model Loaded!" << std::endl;
+        qWarning() << "Attempted detection without model loaded.";
         return;
     }
+    qInfo() << "Running Detection on: " << imagePath;
 
     cv::Mat img = cv::imread(imagePath.toStdString());
 
@@ -111,25 +114,31 @@ void Project::saveMedia() {
     settings.beginWriteArray("media");
     settings.setValue("size", 0);
     settings.remove("");
+    int count = 0;
 
     for (int i=0; i<media.size(); i++) {
+        ++count;
+        qInfo() << "Saving media: " << media.at(i);
         settings.setArrayIndex(i);
         settings.setValue("path", media.at(i));
     }
-
+    
+    qInfo() << "Done saving media. Saved " << count << " items";
     settings.endArray();
 }
 
 void Project::loadMedia() {
     media = {};
-
+    int count = 0;
     int size = settings.beginReadArray("media");
 
     for (int i = 0; i < size; ++i) {
+        ++count;
+        qInfo() << "Loading Media: " << media.at(i);
         settings.setArrayIndex(i);
         media.push_back(settings.value("path").toString());
     }
-
+    qInfo() << "Done loading media. Loaded " << count << " items";
     settings.endArray();
 }
 
