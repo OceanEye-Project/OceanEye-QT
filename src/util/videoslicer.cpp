@@ -1,4 +1,6 @@
 #include "videoslicer.h"
+#include <QDebug>
+#include <QString>
 
 VideoSlicer::VideoSlicer(std::shared_ptr<Project>& project)
     : QObject{}
@@ -6,7 +8,8 @@ VideoSlicer::VideoSlicer(std::shared_ptr<Project>& project)
     , dialog("Slicing Video(s)...")
 {
     connect(&watcher, &QFutureWatcher<std::vector<QString>>::finished, this, [this]{
-        std::cout << "all threads done, resuts: " << future.resultCount() << std::endl;
+        qInfo() << "all threads done, resuts: " << future.resultCount();
+
         for (int i=0; i<future.resultCount(); i++) {
             std::vector<QString> newImages = future.resultAt(i);
             currentProject->media.insert(currentProject->media.end(), newImages.begin(), newImages.end());
@@ -23,7 +26,7 @@ VideoSlicer::VideoSlicer(std::shared_ptr<Project>& project)
 }
 
 std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString& projectPath) {
-    std::cout << "Slicing " << video.toStdString() << std::endl;
+    qInfo() << "Commence Slicing " << video;
 
     cv::Mat frame;
     std::string framePath;
@@ -33,7 +36,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     cv::VideoCapture cap(video.toStdString());
 
     if (!cap.isOpened()) {
-        std::cerr << "error opening video file";
+        qWarning() << "Error opening video file " << video;
     }
 
     double fps = cap.get(cv::CAP_PROP_FPS);
@@ -57,21 +60,21 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
         {
             result = cv::imwrite(framePath, frame);
             if (!result) {
-                std::cerr << "Failed to save frame: " << framePath << std::endl;
+                qWarning() << "Failed to save frame: " << QString::fromStdString(framePath);
             } else {
                 savedFrames.push_back(QString::fromStdString(framePath));
-                std::cout << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << framePath << std::endl;
+                qInfo() << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
             }
         }
         else {
-            std::cout << "Frame already exists: " << framePath << std::endl;
+            qWarning() << "Frame already exists: " << QString::fromStdString(framePath);
             savedFrames.push_back(QString::fromStdString(framePath));
         }
 
         currentFrame += frameInterval;
         cap.set(cv::CAP_PROP_POS_FRAMES, currentFrame);
     }
-    std::cout << "Done slicing video" << std::endl;
+    qInfo() << "Done slicing video " << video;
 
     return savedFrames;
 }
