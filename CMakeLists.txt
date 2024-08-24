@@ -47,13 +47,14 @@ set(PROJECT_SOURCES
     src/gui/settings/projectsettings.h src/gui/settings/projectsettings.cpp
     src/gui/settings/globalsettings.h src/gui/settings/globalsettings.cpp
     src/util/settings.h
+    src/util/logger.h src/util/logger.cpp
 
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
     qdarkstyle/light/lightstyle.qrc
 )
 
-include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${OpenCV_INCLUDE_DIRS} src/util)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(OceanEye
