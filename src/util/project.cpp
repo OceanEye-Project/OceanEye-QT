@@ -99,7 +99,7 @@ void Project::loadModel(const QString modelPath) {
 // Returns true if there are more than 0 annotations, false otherwise
 bool Project::runDetection(const QString imagePath) {
     if (!isModelLoaded()) {
-        std::cout << "No Model Loaded!" << std::endl;
+        qWarning() << "No Model Loaded!";
         return false;
     }
 
