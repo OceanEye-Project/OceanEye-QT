@@ -96,7 +96,28 @@ void Project::loadModel(const QString modelPath) {
     emit modelLoaded(modelPath);
 }
 
-void Project::runDetection(const QString imagePath) {
+// Returns true if there are more than 0 annotations, false otherwise
+bool Project::runDetection(const QString imagePath) {
+    if (!isModelLoaded()) {
+        std::cout << "No Model Loaded!" << std::endl;
+        return false;
+    }
+
+    cv::Mat img = cv::imread(imagePath.toStdString());
+
+    auto annotations = model->runInference(img);
+
+    if (annotations.size() > 0) {
+        setAnnotation(imagePath, annotations);
+        return true;
+    }
+
+    return false;
+}
+
+void Project::runSpecificDetection(const QString imagePath, const QList<QListWidgetItem *> classTypes) {
+    std::__1::vector<Annotation> specificAnnotations = {};
+    std::set<QString> classTypesSet = {};
     if (!isModelLoaded()) {
         qWarning() << "Attempted detection without model loaded.";
         return;
@@ -107,7 +128,18 @@ void Project::runDetection(const QString imagePath) {
 
     auto annotations = model->runInference(img);
 
-    setAnnotation(imagePath, annotations);
+    for (auto classType: classTypes) {
+        QString className = classType->text();
+        classTypesSet.insert(className);
+    }
+
+    for (auto annotation : annotations) {
+        if (classTypesSet.find(annotation.className) != classTypesSet.end()) {
+            specificAnnotations.push_back(annotation);
+        }
+    }
+
+    setAnnotation(imagePath, specificAnnotations);
 }
 
 void Project::saveMedia() {

@@ -62,13 +62,35 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
             if (!result) {
                 qWarning() << "Failed to save frame: " << QString::fromStdString(framePath);
             } else {
-                savedFrames.push_back(QString::fromStdString(framePath));
-                qInfo() << "Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                bool annotationsExist = currentProject->runDetection(QString::fromStdString(framePath));
+                if (currentProject->settings.contains("Automatically Filter Dead Video")) {
+                    if (currentProject->settings.value("Automatically Filter Dead Video") == true) {
+                        if (annotationsExist) {
+                            savedFrames.push_back(QString::fromStdString(framePath));
+                            qInfo() << "Filtered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                        }
+                    } 
+                    else {
+                        savedFrames.push_back(QString::fromStdString(framePath));
+                        qInfo() << "Unfiltered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                    }
+                }
             }
         }
         else {
-            qWarning() << "Frame already exists: " << QString::fromStdString(framePath);
-            savedFrames.push_back(QString::fromStdString(framePath));
+            if (currentProject->settings.contains("Automatically Filter Dead Video")) {
+                if (currentProject->settings.value("Automatically Filter Dead Video") == true) {
+                    bool annotationsExist = currentProject->runDetection(QString::fromStdString(framePath));
+                    if (annotationsExist) {
+                        savedFrames.push_back(QString::fromStdString(framePath));
+                       qInfo() << "Unfiltered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                    }
+                } 
+                else {
+                    savedFrames.push_back(QString::fromStdString(framePath));
+                    qInfo() << "Unfiltered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                }
+            }
         }
 
         currentFrame += frameInterval;
@@ -79,7 +101,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     return savedFrames;
 }
 
-void VideoSlicer::slice(QStringList videosToSlice) {
+QFuture<std::__1::vector<QString>> VideoSlicer::slice(QStringList videosToSlice) {
     if (videosToSlice.size() > 0) {
         dialog.show();
 
@@ -101,5 +123,6 @@ void VideoSlicer::slice(QStringList videosToSlice) {
         future = QtConcurrent::mapped(videosToSlice, sliceVideoWithProject);
         watcher.setFuture(future);
     }
+    return future;
 }
 

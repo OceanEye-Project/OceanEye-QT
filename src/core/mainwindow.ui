@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>790</height>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -383,7 +383,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">
@@ -394,7 +394,14 @@
     <addaction name="actionEditMedia"/>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionOpenSettings"/>
+   </widget>
    <addaction name="menuOceanEye"/>
+   <addaction name="menuSettings"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">
@@ -449,6 +456,16 @@
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionThings">
+   <property name="text">
+    <string>Things</string>
+   </property>
+  </action>
+  <action name="actionOpenSettings">
+   <property name="text">
+    <string>Open Settings</string>
    </property>
   </action>
  </widget>

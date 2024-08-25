@@ -250,8 +250,6 @@ void YOLOv8::loadOnnxNetwork() {
     qInfo() << "Model loaded successfully.";
 
     loadClasses();
-
-    net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 }
 
 cv::Mat YOLOv8::formatToSquare(const cv::Mat &source) {

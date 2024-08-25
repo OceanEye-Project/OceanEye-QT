@@ -191,6 +191,8 @@ compile_commands.json
 
 # Project configuration settings like predefined Macros
 *.config
+.qtc_clangd
+.qtcreator
 
 # Qt Creator settings
 *.creator

@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QString>
 #include <QDir>
+#include <QListWidgetItem>
 
 #include "yolov8.h"
 
@@ -25,7 +26,8 @@ public:
     void setAnnotation(const QString image_path, const std::vector<Annotation>& annotations);
     bool isModelLoaded();
     void loadModel(const QString modelPath);
-    void runDetection(const QString imagePath);
+    bool runDetection(const QString imagePath);
+    void runSpecificDetection(const QString imagePath, const QList<QListWidgetItem *> classTypes);
     void loadMedia();
     void saveMedia();
     void setModelConf(int conf);

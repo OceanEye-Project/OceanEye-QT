@@ -26,6 +26,8 @@ public:
     std::shared_ptr<Project> getCurrentProject() const { return currentProject; }
     std::vector<QString> getProjects() const { return projects; }
     friend class WelcomeWindowTest;
+    friend class MainWindowTest;
+    friend class MainWindow;
 
 private:
     std::shared_ptr<Project>& currentProject;
@@ -34,11 +36,11 @@ private:
     Ui::WelcomeWindow *ui;
 
     void loadProjectPaths();
-    void loadProjectFromPath(QString projectPath);
+    void loadProjectFromPath(QString projectPath, bool isNewProject = false);
     void saveProjectPaths();
 
 public slots:
-    void openProject();
+    void openProject(bool isNewProject = false);
 
 signals:
     void projectOpened();

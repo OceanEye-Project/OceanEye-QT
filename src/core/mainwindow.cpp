@@ -7,11 +7,17 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , currentProject(project)
     , mainImage(project)
     , exportDialog(project)
+    , detectOptions(project)
     , editMediaDialog(project)
     , settingsDialog(project)
     , videoSlicer(project)
 {
     ui->setupUi(this);
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int screenWidth = screenGeometry.width();
+    int screenHeight = screenGeometry.height();
+    resize(screenWidth, screenHeight);
 
     mainImage.annotationEditBtn = ui->annotationEditBtn;
     mainImage.annotationDeleteBtn = ui->annotationDeleteBtn;
@@ -29,13 +35,23 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 
     ui->dataTable->setModel(model);
 
-    connect(ui->AddMediaBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
-    connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
-    connect(ui->loadModelBtn, &QPushButton::clicked, this, &MainWindow::loadModel);
+    connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
+    connect(&detectOptions, &DetectOptions::runDetection, this, &MainWindow::runDetection);
+    connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
+    connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::doneSlicing);
+
+    connect(ui->AddMediaBtn, &QPushButton::clicked, this, [this]() {
+        addMedia();
+    });
+    connect(ui->loadModelBtn, &QPushButton::clicked, this, [this]() {
+        loadModel();
+    });
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
+    connect(ui->actionOpenSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
+    connect(&settingsDialog.projectSettings, &ProjectSettings::updateImageUI, this, &MainWindow::updateImageUI);
 
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, [this]{
         // If currentImg is 0, set it to the last image
@@ -114,8 +130,9 @@ void MainWindow::updateTable() {
     // ui->dataTable->setModel(model);
 }
 
-void MainWindow::loadModel() {
-    QString file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
+void MainWindow::loadModel(QString file) {
+    if (file == "") 
+        file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
     currentProject->loadModel(file);
 }
 
@@ -124,6 +141,15 @@ void MainWindow::runDetection() {
         return;
 
     currentProject->runDetection(currentProject->media.at(currentImg));
+
+    updateImageUI();
+}
+
+void MainWindow::runSpecificDetection(QList<QListWidgetItem *> classTypes) { 
+    if (currentProject->media.empty())
+        return;
+
+    currentProject->runSpecificDetection(currentProject->media.at(currentImg), classTypes);
 
     updateImageUI();
 }
@@ -149,8 +175,10 @@ void MainWindow::updateImageUI() {
     mainImage.setImage(currentProject->media.at(currentImg));
 }
 
-void MainWindow::addMedia() {
-    QStringList files = QFileDialog::getOpenFileNames(this, "Select one or more files to open", "", "Image/Video (*.png *.xpm *.jpg *.mp4 *.mov *.avi *.webm)");
+void MainWindow::addMedia(QStringList files) {
+    if (files.isEmpty()) {
+        files = QFileDialog::getOpenFileNames(this, "Select one or more files to open", "", "Image/Video (*.png *.xpm *.jpg *.mp4 *.mov *.avi *.webm)");
+    }
 
     QStringList videosToSlice {};
 
@@ -166,9 +194,12 @@ void MainWindow::addMedia() {
     }
 
     currentProject->saveMedia();
-
-    videoSlicer.slice(videosToSlice);
+    QFuture<std::__1::vector<QString>> slicedVideos = videoSlicer.slice(videosToSlice);
 
     updateImageUI();
+}
+
+void MainWindow::doneSlicing() {
+
 }
 

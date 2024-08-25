@@ -18,6 +18,7 @@ const std::vector<Setting> defaultProjectSettings {
     {"Slice Interval", 5, .suffix = " seconds", .minValue = 1, .maxValue = 6000},
     {"Model Path", ""},
     {"Model Confidence", 70, .suffix = " %", .minValue = 1, .maxValue = 100},
+    {"Automatically Filter Dead Video", false}
 };
 
 const std::vector<Setting> defaultGlobalSettings {};
