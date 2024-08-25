@@ -39,7 +39,7 @@ namespace Logger {
     class Logger {
     public:
         // Public static methods for initializing and cleaning up the logger
-        static void init(const QString& filename = "yolov8_log.txt");
+        static void init(const QString& filename = "log.txt");
         static void cleanup();
 
     private:
