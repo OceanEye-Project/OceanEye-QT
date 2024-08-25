@@ -8,7 +8,7 @@ VideoSlicer::VideoSlicer(std::shared_ptr<Project>& project)
     , dialog("Slicing Video(s)...")
 {
     connect(&watcher, &QFutureWatcher<std::vector<QString>>::finished, this, [this]{
-        qInfo() << "all threads done, resuts: " << future.resultCount();
+        qInfo() << "all threads done, results: " << future.resultCount();
 
         for (int i=0; i<future.resultCount(); i++) {
             std::vector<QString> newImages = future.resultAt(i);
@@ -83,7 +83,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
                     bool annotationsExist = currentProject->runDetection(QString::fromStdString(framePath));
                     if (annotationsExist) {
                         savedFrames.push_back(QString::fromStdString(framePath));
-                       qInfo() << "Unfiltered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
+                       qInfo() << "Filtered Frame saved successfully: " << currentFrame << " / " << cap.get(cv::CAP_PROP_FRAME_COUNT) << " " << QString::fromStdString(framePath);
                     }
                 } 
                 else {
