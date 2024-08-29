@@ -1,5 +1,23 @@
 #include "annotatedimage.h"
 
+QTransform computeQTransform(const QRect &source, const QRect &target) {
+    // Transforms a point from the source rect to the target rect
+
+    qreal sourceWidth = source.width();
+    qreal sourceHeight = source.height();
+    qreal targetWidth = target.width();
+    qreal targetHeight = target.height();
+
+    qreal scaleX = targetWidth / sourceWidth;
+    qreal scaleY = targetHeight / sourceHeight;
+    qreal translateX = target.left() - source.left() * scaleX;
+    qreal translateY = target.top() - source.top() * scaleY;
+
+    return QTransform()
+        .translate(translateX, translateY)
+        .scale(scaleX, scaleY);
+}
+
 // TODO better way to pass widgets through
 AnnotatedImage::AnnotatedImage(
     std::shared_ptr<Project>& project,
@@ -9,6 +27,7 @@ AnnotatedImage::AnnotatedImage(
     , currentProject(project)
 {
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    setMouseTracking(true);
 }
 
 void AnnotatedImage::setImage() {
@@ -60,7 +79,8 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     painter.translate(imagePos);
     painter.scale(zoom, zoom);
 
-    worldToImageTransform = painter.combinedTransform().inverted();
+    worldToImageTransform = computeQTransform(target, source);
+
 
     painter.setBrush(Qt::transparent);
 
@@ -113,8 +133,15 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
         }
     }
 
-
     painter.restore();
+
+    if (annotationNewBtn->isChecked()) {
+        painter.setPen(Qt::red);
+        painter.drawLine(0, mousePos.y(), width(), mousePos.y());
+        painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
+    }
+
+    painter.setPen(Qt::black);
     painter.drawRect(0, 0, width(), height());
 
     mouseWasPressed = false;
@@ -242,6 +269,7 @@ void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
         repaint();
     }
     mousePos = event->position();
+    repaint();
 }
 
 void AnnotatedImage::wheelEvent(QWheelEvent *event) {
