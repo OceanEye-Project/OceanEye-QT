@@ -44,7 +44,6 @@ private:
 
     Ui::MainWindow *ui;
     void addMedia(QStringList files = {});
-    void loadModel(QString file = "");
 
     friend class WelcomeWindow;
     friend class MainWindowTest;

@@ -43,9 +43,6 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, [this]() {
         addMedia();
     });
-    connect(ui->loadModelBtn, &QPushButton::clicked, this, [this]() {
-        loadModel();
-    });
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
@@ -128,12 +125,6 @@ void MainWindow::updateTable() {
     }
 
     // ui->dataTable->setModel(model);
-}
-
-void MainWindow::loadModel(QString file) {
-    if (file == "") 
-        file = QFileDialog::getOpenFileName(this, "Select one or more files to open", "", "Models (*.onnx)");
-    currentProject->loadModel(file);
 }
 
 void MainWindow::runDetection() {

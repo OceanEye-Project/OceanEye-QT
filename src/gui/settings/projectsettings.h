@@ -19,6 +19,7 @@ class ProjectSettings : public QWidget
 public:
     explicit ProjectSettings(std::shared_ptr<Project>& project);
     std::shared_ptr<Project>& currentProject;
+    void loadModel(QString file);
 signals:
     void updateImageUI();
 };
