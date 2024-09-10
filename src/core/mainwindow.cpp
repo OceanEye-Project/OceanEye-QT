@@ -53,12 +53,9 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::doneSlicing);
 
-    // Connect media and model loading buttons
+    // Connect media button
     connect(ui->AddMediaBtn, &QPushButton::clicked, this, [this]() {
         addMedia();
-    });
-    connect(ui->loadModelBtn, &QPushButton::clicked, this, [this]() {
-        loadModel();
     });
 
     // Connect menu actions
