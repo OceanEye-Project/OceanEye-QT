@@ -10,6 +10,10 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
 {
     ui->setupUi(this);
 
+    ui->projectBtn->setProperty("type", "welcomeWindowButton");
+    ui->settingsBtn->setProperty("type", "welcomeWindowButton");
+    ui->aboutBtn->setProperty("type", "welcomeWindowButton");
+
     connect(ui->openProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     connect(ui->openProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     // Add additional logic to newProjectBtn
@@ -68,8 +72,6 @@ void WelcomeWindow::openProject(bool isNewProject) {
 }
 
 void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) {
-    std::cout << projectPath.toStdString() << std::endl;
-
     currentProject = std::make_shared<Project>(projectPath);
 
     auto projectPos = std::find(projects.begin(), projects.end(), projectPath);
@@ -97,13 +99,15 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) 
 void WelcomeWindow::loadProjectPaths() {
     qDeleteAll(ui->projectArray->children());
 
-    QSettings settings {"oceaneye", "oceaneye"};
+    QSettings settings {QSettings::Scope::UserScope};
 
     int size = settings.beginReadArray("projects");
 
     QVBoxLayout* projectArrayLayout = new QVBoxLayout();
 
     ui->projectArray->setLayout(projectArrayLayout);
+    projectArrayLayout->setContentsMargins(0, 0, 0, 0);
+    projectArrayLayout->setSpacing(0);
 
     projects.clear();
 
@@ -114,6 +118,7 @@ void WelcomeWindow::loadProjectPaths() {
         projects.push_back(projectPath);
 
         QWidget* project = new QWidget();
+
         QHBoxLayout* projectLayout = new QHBoxLayout();
         QPushButton* projectBtn = new QPushButton(projectPath);
         QPushButton* closeBtn = new QPushButton("x");
@@ -142,7 +147,7 @@ void WelcomeWindow::loadProjectPaths() {
 }
 
 void WelcomeWindow::saveProjectPaths() {
-    QSettings settings {"oceaneye", "oceaneye"};
+    QSettings settings {QSettings::Scope::UserScope};
 
     settings.beginWriteArray("projects");
     settings.remove("");

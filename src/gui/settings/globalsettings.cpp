@@ -6,7 +6,7 @@ GlobalSettings::GlobalSettings()
     QFormLayout* layout = new QFormLayout();
     setLayout(layout);
 
-    QSettings settings {"oceaneye", "oceaneye"};
+    QSettings settings {QSettings::Scope::UserScope};
 
     QLabel* settingsPathLabel = new QLabel(settings.fileName());
     settingsPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);

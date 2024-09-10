@@ -1,8 +1,10 @@
 #include "core/welcomewindow.h"
 #include "core/mainwindow.h"
 #include <QApplication>
+#include <QSettings>
 #include "util/project.h"
 #include "logger.h"
+#include "util/settings.h"
 
 std::shared_ptr<Project> project = nullptr;
 
@@ -12,6 +14,20 @@ int main(int argc, char *argv[])
     Logger::Logger::init("log.txt");
 
     QApplication app(argc, argv);
+
+    QCoreApplication::setOrganizationName("oceaneye");
+    QCoreApplication::setOrganizationDomain("oceaneye");
+    QCoreApplication::setApplicationName("oceaneye");
+
+    auto format = registerYAMLFormat();
+    QSettings::setPath(format, QSettings::Scope::UserScope, QDir::homePath() + QDir::separator() + ".oceaneye");
+    QSettings::setDefaultFormat(format);
+
+    QSettings settings {QSettings::Scope::UserScope};
+    auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    settings.setValue("lastOpenedProject", timestamp);
+
+
     WelcomeWindow window(project);
     window.setWindowTitle("OceanEye");
 

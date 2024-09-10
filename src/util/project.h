@@ -10,6 +10,7 @@
 #include <QListWidgetItem>
 
 #include "yolov8.h"
+#include "settings.h"
 
 class Project : public QObject
 {
