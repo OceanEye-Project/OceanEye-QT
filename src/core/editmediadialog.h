@@ -41,26 +41,28 @@ class EditMediaDialog : public QWidget
     FlowLayout* mediaLayout = new FlowLayout();
     QPixmap previewPixmap {};
     std::map<int, ImageThumbnail*> selectedImages {};
-
-    void updateImages();
+    
     void removeSelected();
     void removeAll();
     void clearSelection();
     void refreshMedia();
     void setPreview(int idx);
-
     void showEvent(QShowEvent* event);
+    void loadMoreMedia();
+
+    int loadedItems; // Tracks the number of currently loaded items
+    const int itemsPerLoad = 20; // Number of items to load at once
 
 public:
     std::shared_ptr<Project>& currentProject;
     explicit EditMediaDialog(std::shared_ptr<Project>& project);
 
+public slots:
+    void onScroll(int value);
+
 signals:
     void mediaChanged();
-
 };
-
-
 
 
 #endif // EDITMEDIADIALOG_H

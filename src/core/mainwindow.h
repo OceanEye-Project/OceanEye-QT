@@ -68,6 +68,7 @@ private:
     
     // Method for adding media files to the project
     void addMedia(QStringList files = {});
+
     // Method for loading a machine learning model
     void loadModel(QString file = "");
     // Methods for navigating between images
