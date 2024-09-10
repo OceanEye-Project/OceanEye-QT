@@ -4,6 +4,15 @@
 #include <vector>
 #include <QVariant>
 #include <QString>
+#include <QSettings>
+#include <QIODevice>
+#include <QDataStream>
+#include <QMetaType>
+#include <QKeySequence>
+#include <yaml-cpp/yaml.h>
+#include <iostream>
+
+typedef QSettings::SettingsMap::const_iterator SettingsIterator;
 
 struct Setting {
     QString key;
@@ -23,5 +32,6 @@ const std::vector<Setting> defaultProjectSettings {
 
 const std::vector<Setting> defaultGlobalSettings {};
 
+QSettings::Format registerYAMLFormat();
 
 #endif // SETTINGS_H
