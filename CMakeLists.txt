@@ -27,6 +27,8 @@ else ()
     find_package(OpenCV REQUIRED)
 endif ()
 
+add_subdirectory(yaml-cpp)
+
 set(PROJECT_SOURCES
     src/main.cpp
 
@@ -47,7 +49,7 @@ set(PROJECT_SOURCES
     src/gui/settings/settings.h src/gui/settings/settings.cpp
     src/gui/settings/projectsettings.h src/gui/settings/projectsettings.cpp
     src/gui/settings/globalsettings.h src/gui/settings/globalsettings.cpp
-    src/util/settings.h
+    src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
 
     src/resources/resources.qrc
@@ -55,8 +57,7 @@ set(PROJECT_SOURCES
     qdarkstyle/light/lightstyle.qrc
 )
 
-include_directories(${OpenCV_INCLUDE_DIRS} src/util)
-
+include_directories(${OpenCV_INCLUDE_DIRS} src/util yaml-cpp/include)
 if(APPLE)
     execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
                     OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
@@ -93,6 +94,7 @@ else()
     endif()
 endif()
 
+target_link_libraries(OceanEye PRIVATE yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)

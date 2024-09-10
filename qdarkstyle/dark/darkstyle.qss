@@ -17,6 +17,16 @@ See Qt documentation:
   - https://doc.qt.io/qt-5/stylesheet-examples.html
 
 --------------------------------------------------------------------------- */
+
+QPushButton[type="welcomeWindowButton"]:checked {
+  background-color: rgb(25, 35, 45);
+  border: 2px solid rgb(173, 189, 205);
+}
+
+QWidget[type="welcomeWindowProject"] {
+  /* border-bottom: 1px solid rgb(173, 189, 205); */
+}
+
 /* Reset elements ------------------------------------------------------------
 
 Resetting everything helps to unify styles across different operating systems
