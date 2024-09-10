@@ -166,9 +166,9 @@ void Project::loadMedia() {
 
     for (int i = 0; i < size; ++i) {
         ++count;
-        qInfo() << "Loading Media: " << media.at(i);
         settings.setArrayIndex(i);
         media.push_back(settings.value("path").toString());
+        qInfo() << "Loading Media: " << media.at(i);
     }
     qInfo() << "Done loading media. Loaded " << count << " items";
     settings.endArray();
