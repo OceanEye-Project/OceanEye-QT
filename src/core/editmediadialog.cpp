@@ -2,6 +2,7 @@
 #include "./ui_editmedia.h"
 #include <QApplication>
 #include <QScreen>
+#include <QScrollBar>
 
 EditMediaDialog::EditMediaDialog(std::shared_ptr<Project>& project)
     : QWidget{}
@@ -23,14 +24,14 @@ EditMediaDialog::EditMediaDialog(std::shared_ptr<Project>& project)
     ui->mediaBox->resize(screenWidth*0.5, screenHeight);
 
 
-    // connect(ui->addMedia, &QPushButton::clicked, currentProject.get(), &Project::addMedia);
+    connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &EditMediaDialog::onScroll);
     connect(ui->removeSelected, &QPushButton::clicked, this, &EditMediaDialog::removeSelected);
     connect(ui->removeAll, &QPushButton::clicked, this, &EditMediaDialog::removeAll);
     connect(ui->clearSelection, &QPushButton::clicked, this, &EditMediaDialog::clearSelection);
     ui->mediaBox->setLayout(mediaLayout);
 
     if (!currentProject->media.empty())
-        setPreview(0);
+        loadMoreMedia();
 }
 
 void EditMediaDialog::showEvent(QShowEvent* event) {
@@ -39,25 +40,31 @@ void EditMediaDialog::showEvent(QShowEvent* event) {
 }
 
 void EditMediaDialog::refreshMedia() {
-    QLayoutItem *child;
+    QLayoutItem* child;
     while ((child = mediaLayout->takeAt(0)) != nullptr) {
         delete child->widget();
         delete child;
     }
 
     selectedImages.clear();
+    loadedItems = 0; // Reset loaded items
 
+    loadMoreMedia(); // Load initial set of items
+}
+
+void EditMediaDialog::loadMoreMedia() {
     int size = 150;
-    for (int i=0; i<currentProject->media.size(); i++) {
+    int start = loadedItems;
+    int end = std::min(start + itemsPerLoad, static_cast<int>(currentProject->media.size()));
+
+    for (int i = start; i < end; ++i) {
         auto& file = currentProject->media.at(i);
 
         ImageThumbnail* thumbnail = new ImageThumbnail();
-
         thumbnail->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        // thumbnail->setMinimumHeight(size);
         thumbnail->setMinimumWidth(size);
 
-        QPixmap pixmap {file};
+        QPixmap pixmap{file};
         QPixmap scaledPixmap = pixmap.scaled(size, size, Qt::KeepAspectRatio);
         QIcon icon(scaledPixmap);
         thumbnail->setIcon(icon);
@@ -69,12 +76,14 @@ void EditMediaDialog::refreshMedia() {
         connect(thumbnail, &ImageThumbnail::clicked, this, [this, i, thumbnail](bool checked) {
             selectedImages.insert({i, thumbnail});
         });
+
         mediaLayout->addWidget(thumbnail);
     }
 
-    mediaLayout->heightForWidth(size);
-
+    loadedItems = end; // Update the count of loaded items
 }
+
+
 void EditMediaDialog::setPreview(int idx) {
     QString path = currentProject->media.at(idx);
     previewPixmap.load(path);
@@ -83,9 +92,19 @@ void EditMediaDialog::setPreview(int idx) {
     ui->mediaPath->setText(path);
 }
 
-void EditMediaDialog::updateImages() {
+void EditMediaDialog::onScroll(int value) {
+    QScrollBar* scrollbar = ui->scrollArea->verticalScrollBar();
+    int maxScroll = scrollbar->maximum();
+    int scrollPosition = scrollbar->value();
+    int viewportHeight = ui->scrollArea->viewport()->height();
 
+    if (scrollPosition + viewportHeight >= maxScroll - 100) { // Trigger load when close to the bottom
+        if (loadedItems < static_cast<int>(currentProject->media.size())) {
+            loadMoreMedia();
+        }
+    }
 }
+
 
 void EditMediaDialog::removeSelected() {
     for (auto it = selectedImages.begin(); it != selectedImages.end(); ++it) {

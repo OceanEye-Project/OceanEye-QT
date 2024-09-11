@@ -3,8 +3,7 @@
 #include <QString>
 
 Project::Project(const QString project_path)
-    : settings(QDir::cleanPath(project_path + QDir::separator() + ".oceaneye.ini")
-    , QSettings::Format::IniFormat)
+    : settings(QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"), registerYAMLFormat())
     , projectPath(project_path) {
 
     loadModel(settings.value("Model Path").toString());
@@ -19,53 +18,56 @@ Project::Project(const QString project_path)
 std::vector<Annotation> Project::getAnnotation(const QString image_path) {
     std::vector<Annotation> annotations {};
 
-    // if (!settings.contains("annotations/" + image_path))
-        // return annotations;
+    const QFileInfo file_info(image_path);
+    QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
 
-    int size = settings.beginReadArray("annotations/" + image_path);
+    int size = image_settings.beginReadArray("annotations");
 
     for (int i = 0; i < size; ++i) {
-        settings.setArrayIndex(i);
+        image_settings.setArrayIndex(i);
 
         Annotation annotation {};
 
-        annotation.classId = settings.value("classId").toInt();
-        annotation.className = settings.value("className").toString();
-        annotation.confidence = settings.value("confidence").toFloat();
+        annotation.classId = image_settings.value("classId").toInt();
+        annotation.className = image_settings.value("className").toString();
+        annotation.confidence = image_settings.value("confidence").toFloat();
         annotation.box.setRect(
-            settings.value("x").toFloat(),
-            settings.value("y").toFloat(),
-            settings.value("w").toFloat(),
-            settings.value("h").toFloat()
+            image_settings.value("x").toFloat(),
+            image_settings.value("y").toFloat(),
+            image_settings.value("w").toFloat(),
+            image_settings.value("h").toFloat()
         );
 
         annotations.push_back(annotation);
     }
-    settings.endArray();
+    image_settings.endArray();
 
     return annotations;
 }
 
 void Project::setAnnotation(const QString image_path, const std::vector<Annotation>& annotations) {
 
-    settings.beginWriteArray("annotations/" + image_path);
-    settings.remove("");
+    const QFileInfo file_info(image_path);
+    QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
+
+    image_settings.beginWriteArray("annotations");
+    image_settings.remove("");
 
     for (int i=0; i<annotations.size(); i++) {
         auto annotation = annotations.at(i);
 
-        settings.setArrayIndex(i);
-        settings.setValue("classId", annotation.classId);
-        settings.setValue("className", annotation.className);
-        settings.setValue("confidence", annotation.confidence);
-        settings.setValue("x", annotation.box.x());
-        settings.setValue("y", annotation.box.y());
-        settings.setValue("w", annotation.box.width());
-        settings.setValue("h", annotation.box.height());
+        image_settings.setArrayIndex(i);
+        image_settings.setValue("classId", annotation.classId);
+        image_settings.setValue("className", annotation.className);
+        image_settings.setValue("confidence", annotation.confidence);
+        image_settings.setValue("x", annotation.box.x());
+        image_settings.setValue("y", annotation.box.y());
+        image_settings.setValue("w", annotation.box.width());
+        image_settings.setValue("h", annotation.box.height());
 
     }
 
-    settings.endArray();
+    image_settings.endArray();
 }
 
 void Project::setModelConf(int conf) {
@@ -166,9 +168,9 @@ void Project::loadMedia() {
 
     for (int i = 0; i < size; ++i) {
         ++count;
-        qInfo() << "Loading Media: " << media.at(i);
         settings.setArrayIndex(i);
         media.push_back(settings.value("path").toString());
+        qInfo() << "Loading Media: " << media.at(i);
     }
     qInfo() << "Done loading media. Loaded " << count << " items";
     settings.endArray();

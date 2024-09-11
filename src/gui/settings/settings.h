@@ -1,5 +1,5 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef SETTINGS_GUI_H
+#define SETTINGS_GUI_H
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -19,4 +19,4 @@ public:
 signals:
 };
 
-#endif // SETTINGS_H
+#endif // SETTINGS_GUI_H

@@ -1,5 +1,15 @@
 #include "annotatedimage.h"
 
+QTransform computeQTransform(const QRect &source, const QRect &target, const QPointF &translate, float zoom) {
+    QTransform transform;
+    transform.scale(1 / zoom, 1 / zoom);
+    transform.translate(-translate.x(), -translate.y());
+    transform.scale((double) target.width() / source.width(), (double) target.height() / source.height());
+    transform.translate(-source.x(), -source.y());
+
+    return transform;
+}
+
 // TODO better way to pass widgets through
 AnnotatedImage::AnnotatedImage(
     std::shared_ptr<Project>& project,
@@ -9,6 +19,7 @@ AnnotatedImage::AnnotatedImage(
     , currentProject(project)
 {
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    setMouseTracking(true);
 }
 
 void AnnotatedImage::setImage() {
@@ -60,17 +71,17 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     painter.translate(imagePos);
     painter.scale(zoom, zoom);
 
-    worldToImageTransform = painter.combinedTransform().inverted();
+    worldToImageTransform = computeQTransform(target, source, imagePos, zoom);
 
     painter.setBrush(Qt::transparent);
 
     painter.drawPixmap(0, 0, pixmap);
 
     QPen pen {};
-    pen.setWidth(3);
+    pen.setWidth(1);
     painter.setPen(pen);
 
-    auto handlesize = 7;
+    auto handlesize = 4;
     auto imageMousePos = worldToImageTransform.map(mousePos);
 
     for (int i=0; i<annotations.size(); i++) {
@@ -113,8 +124,16 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
         }
     }
 
-
     painter.restore();
+
+    if (annotationNewBtn->isChecked()) {
+        painter.setPen(Qt::red);
+        painter.drawLine(0, mousePos.y(), width(), mousePos.y());
+        painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
+    }
+
+    painter.setBrush(Qt::transparent);
+    painter.setPen(Qt::black);
     painter.drawRect(0, 0, width(), height());
 
     mouseWasPressed = false;
@@ -242,6 +261,7 @@ void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
         repaint();
     }
     mousePos = event->position();
+    repaint();
 }
 
 void AnnotatedImage::wheelEvent(QWheelEvent *event) {

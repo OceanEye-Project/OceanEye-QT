@@ -10,11 +10,20 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
 {
     ui->setupUi(this);
 
+    ui->projectBtn->setProperty("type", "welcomeWindowButton");
+    ui->settingsBtn->setProperty("type", "welcomeWindowButton");
+    ui->aboutBtn->setProperty("type", "welcomeWindowButton");
+
     connect(ui->openProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     connect(ui->openProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
+    connect(ui->lineEdit, &QLineEdit::textChanged, [this]() {
+        this->loadProjectPaths();
+    });
     // Add additional logic to newProjectBtn
     // Currently mimic the behavior of openProjectBtn
-    connect(ui->newProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
+    connect(ui->newProjectBtn, &QPushButton::clicked, this, [this]() {
+        openProject(true);
+    });
     connect(ui->newProjectBtn2, &QPushButton::clicked, this, [this]() {
         openProject(true);
     });
@@ -68,8 +77,6 @@ void WelcomeWindow::openProject(bool isNewProject) {
 }
 
 void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) {
-    std::cout << projectPath.toStdString() << std::endl;
-
     currentProject = std::make_shared<Project>(projectPath);
 
     auto projectPos = std::find(projects.begin(), projects.end(), projectPath);
@@ -97,52 +104,64 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) 
 void WelcomeWindow::loadProjectPaths() {
     qDeleteAll(ui->projectArray->children());
 
-    QSettings settings {"oceaneye", "oceaneye"};
+    QSettings settings {QSettings::Scope::UserScope};
 
     int size = settings.beginReadArray("projects");
 
     QVBoxLayout* projectArrayLayout = new QVBoxLayout();
 
     ui->projectArray->setLayout(projectArrayLayout);
+    projectArrayLayout->setContentsMargins(0, 0, 0, 0);
+    projectArrayLayout->setSpacing(0);
 
     projects.clear();
+
+    // Get the search filter text from the lineEdit
+    QString filterText = ui->lineEdit->text().trimmed().toLower();
 
     for (int i = size - 1; i >= 0; --i) {
         settings.setArrayIndex(i);
 
         QString projectPath = settings.value("path").toString();
-        projects.push_back(projectPath);
+        
+        // Apply the filter: check if the project path contains the filter text
+        if (filterText.isEmpty() || projectPath.toLower().contains(filterText)) {
+            projects.push_back(projectPath);
 
-        QWidget* project = new QWidget();
-        QHBoxLayout* projectLayout = new QHBoxLayout();
-        QPushButton* projectBtn = new QPushButton(projectPath);
-        QPushButton* closeBtn = new QPushButton("x");
+            QWidget* project = new QWidget();
 
-        connect(closeBtn, &QPushButton::clicked, this, [this, index=projects.size() - 1] {
-            projects.erase(projects.begin() + index);
-            saveProjectPaths();
-            loadProjectPaths();
-        });
+            QHBoxLayout* projectLayout = new QHBoxLayout();
+            QPushButton* projectBtn = new QPushButton(projectPath);
+            QPushButton* closeBtn = new QPushButton("x");
 
-        connect(projectBtn, &QPushButton::clicked, this, [this, projectPath] {
-            loadProjectFromPath(projectPath);
-        });
+            connect(closeBtn, &QPushButton::clicked, this, [this, index=projects.size() - 1] {
+                projects.erase(projects.begin() + index);
+                saveProjectPaths();
+                loadProjectPaths();
+            });
 
-        project->setLayout(projectLayout);
+            connect(projectBtn, &QPushButton::clicked, this, [this, projectPath] {
+                loadProjectFromPath(projectPath);
+            });
 
-        projectLayout->addWidget(projectBtn);
-        projectLayout->addStretch();
-        projectLayout->addWidget(closeBtn);
+            project->setLayout(projectLayout);
 
-        projectArrayLayout->addWidget(project);
+            projectLayout->addWidget(projectBtn);
+            projectLayout->addStretch();
+            projectLayout->addWidget(closeBtn);
+
+            projectArrayLayout->addWidget(project);
+        }
     }
+
     settings.endArray();
 
     projectArrayLayout->addStretch();
 }
 
+
 void WelcomeWindow::saveProjectPaths() {
-    QSettings settings {"oceaneye", "oceaneye"};
+    QSettings settings {QSettings::Scope::UserScope};
 
     settings.beginWriteArray("projects");
     settings.remove("");
