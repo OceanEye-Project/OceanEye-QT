@@ -14,6 +14,15 @@
    <string>Export</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
+   </property>
+   <property name="leftMargin">
+    <number>50</number>
+   </property>
+   <property name="rightMargin">
+    <number>50</number>
+   </property>
    <item row="0" column="1">
     <widget class="QLabel" name="exportCount">
      <property name="text">
@@ -33,9 +42,25 @@
    </item>
    <item row="1" column="1">
     <widget class="QComboBox" name="formatCombo">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <item>
       <property name="text">
        <string>CSV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>COCO</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>YAML</string>
       </property>
      </item>
      <item>
@@ -57,6 +82,12 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <item>
       <property name="text">
        <string>All Annotations in One File</string>
@@ -77,7 +108,7 @@
    <item row="4" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -92,7 +123,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
