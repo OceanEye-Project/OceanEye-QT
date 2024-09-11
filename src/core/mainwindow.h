@@ -21,6 +21,7 @@
 #include "detectoptions.h"
 #include "../util/videoslicer.h"
 #include "../util/yolov8.h"
+#include "welcomewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

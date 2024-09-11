@@ -386,6 +386,7 @@
     <addaction name="actionExport"/>
     <addaction name="actionEditMedia"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionOpenFile"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -459,6 +460,11 @@
   <action name="actionOpenSettings">
    <property name="text">
     <string>Open Settings</string>
+   </property>
+  </action>
+  <action name="actionOpenFile">
+   <property name="text">
+    <string>Open File</string>
    </property>
   </action>
  </widget>
