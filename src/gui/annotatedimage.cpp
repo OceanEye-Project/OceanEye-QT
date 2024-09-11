@@ -1,21 +1,13 @@
 #include "annotatedimage.h"
 
-QTransform computeQTransform(const QRect &source, const QRect &target) {
-    // Transforms a point from the source rect to the target rect
+QTransform computeQTransform(const QRect &source, const QRect &target, const QPointF &translate, float zoom) {
+    QTransform transform;
+    transform.scale(1 / zoom, 1 / zoom);
+    transform.translate(-translate.x(), -translate.y());
+    transform.scale((double) target.width() / source.width(), (double) target.height() / source.height());
+    transform.translate(-source.x(), -source.y());
 
-    qreal sourceWidth = source.width();
-    qreal sourceHeight = source.height();
-    qreal targetWidth = target.width();
-    qreal targetHeight = target.height();
-
-    qreal scaleX = targetWidth / sourceWidth;
-    qreal scaleY = targetHeight / sourceHeight;
-    qreal translateX = target.left() - source.left() * scaleX;
-    qreal translateY = target.top() - source.top() * scaleY;
-
-    return QTransform()
-        .translate(translateX, translateY)
-        .scale(scaleX, scaleY);
+    return transform;
 }
 
 // TODO better way to pass widgets through
@@ -79,18 +71,17 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     painter.translate(imagePos);
     painter.scale(zoom, zoom);
 
-    worldToImageTransform = computeQTransform(target, source);
-
+    worldToImageTransform = computeQTransform(target, source, imagePos, zoom);
 
     painter.setBrush(Qt::transparent);
 
     painter.drawPixmap(0, 0, pixmap);
 
     QPen pen {};
-    pen.setWidth(3);
+    pen.setWidth(1);
     painter.setPen(pen);
 
-    auto handlesize = 7;
+    auto handlesize = 4;
     auto imageMousePos = worldToImageTransform.map(mousePos);
 
     for (int i=0; i<annotations.size(); i++) {
@@ -141,6 +132,7 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
         painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
     }
 
+    painter.setBrush(Qt::transparent);
     painter.setPen(Qt::black);
     painter.drawRect(0, 0, width(), height());
 
