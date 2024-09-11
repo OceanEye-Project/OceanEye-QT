@@ -18,7 +18,9 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     connect(ui->openProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     // Add additional logic to newProjectBtn
     // Currently mimic the behavior of openProjectBtn
-    connect(ui->newProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
+    connect(ui->newProjectBtn, &QPushButton::clicked, this, [this]() {
+        openProject(true);
+    });
     connect(ui->newProjectBtn2, &QPushButton::clicked, this, [this]() {
         openProject(true);
     });
