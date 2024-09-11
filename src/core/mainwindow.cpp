@@ -65,6 +65,10 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->actionOpenSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(&settingsDialog.projectSettings, &ProjectSettings::updateImageUI, this, &MainWindow::updateImageUI);
+    connect(&settingsDialog.projectSettings, &ProjectSettings::updateModelConfSlider, [this, project]() {
+        ui->modelConfSlider->setValue(project->settings.value("Model Confidence").toInt());
+    });
+
 
     // Connect image navigation buttons
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, &MainWindow::navigatePrevious);

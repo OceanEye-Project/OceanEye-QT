@@ -21,6 +21,7 @@ public:
     std::shared_ptr<Project>& currentProject;
     void loadModel(QString file);
 signals:
+    void updateModelConfSlider();
     void updateImageUI();
 };
 
