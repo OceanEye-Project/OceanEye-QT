@@ -41,7 +41,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
 
     // Add the button and label as a form row (consistent with the rest of the settings)
     settingsLayout->addRow(loadModelButton, modelFileLabel);
-
+    
     // Map to store the current values of the widgets
     std::map<QString, QWidget*> widgetMap;
 
@@ -99,7 +99,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     });
 
     // Apply button clicked signal
-    connect(applyButton, &QPushButton::clicked, this, [this, &settings, widgetMap]() {
+    connect(applyButton, &QPushButton::clicked, this, [this, &settings, widgetMap, mainLayout]() {
         for (auto& setting : defaultProjectSettings) {
             QWidget* widget = widgetMap.at(setting.key);
             QVariant newValue;
@@ -133,6 +133,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 currentProject->runDetection(image);
             }
         updateImageUI();
+        parentWidget()->close();
     });
 }
 

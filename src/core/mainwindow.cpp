@@ -148,23 +148,23 @@ void MainWindow::updateTable() {
 
     // Clear and set up the model
     model->clear();
-    model->setColumnCount(6);
+    model->setColumnCount(2);
     model->setHorizontalHeaderItem(0, new QStandardItem("Class"));
     model->setHorizontalHeaderItem(1, new QStandardItem("Confidence"));
-    model->setHorizontalHeaderItem(2, new QStandardItem("X"));
-    model->setHorizontalHeaderItem(3, new QStandardItem("Y"));
-    model->setHorizontalHeaderItem(4, new QStandardItem("Width"));
-    model->setHorizontalHeaderItem(5, new QStandardItem("Height"));
+    // model->setHorizontalHeaderItem(2, new QStandardItem("X"));
+    // model->setHorizontalHeaderItem(3, new QStandardItem("Y"));
+    // model->setHorizontalHeaderItem(4, new QStandardItem("Width"));
+    // model->setHorizontalHeaderItem(5, new QStandardItem("Height"));
 
     // Populate the model with annotation data
     for (auto& annotation : mainImage.annotations) {
         QList<QStandardItem *> items;
         items.append(new QStandardItem(QString(annotation.className)));
         items.append(new QStandardItem(QString::number(annotation.confidence)));
-        items.append(new QStandardItem(QString::number(annotation.box.x())));
-        items.append(new QStandardItem(QString::number(annotation.box.y())));
-        items.append(new QStandardItem(QString::number(annotation.box.width())));
-        items.append(new QStandardItem(QString::number(annotation.box.height())));
+        // items.append(new QStandardItem(QString::number(annotation.box.x())));
+        // items.append(new QStandardItem(QString::number(annotation.box.y())));
+        // items.append(new QStandardItem(QString::number(annotation.box.width())));
+        // items.append(new QStandardItem(QString::number(annotation.box.height())));
         model->appendRow(items);
     }
 }
