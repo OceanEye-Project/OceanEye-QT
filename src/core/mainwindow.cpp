@@ -15,7 +15,6 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 {
     ui->setupUi(this);
     
-    
     // Set window size to match the primary screen
     QScreen* screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();
@@ -63,6 +62,10 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->actionOpenSettings, &QAction::triggered, &settingsDialog, &Settings::show);
+    connect(ui->actionOpenFile, &QAction::triggered, [this]() {
+        WelcomeWindow *welcomeWindow = new WelcomeWindow(currentProject);
+        welcomeWindow->openProject();
+    });
     connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(&settingsDialog.projectSettings, &ProjectSettings::updateImageUI, this, &MainWindow::updateImageUI);
 
