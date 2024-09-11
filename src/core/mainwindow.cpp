@@ -78,7 +78,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
 
     // Set initial model path if loaded
     if (project->isModelLoaded()) {
-        ui->modelPathLabel->setText(QString::fromStdString(project->model->modelPath));
+        auto file_info = QFileInfo(QString::fromStdString(project->model->modelPath));
+        ui->modelPathLabel->setText(file_info.fileName());
     }
     
     // Set initial model confidence
