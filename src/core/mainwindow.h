@@ -8,6 +8,8 @@
 #include <QImageReader>
 #include <QProgressBar>
 #include <QKeyEvent>
+#include <QShortcut>
+#include <QKeySequence>
 
 // Third-party libraries
 #include "opencv2/opencv.hpp"
@@ -39,10 +41,6 @@ public:
     MainWindow(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
     // Destructor
     ~MainWindow();
-
-protected:
-    // Override keyPressEvent to handle keyboard navigation
-    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     // Reference to the current project

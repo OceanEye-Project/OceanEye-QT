@@ -87,8 +87,17 @@
                    <layout class="QHBoxLayout" name="horizontalLayout_9">
                     <item>
                      <widget class="QPushButton" name="annotationNewBtn">
+                      <property name="toolTipDuration">
+                       <number>-4</number>
+                      </property>
                       <property name="text">
                        <string>New</string>
+                      </property>
+                      <property name="checkable">
+                       <bool>true</bool>
+                      </property>
+                      <property name="autoExclusive">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>

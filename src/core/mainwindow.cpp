@@ -105,6 +105,17 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::updateImageUI);
     connect(&editMediaDialog, &EditMediaDialog::mediaChanged, this, &MainWindow::updateImageUI);
 
+    // next and previous image shortcuts
+    connect(
+        new QShortcut(QKeySequence(Qt::Key_Right), this), 
+        &QShortcut::activated, this, &MainWindow::navigateNext
+    );
+
+    connect(
+        new QShortcut(QKeySequence(Qt::Key_Left), this), 
+        &QShortcut::activated, this, &MainWindow::navigatePrevious
+    );
+
     // Populate annotation class combo box
     for (int i=0; i<model_classes.size();i++) {
         ui->annotationClassCombo->addItem(
@@ -122,19 +133,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event){
-    // Always handle left and right arrow keys for image navigation
-    if (event->key() == Qt::Key_Right) {
-        navigateNext();
-        event->accept();  // Stop event propagation
-    } else if (event->key() == Qt::Key_Left) {
-        navigatePrevious();
-        event->accept();  // Stop event propagation
-    } else {
-        // Let the base class handle other keys
-        QMainWindow::keyPressEvent(event);
-    }
-}
+// void MainWindow::keyPressEvent(QKeyEvent *event){
+//     // Always handle left and right arrow keys for image navigation
+//     if (event->key() == Qt::Key_Right) {
+//         navigateNext();
+//         event->accept();  // Stop event propagation
+//     } else if (event->key() == Qt::Key_Left) {
+//         navigatePrevious();
+//         event->accept();  // Stop event propagation
+//     } else {
+//         // Let the base class handle other keys
+//         QMainWindow::keyPressEvent(event);
+//     }
+// }
 
 void MainWindow::navigateNext()
 {

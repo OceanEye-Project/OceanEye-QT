@@ -6,7 +6,7 @@ QPushButton[type="welcomeWindowButton"]:checked {
 QPushButton[type="welcomeWindowButton"] {
     background-color: rgb(69, 67, 67);
     border: 2px solid rgb(24, 25, 26);
-    border-radius: 10px;
+    border-radius: 3px;
     color: rgb(217, 220, 213);
     padding: 5px;
     text-align: center;

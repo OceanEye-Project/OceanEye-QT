@@ -23,91 +23,68 @@ AnnotatedImage::AnnotatedImage(
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     setMouseTracking(true);
 
-    // QShortcut *shortcutDelte = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-    // connect(shortcutDelte, &QShortcut::activated, this, &AnnotatedImage::deleteAnnotation);
+    // Delete key deletes the selected annotation
     connect(
-        new QShortcut(QKeySequence(Qt::Key_Delete), this), 
+        new QShortcut(QKeySequence(Qt::Key_Delete, Qt::Key_Backspace), this), 
         &QShortcut::activated, this, [this]() {
-        deleteAnnotation();
-        repaint();
-    });
+            if (selectedAnnotation >= 0) {
+                annotations.erase(annotations.begin() + selectedAnnotation);
+                selectedAnnotation = -1;
+                emit annotationsChanged();
+                repaint();
+            }
+        }
+    );
 
-    // QShortcut *shortcutSpace = new QShortcut(QKeySequence(Qt::Key_Space), this);
-    // connect(shortcutSpace, &QShortcut::activated, this, &AnnotatedImage::changeClass);
+    // Space key changes the class of the selected annotation
     connect(
         new QShortcut(QKeySequence(Qt::Key_Space), this), 
         &QShortcut::activated, this, [this]() {
-        changeClass();
-        repaint();
-    });
+            if (selectedAnnotation >= 0) {
+                auto& annotation = annotations.at(selectedAnnotation);
+                annotation.classId = (annotation.classId + 1) % model_classes.size();
+                annotation.className = QString::fromStdString(model_classes.at(annotation.classId));
+                emit annotationsChanged();
+                repaint();
+            }
+        }
+    );
 
-    // QShortcut *shortcutN = new QShortcut(QKeySequence(Qt::Key_N), this);
-    // connect(shortcutN, &QShortcut::activated, this, &AnnotatedImage::newAnnotation);
+    // N key creates a new annotation
     connect(
         new QShortcut(QKeySequence(Qt::Key_N), this), 
         &QShortcut::activated, this, [this]() {
-        annotationNewBtn->setChecked(true);
-        repaint();
-    });
+            annotationNewBtn->setChecked(true);
+            repaint();
+        }
+    );
 
-    // QShortcut *shortcutEsc = new QShortcut(QKeySequence(Qt::Key_Escape), this);
-    // connect(shortcutEsc, &QShortcut::activated, this, &AnnotatedImage::escape);
+    // Escape key cancels annotation creation
     connect(
         new QShortcut(QKeySequence(Qt::Key_Escape), this), 
         &QShortcut::activated, this, [this]() {
-        annotationEditBtn->setChecked(true);
+            annotationEditBtn->setChecked(true);
 
-        if (selectedAnnotation >= 0) {
-            selectedAnnotation = -1;
+            if (selectedAnnotation >= 0) {
+                selectedAnnotation = -1;
+            }
+
+            repaint();
         }
+    );
 
-        repaint();
-    });
 
+    // R resets the view
     connect(
         new QShortcut(QKeySequence(Qt::Key_R), this), 
         &QShortcut::activated, this, [this]() {
-        zoom = 1;
-        imagePos = {0, 0};
-        setMargins();
-        repaint();
-    });
+            zoom = 1;
+            imagePos = {0, 0};
+            setMargins();
+            repaint();
+        }
+    );
 }
-
-
-// void AnnotatedImage::escape() {
-//     annotationEditBtn->setChecked(true);
-
-//     if (selectedAnnotation >= 0) {
-//         selectedAnnotation = -1;
-//     }
-
-//     repaint();
-// }
-
-// void AnnotatedImage::deleteAnnotation() {
-//     if (selectedAnnotation >= 0) {
-//         annotations.erase(annotations.begin() + selectedAnnotation);
-//         selectedAnnotation = -1;
-//         emit annotationsChanged();
-//         repaint();
-//     }
-// }
-
-// void AnnotatedImage::changeClass() {
-//     if (selectedAnnotation >= 0) {
-//         auto& annotation = annotations.at(selectedAnnotation);
-//         annotation.classId = (annotation.classId + 1) % model_classes.size();
-//         annotation.className = QString::fromStdString(model_classes.at(annotation.classId));
-//         emit annotationsChanged();
-//         repaint();
-//     }
-// }
-
-// void AnnotatedImage::newAnnotation() {
-//     annotationNewBtn->setChecked(true);
-//     repaint();
-// }
 
 void AnnotatedImage::setImage() {
     pixmap = QPixmap();
@@ -179,6 +156,10 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
         painter.setPen(pen);
 
         painter.setBrush(Qt::transparent);
+
+        if (selectedAnnotation == i) {
+            painter.setBrush(QColor::fromHsv(hue, 245, 245, 90));
+        }
 
         painter.drawRect(annotation.box);
 

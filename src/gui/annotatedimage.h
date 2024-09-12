@@ -50,11 +50,6 @@ class AnnotatedImage : public QWidget
     int selectedAnnotation {-1};
     QTransform worldToImageTransform {};
 
-    // void escape();
-    // void deleteAnnotation();
-    // void newAnnotation();
-    // void changeClass();
-
 public:
     
     QPushButton* annotationEditBtn;
