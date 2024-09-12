@@ -51,8 +51,6 @@ class AnnotatedImage : public QWidget
     QTransform worldToImageTransform {};
 
 public:
-    
-    QPushButton* annotationEditBtn;
     QPushButton* annotationNewBtn;
     QComboBox* annotationClassCombo;
 

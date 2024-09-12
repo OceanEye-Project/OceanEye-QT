@@ -25,7 +25,7 @@ AnnotatedImage::AnnotatedImage(
 
     // Delete key deletes the selected annotation
     connect(
-        new QShortcut(QKeySequence(Qt::Key_Delete, Qt::Key_Backspace), this), 
+        new QShortcut(QKeySequence(Qt::Key_Delete), this), 
         &QShortcut::activated, this, [this]() {
             if (selectedAnnotation >= 0) {
                 annotations.erase(annotations.begin() + selectedAnnotation);
@@ -63,7 +63,7 @@ AnnotatedImage::AnnotatedImage(
     connect(
         new QShortcut(QKeySequence(Qt::Key_Escape), this), 
         &QShortcut::activated, this, [this]() {
-            annotationEditBtn->setChecked(true);
+            annotationNewBtn->setChecked(false);
 
             if (selectedAnnotation >= 0) {
                 selectedAnnotation = -1;

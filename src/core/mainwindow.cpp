@@ -26,12 +26,10 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     ui->dataTable->setFocusPolicy(Qt::NoFocus);
 
     // Set up annotation buttons and class combo box
-    mainImage.annotationEditBtn = ui->annotationEditBtn;
     mainImage.annotationNewBtn = ui->annotationNewBtn;
     mainImage.annotationClassCombo = ui->annotationClassCombo;
     
     // Connect annotation buttons to trigger repaint
-    connect(ui->annotationEditBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
     connect(ui->annotationNewBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
 
     // Connect annotationsChanged signal to updateTable slot
