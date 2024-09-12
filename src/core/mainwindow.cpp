@@ -47,7 +47,8 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     ui->dataTable->setModel(model);
 
     // Connect detection-related signals and slots
-    connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
+    // connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
+    connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
     connect(&detectOptions, &DetectOptions::runDetection, this, &MainWindow::runDetection);
     connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::doneSlicing);
@@ -195,7 +196,18 @@ void MainWindow::runDetection() {
     if (currentProject->media.empty())
         return;
 
-    currentProject->runDetection(currentProject->media.at(currentImg));
+    bool containsAll = false;
+    for (QListWidgetItem* item : currentProject->selectedItems) {
+        if (item->text() == "All") {
+            containsAll = true;
+        }
+    }
+
+    if(containsAll) {
+        currentProject->runDetection(currentProject->media.at(currentImg));
+    } else {
+        currentProject->runSpecificDetection(currentProject->media.at(currentImg), currentProject->selectedItems);
+    }
     updateImageUI();
 }
 

@@ -23,6 +23,7 @@ public:
     std::vector<Annotation> getAnnotation(const QString image_path);
     std::vector<QString> media {};
     std::unique_ptr<YOLOv8> model {nullptr};
+    QList<QListWidgetItem*> selectedItems;
 
     void setAnnotation(const QString image_path, const std::vector<Annotation>& annotations);
     bool isModelLoaded();

@@ -12,7 +12,18 @@ DetectOptions::DetectOptions(std::shared_ptr<Project>& project)
     ui->classList->setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Populate the drop down menu
-    ui->classList->addItem("All");
+    // Populate the drop down menu
+    ui->classList->addItem("All");  // Add "All" item
+    
+    // Select the "All" item and add it to currentProject->selectedItems
+    QListWidgetItem* allItem = ui->classList->findItems("All", Qt::MatchExactly).first();
+    allItem->setSelected(true);  // Select "All"
+    
+    // Assuming currentProject has a selectedItems member (as QList<QListWidgetItem*>)
+    if (currentProject) {
+        currentProject->selectedItems.append(allItem);  // Add "All" to selectedItems
+    }
+    
     for (int i=0; i<model_classes.size();i++) {
         ui->classList->addItem(
             QString::fromStdString(model_classes.at(i))
@@ -21,11 +32,10 @@ DetectOptions::DetectOptions(std::shared_ptr<Project>& project)
 
     connect(ui->cancelBtn, &QPushButton::clicked, this, &DetectOptions::close);
     connect(ui->okBtn, &QPushButton::clicked, this, [this]() {
-        if (ui->classList->findItems("All", Qt::MatchExactly).first()->isSelected())
-            emit runDetection();
-        else if (ui->classList->selectedItems().size() > 0)
-            emit runSpecificDetection(ui->classList->selectedItems());
-
+        if(currentProject) {
+            QList<QListWidgetItem*> selectedItems = ui->classList->selectedItems(); 
+            currentProject->selectedItems = selectedItems;
+        }
         DetectOptions::close();
     });
 }
