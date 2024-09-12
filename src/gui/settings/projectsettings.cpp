@@ -9,6 +9,7 @@
 ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     : QWidget{}
     , currentProject{project}
+    , detectOptionsDialog{project}
 {
     // Main layout for the entire window
     QVBoxLayout* mainLayout = new QVBoxLayout();
@@ -29,6 +30,10 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     QFormLayout* settingsLayout = new QFormLayout();
     settingsGroupBox->setLayout(settingsLayout);
     mainLayout->addWidget(settingsGroupBox);
+
+    QPushButton* detectOptionsButton = new QPushButton("Specify Detections", this);
+    settingsLayout->addRow(detectOptionsButton);
+    connect(detectOptionsButton, &QPushButton::clicked, &detectOptionsDialog, &DetectOptions::show);
 
     QSettings& settings {currentProject->settings};
     QLabel* settingsPathLabel = new QLabel(settings.fileName());
