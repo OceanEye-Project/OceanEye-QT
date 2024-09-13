@@ -300,36 +300,65 @@ void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
     Qt::MouseButtons buttons = event->buttons();
     QPointF delta = event->position() - mousePos;
 
+    setCursor(Qt::ArrowCursor);
+
     if (buttons & Qt::RightButton) {
         imagePos += delta / imageScale;
         enforceBoundryConditions();
         repaint();
 
-    } else if (buttons & Qt::LeftButton) {
-        if (selectedHandle && selectedAnnotation >= 0) {
-            Annotation& annotation = annotations.at(selectedAnnotation);
+    } else if (selectedAnnotation >= 0) {
+        QPointF imageMousePos = worldToImageTransform.map(event->position());
+        
+        for (auto& handle : annotationHandles) {
+            auto point = annotations.at(selectedAnnotation).box.topLeft() + QPointF(annotations.at(selectedAnnotation).box.width() * handle.point.x(), annotations.at(selectedAnnotation).box.height() * handle.point.y());
+            auto distance = (point - imageMousePos).manhattanLength();
+            
+            if (distance * distance < handleSize * handleSize || (selectedHandle && selectedHandle->point == handle.point)) {
+                // set cursor for the appropriate handle
+                if (handle.T && handle.L) {
+                    setCursor(Qt::SizeFDiagCursor);
+                } else if (handle.T && handle.R) {
+                    setCursor(Qt::SizeBDiagCursor);
+                } else if (handle.B && handle.L) {
+                    setCursor(Qt::SizeBDiagCursor);
+                } else if (handle.B && handle.R) {
+                    setCursor(Qt::SizeFDiagCursor);
+                } else if (handle.T) {
+                    setCursor(Qt::SizeVerCursor);
+                } else if (handle.L) {
+                    setCursor(Qt::SizeHorCursor);
+                } else if (handle.B) {
+                    setCursor(Qt::SizeVerCursor);
+                } else if (handle.R) {
+                    setCursor(Qt::SizeHorCursor);
+                }
+            }
+        }
+        if (buttons & Qt::LeftButton) {
+            if (selectedHandle) {
+                Annotation& annotation = annotations.at(selectedAnnotation);
 
-            QPointF imageMousePos = worldToImageTransform.map(event->position());
-            QPointF boundedMousePos = QPoint(
-                std::clamp(imageMousePos.x(), 0.0, (double) pixmap.width()),
-                std::clamp(imageMousePos.y(), 0.0, (double) pixmap.height())
-            );
+                QPointF boundedMousePos = QPoint(
+                    std::clamp(imageMousePos.x(), 0.0, (double) pixmap.width()),
+                    std::clamp(imageMousePos.y(), 0.0, (double) pixmap.height())
+                );
 
-            if (selectedHandle->T)
-                annotation.box.setTop(boundedMousePos.y());
+                if (selectedHandle->T)
+                    annotation.box.setTop(boundedMousePos.y());
 
-            if (selectedHandle->L)
-                annotation.box.setLeft(boundedMousePos.x());
+                if (selectedHandle->L)
+                    annotation.box.setLeft(boundedMousePos.x());
 
-            if (selectedHandle->B)
-                annotation.box.setBottom(boundedMousePos.y());
+                if (selectedHandle->B)
+                    annotation.box.setBottom(boundedMousePos.y());
 
-            if (selectedHandle->R)
-                annotation.box.setRight(boundedMousePos.x());
-
-        } else {
-            imagePos += delta / imageScale;
-            enforceBoundryConditions();
+                if (selectedHandle->R)
+                    annotation.box.setRight(boundedMousePos.x());
+            } else {
+                imagePos += delta / imageScale;
+                enforceBoundryConditions();
+            }
         }
 
         repaint();

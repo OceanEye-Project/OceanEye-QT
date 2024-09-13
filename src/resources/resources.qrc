@@ -4,5 +4,6 @@
         <file>about.md</file>
         <file>licence.txt</file>
         <file>styles.qss</file>
+        <file>mouse.jpg</file>
     </qresource>
 </RCC>
