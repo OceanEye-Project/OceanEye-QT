@@ -24,6 +24,7 @@
 #include "../util/videoslicer.h"
 #include "../util/yolov8.h"
 #include "welcomewindow.h"
+#include "QtAwesome.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -64,6 +65,8 @@ private:
 
     // Pointer to the UI components
     Ui::MainWindow *ui;
+    // For Icons
+    fa::QtAwesome* awesome;
     
     // Method for adding media files to the project
     void addMedia(QStringList files = {});

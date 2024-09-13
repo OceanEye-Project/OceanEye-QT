@@ -14,6 +14,9 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , videoSlicer(project)
 {
     ui->setupUi(this);
+    awesome = new fa::QtAwesome(this);
+    awesome->initFontAwesome();
+    ui->annotationNewBtn->setIcon(awesome->icon(fa::fa_solid, fa::fa_plus));
     
     // Set window size to match the primary screen
     QScreen* screen = QGuiApplication::primaryScreen();

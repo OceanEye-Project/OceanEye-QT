@@ -89,7 +89,7 @@
                      <number>-4</number>
                     </property>
                     <property name="text">
-                     <string>+ New Annotation</string>
+                     <string>New Annotation</string>
                     </property>
                     <property name="checkable">
                      <bool>true</bool>
