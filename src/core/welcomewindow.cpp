@@ -10,11 +10,6 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
 {
     ui->setupUi(this);
 
-    QPixmap cursor_pixmap = QPixmap(":mouse.jpg");
-    QPixmap resized = cursor_pixmap.scaled(32, 32, Qt::KeepAspectRatio);
-    QCursor cursor_default = QCursor(resized, 0, 0);
-    setCursor(cursor_default);
-
     ui->projectBtn->setProperty("type", "welcomeWindowButton");
     ui->settingsBtn->setProperty("type", "welcomeWindowButton");
     ui->aboutBtn->setProperty("type", "welcomeWindowButton");
