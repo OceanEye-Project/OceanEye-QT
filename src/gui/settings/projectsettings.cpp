@@ -81,13 +81,16 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 settingsLayout->addRow(setting.key, box);
                 break;
             }
-            case QMetaType::QString: {
+            /* This commented out code overwrites model path in the settings to always be blank
+             *
+             * case QMetaType::QString: {
                 QLineEdit* box = new QLineEdit();
                 box->setText(settings.value(setting.key).toString());
                 widgetMap[setting.key] = box;  // Store the widget
                 settingsLayout->addRow(setting.key, box);
                 break;
             }
+            */
             default:
                 break;
         }
@@ -106,6 +109,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     // Apply button clicked signal
     connect(applyButton, &QPushButton::clicked, this, [this, &settings, widgetMap, mainLayout]() {
         for (auto& setting : defaultProjectSettings) {
+            if(setting.key.compare("Model Path") == 0) continue; // Skip over Model Path because we've already applied it
             QWidget* widget = widgetMap.at(setting.key);
             QVariant newValue;
 
