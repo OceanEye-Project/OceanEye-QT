@@ -101,7 +101,7 @@ std::vector<QString> VideoSlicer::sliceVideo(const QString& video, const QString
     return savedFrames;
 }
 
-QFuture<std::__1::vector<QString>> VideoSlicer::slice(QStringList videosToSlice) {
+QFuture<std::vector<QString>> VideoSlicer::slice(QStringList videosToSlice) {
     if (videosToSlice.size() > 0) {
         dialog.show();
 
