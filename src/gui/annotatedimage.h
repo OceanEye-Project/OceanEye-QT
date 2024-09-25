@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QPushButton>
+#include <QComboBox>
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QCheckBox>
@@ -49,9 +51,6 @@ class AnnotatedImage : public QWidget
     QTransform worldToImageTransform {};
 
 public:
-
-    QPushButton* annotationEditBtn;
-    QPushButton* annotationDeleteBtn;
     QPushButton* annotationNewBtn;
     QComboBox* annotationClassCombo;
 

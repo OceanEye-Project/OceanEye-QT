@@ -8,6 +8,8 @@
 #include <QImageReader>
 #include <QProgressBar>
 #include <QKeyEvent>
+#include <QShortcut>
+#include <QKeySequence>
 
 // Third-party libraries
 #include "opencv2/opencv.hpp"
@@ -22,6 +24,7 @@
 #include "../util/videoslicer.h"
 #include "../util/yolov8.h"
 #include "welcomewindow.h"
+#include "QtAwesome.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,10 +42,6 @@ public:
     MainWindow(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
     // Destructor
     ~MainWindow();
-
-protected:
-    // Override keyPressEvent to handle keyboard navigation
-    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     // Reference to the current project
@@ -66,6 +65,8 @@ private:
 
     // Pointer to the UI components
     Ui::MainWindow *ui;
+    // For Icons
+    fa::QtAwesome* awesome;
     
     // Method for adding media files to the project
     void addMedia(QStringList files = {});

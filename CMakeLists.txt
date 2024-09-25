@@ -29,6 +29,7 @@ endif ()
 
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(yaml-cpp)
+add_subdirectory(QtAwesome)
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -95,6 +96,7 @@ else()
     endif()
 endif()
 
+target_link_libraries(OceanEye PRIVATE QtAwesome)
 target_link_libraries(OceanEye PRIVATE yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

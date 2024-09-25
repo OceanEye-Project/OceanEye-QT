@@ -14,6 +14,9 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , videoSlicer(project)
 {
     ui->setupUi(this);
+    awesome = new fa::QtAwesome(this);
+    awesome->initFontAwesome();
+    ui->annotationNewBtn->setIcon(awesome->icon(fa::fa_solid, fa::fa_plus));
     
     // Set window size to match the primary screen
     QScreen* screen = QGuiApplication::primaryScreen();
@@ -26,15 +29,11 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     ui->dataTable->setFocusPolicy(Qt::NoFocus);
 
     // Set up annotation buttons and class combo box
-    mainImage.annotationEditBtn = ui->annotationEditBtn;
-    mainImage.annotationDeleteBtn = ui->annotationDeleteBtn;
     mainImage.annotationNewBtn = ui->annotationNewBtn;
     mainImage.annotationClassCombo = ui->annotationClassCombo;
-
+    
     // Connect annotation buttons to trigger repaint
-    connect(ui->annotationEditBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
     connect(ui->annotationNewBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
-    connect(ui->annotationDeleteBtn, &QPushButton::clicked, &mainImage, &AnnotatedImage::triggerRepaint);
 
     // Connect annotationsChanged signal to updateTable slot
     connect(&mainImage, &AnnotatedImage::annotationsChanged, this, &MainWindow::updateTable);
@@ -108,6 +107,17 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::updateImageUI);
     connect(&editMediaDialog, &EditMediaDialog::mediaChanged, this, &MainWindow::updateImageUI);
 
+    // next and previous image shortcuts
+    connect(
+        new QShortcut(QKeySequence(Qt::Key_Right), this), 
+        &QShortcut::activated, this, &MainWindow::navigateNext
+    );
+
+    connect(
+        new QShortcut(QKeySequence(Qt::Key_Left), this), 
+        &QShortcut::activated, this, &MainWindow::navigatePrevious
+    );
+
     // Populate annotation class combo box
     for (int i=0; i<model_classes.size();i++) {
         ui->annotationClassCombo->addItem(
@@ -125,19 +135,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event){
-    // Always handle left and right arrow keys for image navigation
-    if (event->key() == Qt::Key_Right) {
-        navigateNext();
-        event->accept();  // Stop event propagation
-    } else if (event->key() == Qt::Key_Left) {
-        navigatePrevious();
-        event->accept();  // Stop event propagation
-    } else {
-        // Let the base class handle other keys
-        QMainWindow::keyPressEvent(event);
-    }
-}
+// void MainWindow::keyPressEvent(QKeyEvent *event){
+//     // Always handle left and right arrow keys for image navigation
+//     if (event->key() == Qt::Key_Right) {
+//         navigateNext();
+//         event->accept();  // Stop event propagation
+//     } else if (event->key() == Qt::Key_Left) {
+//         navigatePrevious();
+//         event->accept();  // Stop event propagation
+//     } else {
+//         // Let the base class handle other keys
+//         QMainWindow::keyPressEvent(event);
+//     }
+// }
 
 void MainWindow::navigateNext()
 {
