@@ -138,10 +138,30 @@ if (WIN32)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake" @ONLY)
 
     set(CPACK_PRE_BUILD_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake)
+
+    set(CPACK_GENERATOR "IFW")
+endif ()
+
+if (APPLE)    
+    install(CODE "
+    include(BundleUtilities)
+    fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/OceanEye.app\" \"\" \"${OpenCV_DIR}\")
+    " COMPONENT Runtime)
+
+    # add_custom_command(TARGET OceanEye POST_BUILD
+    #     COMMAND ${CMAKE_COMMAND} -E copy_directory
+    #     ${CMAKE_SOURCE_DIR}/resources
+    #     $<TARGET_FILE_DIR:OceanEye>/../Resources)
+
+    set_target_properties(OceanEye PROPERTIES
+            INSTALL_RPATH @executable_path/../Frameworks
+            RESOURCE "${SHARED_STATIC_ASSETS}")
+
+    set(CPACK_GENERATOR "DragNDrop")
 endif ()
 
 # TO CREATE INSTALLER RUN COMMANDS IN THIS ORDER
-# cmake -- build . --target all
+# cmake --build . --target all
 # cmake  --build  . --target install
 # cmake --build . --target package
 
@@ -151,7 +171,6 @@ endif ()
 install(TARGETS OceanEye DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${COMPONENT_NAME_MAIN})
 
 include(InstallRequiredSystemLibraries)
-set(CPACK_GENERATOR "IFW")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_MONOLITHIC_INSTALL TRUE)
