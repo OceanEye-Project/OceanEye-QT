@@ -130,6 +130,7 @@ if (WIN32)
     install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
     install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
     install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
+    install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
