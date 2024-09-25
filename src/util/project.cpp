@@ -148,9 +148,8 @@ bool Project::runDetection(const QString imagePath) {
 }
 
 void Project::runSpecificDetection(const QString imagePath, const QList<QListWidgetItem *> classTypes) {
-
     try{
-        std::__1::vector<Annotation> specificAnnotations = {};
+        std::vector<Annotation> specificAnnotations = {};
         std::set<QString> classTypesSet = {};
         if (!isModelLoaded()) {
             qWarning() << "Attempted detection without model loaded.";

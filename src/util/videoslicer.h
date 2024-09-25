@@ -19,7 +19,7 @@ class VideoSlicer : public QObject
 
 public:
     explicit VideoSlicer(std::shared_ptr<Project>& project);
-    QFuture<std::__1::vector<QString>> slice(QStringList videos);
+    QFuture<std::vector<QString>> slice(QStringList videos);
 
 signals:
     void updateProgress(int value);
