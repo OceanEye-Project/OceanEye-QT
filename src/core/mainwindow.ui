@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>819</height>
+    <height>856</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,40 +82,14 @@
                  <property name="title">
                   <string>Annotations</string>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_6">
-                  <item>
-                   <widget class="QPushButton" name="annotationEditBtn">
-                    <property name="text">
-                     <string>Edit</string>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
+                 <layout class="QVBoxLayout" name="verticalLayout">
                   <item>
                    <widget class="QPushButton" name="annotationNewBtn">
+                    <property name="toolTipDuration">
+                     <number>-4</number>
+                    </property>
                     <property name="text">
-                     <string>New</string>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="annotationDeleteBtn">
-                    <property name="text">
-                     <string>Delete</string>
+                     <string>New Annotation</string>
                     </property>
                     <property name="checkable">
                      <bool>true</bool>
@@ -376,7 +350,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">
