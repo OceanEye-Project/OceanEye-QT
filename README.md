@@ -13,7 +13,7 @@ OceanEye is a C++ desktop application built with Qt for computer aided image ann
 
 ### Application Guide
 
-1. First-time startup will take you on the project launcher. You should see a page:
+1. First-time startup will take you to the project launcher. You should see a page:
 
     ![Startup view of the application](example_images/startup.png)
 
