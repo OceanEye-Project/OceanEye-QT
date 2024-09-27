@@ -285,7 +285,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Image annotation software for academics</string>
+           <string>Image annotation software for everyone</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
