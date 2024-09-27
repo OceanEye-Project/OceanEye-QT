@@ -23,6 +23,7 @@ public:
     void loadModel(QString file);
     DetectOptions detectOptionsDialog;
 signals:
+    void updateModelConfSlider();
     void updateImageUI();
 };
 
