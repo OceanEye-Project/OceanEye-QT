@@ -11,6 +11,8 @@
 #include <opencv2/dnn.hpp>
 #include <QString>
 #include <QRect>
+#include <QShortcut>
+
 
 struct Annotation {
     int classId;

@@ -9,6 +9,7 @@
 ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     : QWidget{}
     , currentProject{project}
+    , detectOptionsDialog{project}
 {
     // Main layout for the entire window
     QVBoxLayout* mainLayout = new QVBoxLayout();
@@ -30,6 +31,10 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     settingsGroupBox->setLayout(settingsLayout);
     mainLayout->addWidget(settingsGroupBox);
 
+    QPushButton* detectOptionsButton = new QPushButton("Specify Detections", this);
+    settingsLayout->addRow(detectOptionsButton);
+    connect(detectOptionsButton, &QPushButton::clicked, &detectOptionsDialog, &DetectOptions::show);
+
     QSettings& settings {currentProject->settings};
     QLabel* settingsPathLabel = new QLabel(settings.fileName());
     settingsPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -49,6 +54,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     for (auto& setting : defaultProjectSettings) {
         if (!settings.contains(setting.key))
             settings.setValue(setting.key, setting.defaultValue);
+        if(setting.key.compare("Model Path") == 0) continue; // Skip over Model Path setting because we've already have a button for it
 
         switch (setting.defaultValue.typeId()) {
             case QMetaType::Int: {
@@ -77,7 +83,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 settingsLayout->addRow(setting.key, box);
                 break;
             }
-            case QMetaType::QString: {
+             case QMetaType::QString: {
                 QLineEdit* box = new QLineEdit();
                 box->setText(settings.value(setting.key).toString());
                 widgetMap[setting.key] = box;  // Store the widget
@@ -102,6 +108,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     // Apply button clicked signal
     connect(applyButton, &QPushButton::clicked, this, [this, &settings, widgetMap, mainLayout]() {
         for (auto& setting : defaultProjectSettings) {
+            if(setting.key.compare("Model Path") == 0) continue; // Skip over Model Path setting because it has a separate process
             QWidget* widget = widgetMap.at(setting.key);
             QVariant newValue;
 

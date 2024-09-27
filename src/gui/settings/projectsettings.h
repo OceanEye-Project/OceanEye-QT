@@ -12,6 +12,7 @@
 
 #include "../../util/project.h"
 #include "../../util/settings.h"
+#include "../../core/detectoptions.h"
 
 class ProjectSettings : public QWidget
 {
@@ -20,6 +21,7 @@ public:
     explicit ProjectSettings(std::shared_ptr<Project>& project);
     std::shared_ptr<Project>& currentProject;
     void loadModel(QString file);
+    DetectOptions detectOptionsDialog;
 signals:
     void updateModelConfSlider();
     void updateImageUI();
