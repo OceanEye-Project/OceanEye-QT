@@ -79,6 +79,7 @@ bool readSettings(QIODevice& device, QSettings::SettingsMap& map) {
         return true;
     } catch (std::exception& e) {
         qWarning() << "Exception when parsing YAML config file:" << e.what();
+        qErrnoWarning("Exception when parsing YAML config file. Check error logs for more information");
         return false;
     }
 }
@@ -185,6 +186,7 @@ bool writeSettings(QIODevice& device, const QSettings::SettingsMap& map) {
         return true;
     } catch (std::exception& e) {
         qWarning() << "Exception when writing YAML config file:" << e.what();
+        qErrnoWarning("Exception when writing YAML config file. Check error logs for more information");
         return false;
     }
 }
