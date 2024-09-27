@@ -231,6 +231,7 @@ void YOLOv8::loadOnnxNetwork() {
         net = cv::dnn::readNetFromONNX(modelPath);
     } catch (const cv::Exception &e) {
         qCritical() << "Error loading the ONNX model: " << QString::fromStdString(e.what()); 
+        qErrnoWarning("Error loading the ONNX model. Check error logs for more information");
         loaded = false;
         return;
     }

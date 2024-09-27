@@ -54,6 +54,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     for (auto& setting : defaultProjectSettings) {
         if (!settings.contains(setting.key))
             settings.setValue(setting.key, setting.defaultValue);
+        if(setting.key.compare("Model Path") == 0) continue; // Skip over Model Path setting because we've already have a button for it
 
         switch (setting.defaultValue.typeId()) {
             case QMetaType::Int: {
@@ -81,7 +82,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 settingsLayout->addRow(setting.key, box);
                 break;
             }
-            case QMetaType::QString: {
+             case QMetaType::QString: {
                 QLineEdit* box = new QLineEdit();
                 box->setText(settings.value(setting.key).toString());
                 widgetMap[setting.key] = box;  // Store the widget
@@ -106,6 +107,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     // Apply button clicked signal
     connect(applyButton, &QPushButton::clicked, this, [this, &settings, widgetMap, mainLayout]() {
         for (auto& setting : defaultProjectSettings) {
+            if(setting.key.compare("Model Path") == 0) continue; // Skip over Model Path setting because it has a separate process
             QWidget* widget = widgetMap.at(setting.key);
             QVariant newValue;
 

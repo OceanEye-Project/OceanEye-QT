@@ -55,6 +55,7 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
         }catch(const std::exception &exec){
             qInfo() << "Error with project loading annotation.";
             qFatal() << "Error is: " << exec.what();
+            qErrnoWarning("Error with project loading annotation. Check error logs for more information");
         }
         
     }
@@ -119,6 +120,7 @@ void Project::loadModel(const QString modelPath) {
     }catch(const std::exception &exec){
         qInfo() << "Error with project loading model.";
         qFatal() << "Error is: " << exec.what();
+        qErrnoWarning("Error with project loading model. Check error logs for more information");
     }
 
    
@@ -143,6 +145,7 @@ bool Project::runDetection(const QString imagePath) {
     }catch(const std::exception &exec){
         qInfo() << "Error running upload detection.";
         qFatal() << "Error is: " << exec.what();
+        qErrnoWarning("Error running upload detection. Check error logs for more information");
     }
     return false;
 }
@@ -177,6 +180,7 @@ void Project::runSpecificDetection(const QString imagePath, const QList<QListWid
     }catch(const std::exception &exec){
         qInfo() << "Error running specific detection.";
         qFatal() << "Error is: " << exec.what();
+        qErrnoWarning("Error running specifc detection. Check error logs for more information");
     }
 }
 
@@ -199,6 +203,7 @@ void Project::saveMedia() {
     }catch(const std::exception &exec){
         qInfo() << "Error saving media.";
         qWarning() << "Error is: " << exec.what();
+        qErrnoWarning("Error saving media. Check error logs for more information");
     }
 }
 
@@ -220,6 +225,7 @@ void Project::loadMedia() {
     }catch(const std::exception &exec){
         qInfo() << "Error loading media.";
         qFatal() << "Error is: " << exec.what();
+        qErrnoWarning("Error loading media. Check error logs for more information");
     }
 }
 
