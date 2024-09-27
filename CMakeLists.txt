@@ -29,6 +29,7 @@ endif ()
 
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(yaml-cpp)
+set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(QtAwesome)
 
 set(PROJECT_SOURCES
@@ -189,6 +190,12 @@ set(CPACK_IFW_PACKAGE_TITLE "OceanEye")
 set(CPACK_IFW_PACKAGE_PUBLISHER "SOLIDS Lab, UVic")
 set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Aero")
 set(CPACK_IFW_PACKAGE_MAINTENANCE_TOOL_NAME "OceanEye Configuration")
+set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT "${CMAKE_SOURCE_DIR}/packages/com.oceaneye.root/installscript.qs")
+
+set (CPACK_IFW_PACKAGE_START_MENU_DIRECTORY "OceanEye")
+set (CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
+set (CPACK_IFW_ADMIN_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
+
 # set(CPACK_IFW_PACKAGE_RUN_PROGRAM "@TargetDir@/OceanEye")
 # set(CPACK_IFW_PACKAGE_RUN_PROGRAM_DESCRIPTION "Start OceanEye")
 # set(CPACK_IFW_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/ScreenPlay/assets/icons/app.ico")
