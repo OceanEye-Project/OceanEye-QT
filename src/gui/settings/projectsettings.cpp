@@ -64,6 +64,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 box->setValue(settings.value(setting.key).toInt());
                 widgetMap[setting.key] = box;  // Store the widget
                 settingsLayout->addRow(setting.key, box);
+                // Update model conf slider
                 break;
             }
             case QMetaType::Double: {
@@ -115,6 +116,7 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
                 case QMetaType::Int:
                     newValue = dynamic_cast<QSpinBox*>(widget)->value();
                     currentProject->setModelConf(newValue.toInt());
+                    updateModelConfSlider();
                     break;
                 case QMetaType::Double:
                     newValue = dynamic_cast<QDoubleSpinBox*>(widget)->value();
