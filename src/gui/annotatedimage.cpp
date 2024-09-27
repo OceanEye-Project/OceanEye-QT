@@ -255,7 +255,7 @@ void AnnotatedImage::mousePressEvent(QMouseEvent* event) {
         repaint();
 
         return;
-    } 
+    }
 
     QPointF imageMousePos = worldToImageTransform.map(mousePos);
 
@@ -284,6 +284,9 @@ void AnnotatedImage::mousePressEvent(QMouseEvent* event) {
 }
 
 void AnnotatedImage::mouseReleaseEvent(QMouseEvent* event) {
+    if (currentProject->media.empty())
+        return;
+
     if (selectedHandle) {
         selectedHandle = nullptr;
     }

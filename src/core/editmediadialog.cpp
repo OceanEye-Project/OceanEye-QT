@@ -57,8 +57,8 @@ void EditMediaDialog::loadMoreMedia() {
     int start = loadedItems;
     int end = std::min(start + itemsPerLoad, static_cast<int>(currentProject->media.size()));
 
-    for (int i = start; i < end; ++i) {
-        auto& file = currentProject->media.at(i);
+    for (int i = start; i < end; i++) {
+            auto& file = currentProject->media.at(i);
 
         ImageThumbnail* thumbnail = new ImageThumbnail();
         thumbnail->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -85,11 +85,11 @@ void EditMediaDialog::loadMoreMedia() {
 
 
 void EditMediaDialog::setPreview(int idx) {
-    QString path = currentProject->media.at(idx);
-    previewPixmap.load(path);
-    ui->mediaPreview->setPixmap(previewPixmap);
+     QString path = currentProject->media.at(idx);
+        previewPixmap.load(path);
+        ui->mediaPreview->setPixmap(previewPixmap);
 
-    ui->mediaPath->setText(path);
+        ui->mediaPath->setText(path);
 }
 
 void EditMediaDialog::onScroll(int value) {
@@ -108,8 +108,8 @@ void EditMediaDialog::onScroll(int value) {
 
 void EditMediaDialog::removeSelected() {
     for (auto it = selectedImages.begin(); it != selectedImages.end(); ++it) {
-        currentProject->media.at(it->first) = currentProject->media.back();
-        currentProject->media.pop_back();
+            currentProject->media.at(it->first) = currentProject->media.back();
+            currentProject->media.pop_back();
         it->second->setParent(nullptr);
         delete it->second;
     }
