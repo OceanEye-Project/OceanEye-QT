@@ -168,6 +168,9 @@ void MainWindow::navigatePrevious()
 }
 
 void MainWindow::updateTable() {
+    if (currentProject->media.empty())
+        return;
+
     // Update project annotations
     currentProject->setAnnotation(currentProject->media.at(currentImg), mainImage.annotations);
 
