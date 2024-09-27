@@ -63,12 +63,21 @@ OceanEye is a C++ desktop application built with Qt for computer aided image ann
 
 5. __Exporting Data__ 
 
-- Data can be exported in desired format by navigating to `Export` in the top left, then selecting the desired data format and grouping.
+    - Data can be exported in desired format by navigating to `Export` in the top left, then selecting the desired data format and grouping.
 
 
-6. __In case of application error or crash...__
+6. __Keyboard Shortcuts__
 
-- Please create an issue under the "Issues" tab on this repository that clearly explains the problem and the actions that led to the error, providing the contents of log.txt at the time of error. Any information you can provide about your system helps!
+    - Add new annotation of the same type as previous annotation: `N` 
+    - When an annotation is selected, `space` may be used to cycle between classes
+    - When an annotation is selected, `delete` or `backspace` may be used to remove annotations
+    - When in the process of creating an annotation, `esc` may be used to cancel annotation creation
+    - `R` may be used to reset the position of the image
+
+
+7. __In case of application error or crash...__
+
+    - Please create an issue under the "Issues" tab on this repository that clearly explains the problem and the actions that led to the error, providing the contents of log.txt at the time of error. Any information you can provide about your system helps!
 
 ## Developer Guide
 
