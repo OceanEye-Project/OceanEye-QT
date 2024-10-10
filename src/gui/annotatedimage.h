@@ -47,10 +47,10 @@ class AnnotatedImage : public QWidget
     QRect target {};
     bool mouseWasPressed {false};
     std::shared_ptr<AnnotationHandle> selectedHandle {nullptr};
-    int selectedAnnotation {-1};
     QTransform worldToImageTransform {};
 
 public:
+    int selectedAnnotation {-1};
     QPushButton* annotationNewBtn;
     QComboBox* annotationClassCombo;
 
@@ -63,7 +63,6 @@ public:
         );
 
     void triggerRepaint();
-
 
 public slots:
     void resizeEvent(QResizeEvent* event) override;
