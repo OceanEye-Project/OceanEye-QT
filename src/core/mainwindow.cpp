@@ -310,7 +310,6 @@ void MainWindow::handleTableClick(const QModelIndex &index) {
     QString confidence = model->data(model->index(row, 1)).toString();  // Assuming second column is "Confidence"
 
     // Print the row data using qDebug()
-    qDebug() << "Row clicked:" << row << ", Class:" << className << ", Confidence:" << confidence;
     mainImage.selectedAnnotation = row;
     mainImage.triggerRepaint();
 }
