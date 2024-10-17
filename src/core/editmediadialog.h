@@ -44,6 +44,7 @@ class EditMediaDialog : public QWidget
     
     void removeSelected();
     void removeAll();
+    void deleteImageAndAnnotation(QString imageFilename, QString annotationFilename);
     void clearSelection();
     void refreshMedia();
     void setPreview(int idx);
