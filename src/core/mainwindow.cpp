@@ -72,6 +72,9 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
         ui->modelConfSlider->setValue(project->settings.value("Model Confidence").toInt());
     });
 
+    // Connect the clicked signal of the data table to a custom slot
+    connect(ui->dataTable, &QTableView::clicked, this, &MainWindow::handleTableClick);
+
 
     // Connect image navigation buttons
     connect(ui->imgPrevBtn, &QPushButton::clicked, this, &MainWindow::navigatePrevious);
@@ -293,4 +296,16 @@ void MainWindow::addMedia(QStringList files) {
 void MainWindow::doneSlicing() {
     // This method could be called when video slicing is complete
     // It's currently empty, but could be used to update UI or perform other actions
+}
+
+void MainWindow::handleTableClick(const QModelIndex &index) {
+    // Check if the index is valid
+    if (!index.isValid()) return;
+
+    // Get the row of the clicked item
+    int row = index.row();
+
+    // Print the row data using qDebug()
+    mainImage.selectedAnnotation = row;
+    mainImage.triggerRepaint();
 }

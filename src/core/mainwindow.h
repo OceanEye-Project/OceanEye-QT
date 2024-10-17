@@ -67,7 +67,10 @@ private:
     Ui::MainWindow *ui;
     // For Icons
     fa::QtAwesome* awesome;
-    
+
+    // Method for highlighting annotation when a row in the table is clicked
+    void handleTableClick(const QModelIndex &index);
+
     // Method for adding media files to the project
     void addMedia(QStringList files = {});
 
