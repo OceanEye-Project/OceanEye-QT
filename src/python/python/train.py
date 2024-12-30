@@ -1,4 +1,6 @@
+import ultralytics
 
 def run():
-    print("hello from train.py")
+    ultralytics.utils.checks.check_yolo()
+    # print("hello from train.py")
     
