@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "../util/project.h"
 #include "../gui/settings/globalsettings.h"
+#include "../python/python.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -20,6 +20,8 @@ set(CPACK_GENERATOR "IFW")
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
 
+add_subdirectory(pybind11)
+
 if (WIN32)
     # you can put your own install path, or add OpenCV to the global path if you really want
     find_package(OpenCV REQUIRED PATHS "C:/opencv/build")
@@ -54,6 +56,8 @@ set(PROJECT_SOURCES
     src/gui/settings/globalsettings.h src/gui/settings/globalsettings.cpp
     src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
+
+    src/python/python.h src/python/python.cpp
 
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
@@ -99,6 +103,7 @@ endif()
 
 target_link_libraries(OceanEye PRIVATE QtAwesome)
 target_link_libraries(OceanEye PRIVATE yaml-cpp)
+target_link_libraries(OceanEye PRIVATE pybind11::embed)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
@@ -162,6 +167,11 @@ if (APPLE)
 
     set(CPACK_GENERATOR "DragNDrop")
 endif ()
+
+add_custom_command(TARGET OceanEye POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/src/python/python"
+        $<TARGET_FILE_DIR:OceanEye>/python)
 
 # TO CREATE INSTALLER RUN COMMANDS IN THIS ORDER
 # cmake --build . --target all
