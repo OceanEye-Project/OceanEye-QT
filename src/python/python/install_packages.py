@@ -12,16 +12,16 @@ def ls():
     # run `pip list` to list all installed packages
     print("Listing installed packages")
     # convert to multiprocessing:
-    subprocess.run(['ls'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run([sys.executable, "-m", "pip", "list"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def main():
     # print(sys.argv)
     # print(sys.path)
     sys.argv = [sys.path[-1]]
-    multiprocessing.set_executable(os.path.join(sys.exec_prefix, 'bin', 'python3'))
-    sys.executable = os.path.join(sys.exec_prefix, 'bin', 'python3')
+    multiprocessing.set_executable(os.path.join(sys.exec_prefix, 'pythonw.exe'))
+    sys.executable = os.path.join(sys.exec_prefix, 'pythonw.exe')
     # print(sys.executable)
-    # print(sys.exec_prefix)
+    print(sys.exec_prefix)
     # print(os.
-    # ls()
-    install("ultralytics")
+    ls()
+    # install("ultralytics")

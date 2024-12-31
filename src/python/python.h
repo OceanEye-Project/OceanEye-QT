@@ -4,6 +4,7 @@
 // python and QT both use the macro "slots"
 #pragma push_macro("slots")
 #undef slots
+#include <Python.h>
 #include <pybind11/embed.h>
 #pragma pop_macro("slots")
 

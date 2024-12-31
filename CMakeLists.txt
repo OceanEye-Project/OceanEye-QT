@@ -20,7 +20,29 @@ set(CPACK_GENERATOR "IFW")
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
 
+# set(PYTHON_EXECUTABLE "${CMAKE_SOURCE_DIR}/python3.12-embed/python.exe")
+# set(PYTHON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/python3.12-embed/Include")
+
+set(CPYTHON_BUILD_TYPE Release)
+add_subdirectory(cpython)
+
+set(CPYTHON_STDLIB_DIR ${CMAKE_SOURCE_DIR}/cpython/Lib)
+
+set(CPYTHON_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/cpython/Include ${CMAKE_SOURCE_DIR}/libs/cpython)
+set(CPYTHON_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/cpython)
+set(CPYTHON_LIBRARY python3.12m)
+set(CPYTHON_BIN ${CMAKE_SOURCE_DIR}/libs/cpython/libpython3.12m.so)
+
+set(PYBIND11_TEST OFF)
+set(PYTHONLIBS_FOUND ON)
+set(PYTHON_MODULE_EXTENSION .lib)
+set(PYTHON_LIBRARY ${CMAKE_SOURCE_DIR}/cpython/PCBuild/win32/python312_d.lib)
+set(PYTHON_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/cpython/PCBuild/win32)
+
 add_subdirectory(pybind11)
+set(PYBIND_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/pybind11/include)
+
+link_directories(${CPYTHON_LIBRARY_DIR})
 
 if (WIN32)
     # you can put your own install path, or add OpenCV to the global path if you really want
@@ -29,9 +51,9 @@ else ()
     find_package(OpenCV REQUIRED)
 endif ()
 
-set(YAML_CPP_BUILD_TESTS OFF)
+set(YAML_CPP_BUILD_TESTS NO)
 add_subdirectory(yaml-cpp)
-set(YAML_CPP_BUILD_TESTS OFF)
+set(YAML_CPP_BUILD_TESTS NO)
 add_subdirectory(QtAwesome)
 
 set(PROJECT_SOURCES
@@ -81,6 +103,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         packages/com.oceaneye.root/package.xml
         src/resources/licence.txt
         src/resources/about.md
+        build/Desktop_Qt_6_8_1_MinGW_64_bit-Debug/python/get-pip.py
     )
     
 # Define target properties for Android with Qt 6 as:
@@ -133,12 +156,33 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(OceanEye)
 endif()
 
+
+
 if (WIN32)
+    cmake_path(GET CMAKE_C_COMPILER PARENT_PATH MINGW_BIN_DIR)
+    cmake_path(GET MINGW_BIN_DIR PARENT_PATH MINGW_DIR)
+
     install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
+    install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
+    install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
+    install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
     install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
+
+    # Copy Python DLL to the build folder if different
+    add_custom_command(
+      TARGET OceanEye
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND}
+      -E copy_if_different ${CPYTHON_BIN} $<TARGET_FILE_DIR:OceanEye>
+    )
+
+    # Copy the Python stdlib into the build folder (needed by the embedded python)
+    add_custom_command(
+      TARGET OceanEye
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND}
+      -E copy_directory ${CPYTHON_STDLIB_DIR} $<TARGET_FILE_DIR:OceanEye>/lib
+    )
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
