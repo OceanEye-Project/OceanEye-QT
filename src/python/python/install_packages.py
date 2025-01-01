@@ -8,20 +8,12 @@ def install(package):
     subprocess.run([sys.executable, "-m", "pip", "install", package], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(f"Installed {package}")
 
-def ls():
-    # run `pip list` to list all installed packages
-    print("Listing installed packages")
-    # convert to multiprocessing:
-    subprocess.run([sys.executable, "-m", "pip", "list"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def get_pip():
+    print(sys.executable)
+    subprocess.run([sys.executable, "get-pip.py"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def main():
-    # print(sys.argv)
-    # print(sys.path)
+def setup():
     sys.argv = [sys.path[-1]]
-    multiprocessing.set_executable(os.path.join(sys.exec_prefix, 'pythonw.exe'))
-    sys.executable = os.path.join(sys.exec_prefix, 'pythonw.exe')
-    # print(sys.executable)
-    print(sys.exec_prefix)
-    # print(os.
-    ls()
-    # install("ultralytics")
+    python_path = os.path.join(sys.path[-1], 'python3.12-embed')
+    multiprocessing.set_executable(os.path.join(python_path, 'python.exe'))
+    sys.executable = os.path.join(python_path, 'python.exe')

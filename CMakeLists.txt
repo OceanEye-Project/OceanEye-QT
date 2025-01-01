@@ -36,9 +36,9 @@ else ()
     find_package(OpenCV REQUIRED)
 endif ()
 
-set(YAML_CPP_BUILD_TESTS NO)
+set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(yaml-cpp)
-set(YAML_CPP_BUILD_TESTS NO)
+set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(QtAwesome)
 
 set(PROJECT_SOURCES
@@ -151,21 +151,6 @@ if (WIN32)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
     install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
-
-    add_custom_command(
-      TARGET ${PROJECT_NAME}
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND}
-      -E copy_if_different ${CPYTHON_BIN} $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-
-    # Copy the Python stdlib into the build folder (needed by the embedded python)
-    add_custom_command(
-      TARGET ${PROJECT_NAME}
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND}
-      -E copy_directory ${CPYTHON_STDLIB_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>/lib
-    )
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 

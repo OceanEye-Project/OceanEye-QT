@@ -29,13 +29,13 @@ void install_packages() {
 int run_python() {
     std::filesystem::path exeDir = QCoreApplication::applicationDirPath().toStdString();
 
-    auto pythonHome = (exeDir / "lib").string()
+    // auto pythonHome = (exeDir / "lib").string();
     // auto appHome = (exeDir / "lib").string()
 
-    Py_OptimizeFlag = 1;
-    Py_SetProgramName(L"OceanEye Helper");
-    Py_SetPath(pythonHome.c_str());
-    Py_SetPythonHome(pythonHome.c_str());
+    //Py_OptimizeFlag = 1;
+    //Py_SetProgramName(L"OceanEye Helper");
+    //Py_SetPath(pythonHome.c_str());
+    //Py_SetPythonHome(std::wstring(pythonHome).c_str());
 
     py::scoped_interpreter guard{}; // start the interpreter and keep it alive
 
@@ -49,10 +49,22 @@ int run_python() {
         py::module os = py::module::import("os");
         os.attr("chdir")((exeDir / "python").string());
 
-        //py::module ul = py::module::import("ultralytics");
+        py::module sys = py::module::import("sys");
+        sys.attr("path").attr("append")(exeDir.string());
 
-        py::module train = py::module::import("train");
-        py::object result = train.attr("run")();
+        py::module installer = py::module::import("install_packages");
+        installer.attr("setup")();
+        //installer.attr("get_pip")();
+        //installer.attr("install")("ultralytics");
+
+        py::exec(R"(
+            print("Installation Finished")
+        )");
+
+        py::module trainer = py::module::import("train");
+        trainer.attr("run_checks")();
+        // trainer.attr("train")();
+
     } catch (py::error_already_set & e) {
         std::cout << e.what() << std::endl;
     }
