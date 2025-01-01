@@ -24,8 +24,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
 
 set(PYBIND11_TEST OFF)
 
-add_subdirectory(pybind11)
-set(PYBIND_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/pybind11/include)
+add_subdirectory(external/pybind11)
+set(PYBIND_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/pybind11/include)
 
 link_directories(${CPYTHON_LIBRARY_DIR})
 
@@ -37,9 +37,9 @@ else ()
 endif ()
 
 set(YAML_CPP_BUILD_TESTS OFF)
-add_subdirectory(yaml-cpp)
+add_subdirectory(external/yaml-cpp)
 set(YAML_CPP_BUILD_TESTS OFF)
-add_subdirectory(QtAwesome)
+add_subdirectory(external/QtAwesome)
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -151,6 +151,11 @@ if (WIN32)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
     install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
+
+    add_custom_command(TARGET OceanEye POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${PROJECT_SOURCE_DIR}/external/python3.12-embed"
+            $<TARGET_FILE_DIR:OceanEye>)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 

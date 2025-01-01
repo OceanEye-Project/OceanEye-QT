@@ -1,10 +1,10 @@
 [submodule "yaml-cpp"]
-	path = yaml-cpp
+	path = external/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
 [submodule "QtAwesome"]
-	path = QtAwesome
+	path = external/QtAwesome
 	url = https://github.com/gamecreature/QtAwesome.git
 [submodule "pybind11"]
-	path = pybind11
+	path = external/pybind11
 	url = https://github.com/pybind/pybind11.git
 	branch = stable
