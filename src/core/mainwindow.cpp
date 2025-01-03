@@ -8,6 +8,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , currentProject(project)
     , mainImage(project)
     , exportDialog(project)
+    , importDialog(project)
     , detectOptions(project)
     , editMediaDialog(project)
     , settingsDialog(project)
@@ -58,6 +59,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     });
 
     // Connect menu actions
+    connect(ui->actionImport, &QAction::triggered, &importDialog, &ImportDialog::show);
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);

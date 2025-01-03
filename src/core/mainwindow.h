@@ -19,6 +19,7 @@
 #include "../gui/settings/settings.h"
 #include "../util/project.h"
 #include "exportdialog.h"
+#include "importdialog.h"
 #include "editmediadialog.h"
 #include "detectoptions.h"
 #include "../util/videoslicer.h"
@@ -54,6 +55,8 @@ private:
     QStandardItemModel* model {new QStandardItemModel()};
     // Dialog for exporting project data
     ExportDialog exportDialog;
+    // Dialog for importing project data
+    ImportDialog importDialog;
     // Dialog for editing media files
     EditMediaDialog editMediaDialog;
     // Dialog for configuring detection options

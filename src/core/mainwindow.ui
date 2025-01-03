@@ -350,7 +350,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">
@@ -361,6 +361,7 @@
     <addaction name="actionEditMedia"/>
     <addaction name="actionSettings"/>
     <addaction name="actionOpenFile"/>
+    <addaction name="actionImport"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -439,6 +440,11 @@
   <action name="actionOpenFile">
    <property name="text">
     <string>Open File</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import</string>
    </property>
   </action>
  </widget>
