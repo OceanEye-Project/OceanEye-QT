@@ -46,7 +46,7 @@ set(PROJECT_SOURCES
 
     src/core/mainwindow.cpp src/core/mainwindow.h src/core/mainwindow.ui
     src/core/exportdialog.cpp src/core/exportdialog.h src/core/exportdialog.ui
-    src/core/importdialog.cpp src/core/importdialog.h
+    src/core/importdialog.cpp src/core/importdialog.h src/core/importdialog.ui
     src/core/editmediadialog.h src/core/editmediadialog.cpp src/core/editmedia.ui
     src/core/welcomewindow.cpp src/core/welcomewindow.h src/core/welcomewindow.ui
     src/core/detectoptions.h src/core/detectoptions.cpp src/core/detectoptions.ui
@@ -66,6 +66,7 @@ set(PROJECT_SOURCES
     src/util/logger.h src/util/logger.cpp
 
     src/python/python.h src/python/python.cpp
+    src/python/modeltrainer.h src/python/modeltrainer.cpp
 
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
@@ -90,6 +91,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/resources/licence.txt
         src/resources/about.md
         src/core/importdialog.ui
+        src/python/modeltrainer.h src/python/modeltrainer.cpp
     )
     
 # Define target properties for Android with Qt 6 as:

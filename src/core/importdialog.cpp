@@ -29,10 +29,15 @@ ImportDialog::ImportDialog(std::shared_ptr<Project>& project, QWidget *parent)
  * @param: None
  */
 void importCOCO(std::shared_ptr<Project>& currentProject) {
-    QString saveLocation = QFileDialog::getOpenFileName(nullptr, "Open COCO", "COCO Files (*.json)");
+    QString saveLocation = QFileDialog::getOpenFileName(nullptr, "Open COCO", "");
     if (saveLocation.isEmpty()) {
         return; // User canceled the save dialog
     }
+
+    std::filesystem::path rootDirectory = {
+        std::filesystem::path(saveLocation.toStdString()).parent_path()
+    };
+
 
     QFile inFile(saveLocation);
     inFile.open(QIODevice::ReadOnly|QIODevice::Text);
@@ -78,13 +83,13 @@ void importCOCO(std::shared_ptr<Project>& currentProject) {
         QJsonArray jsonBbox = annotation.toObject().value("bbox").toArray();
 
         QPoint boxCoords {
-            jsonBbox.at(0).toInt(),
-            jsonBbox.at(1).toInt()
+            jsonBbox.at(0).toDouble(),
+            jsonBbox.at(1).toDouble()
         };
 
         QSize boxSize {
-            jsonBbox.at(2).toInt(),
-            jsonBbox.at(3).toInt()
+            jsonBbox.at(2).toDouble(),
+            jsonBbox.at(3).toDouble()
         };
 
         QRect box {boxCoords, boxSize};
@@ -100,8 +105,11 @@ void importCOCO(std::shared_ptr<Project>& currentProject) {
     }
 
     for (auto const& [filename, annotations] : importedAnnotations) {
-        currentProject->media.push_back(filename);
-        currentProject->setAnnotation(filename, annotations);
+        QString filepath = QString::fromStdString(
+            (rootDirectory / filename.toStdString()).string()
+        );
+        currentProject->media.push_back(filepath);
+        currentProject->setAnnotation(filepath, annotations);
         currentProject->saveMedia();
     }
 }
@@ -115,11 +123,12 @@ void importCOCO(std::shared_ptr<Project>& currentProject) {
  * @param: None
  */
 void ImportDialog::doImport() {
+    // TODO multithread like videoslicer
     if (ui->formatCombo->currentText() == "COCO") {
         importCOCO(currentProject);
     }
 
-    // TODO emit signal to reload media
+    emit doneImport();
 }
 
 

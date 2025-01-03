@@ -183,6 +183,13 @@
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_3">
                     <item>
+                     <widget class="QPushButton" name="trainBtn">
+                      <property name="text">
+                       <string>Train</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QPushButton" name="detectBtn">
                       <property name="text">
                        <string>Detect</string>

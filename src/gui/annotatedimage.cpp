@@ -100,6 +100,10 @@ void AnnotatedImage::setImage(QString path) {
     emit annotationsChanged();
 
     pixmap = QPixmap(path);
+
+    if (pixmap.isNull()) {
+        std::cout << "Failed to load image: " << path.toStdString() << std::endl;
+    }
     zoom = 1;
     imagePos = {0, 0};
     setMargins();

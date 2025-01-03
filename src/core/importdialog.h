@@ -2,6 +2,7 @@
 #define IMPORTDIALOG_H
 
 #include <QComboBox>
+#include <QtConcurrent/QtConcurrent>
 #include <QHBoxLayout>
 #include <QDialog>
 #include "../util/project.h"
@@ -26,8 +27,8 @@ public:
 public slots:
     void doImport();
 
-
 signals:
+    void doneImport();
 };
 
 #endif // IMPORTDIALOG_H
