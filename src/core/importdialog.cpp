@@ -28,107 +28,82 @@ ImportDialog::ImportDialog(std::shared_ptr<Project>& project, QWidget *parent)
  * Options: All Data
  * @param: None
  */
-void importCOCO() {
-    QString saveLocation = QFileDialog::getSaveFileName(nullptr, "Save COCO", filename, "COCO Files (*.json)");
+void importCOCO(std::shared_ptr<Project>& currentProject) {
+    QString saveLocation = QFileDialog::getOpenFileName(nullptr, "Open COCO", "COCO Files (*.json)");
     if (saveLocation.isEmpty()) {
         return; // User canceled the save dialog
     }
 
-    /*
+    QFile inFile(saveLocation);
+    inFile.open(QIODevice::ReadOnly|QIODevice::Text);
+    QByteArray data = inFile.readAll();
+    inFile.close();
 
-    QJsonObject jsonData;
-    QJsonArray jsonAnnotations;
-    QJsonArray jsonImages;
-    QJsonArray categories;
+    QJsonParseError errorPtr;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
 
-    int current_image = 0;
-    int current_annotation = 0;
-
-    // Loop through annotations and create JSON objects
-    for (auto& [image, anns] : annotations) {
-
-        cv::Mat img = cv::imread(image.toStdString());
-
-        QJsonObject jsonImg;
-        jsonImg["id"] = ++current_image;
-        jsonImg["width"] = img.cols;
-        jsonImg["height"] = img.rows;
-        jsonImg["file_name"] = image;
-        jsonImg["license"] = 0;
-        jsonImg["date_captured"] = 0;
-        jsonImages.append(jsonImg);
-
-        for (auto& ann : anns) {
-            QJsonObject jsonAnn;
-            float area = ann.box.width() * ann.box.height();
-
-            QJsonArray bbox;
-            bbox.append(ann.box.x());
-            bbox.append(ann.box.y());
-            bbox.append(ann.box.width());
-            bbox.append(ann.box.height());
-
-            QJsonArray segmentation;
-
-            jsonAnn["id"] = current_annotation++;
-            jsonAnn["image_id"] = current_image;
-            jsonAnn["category_id"] = ann.classId;
-            jsonAnn["area"] =  ann.box.width() * ann.box.height();
-            jsonAnn["bbox"] = bbox;
-            jsonAnn["segmentation"] = segmentation;
-            jsonAnn["iscrowd"] = 0;
-            jsonAnnotations.append(jsonAnn);
-
-            // Check if category already exists, and add if not
-            bool categoryExists = false;
-            for (const auto& cat : categories) {
-                if (cat.toObject()["id"] == ann.classId) {
-                    categoryExists = true;
-                    break;
-                }
-            }
-
-            if (!categoryExists) {
-                QJsonObject category;
-                category["id"] = ann.classId;
-                category["name"] = ann.className;
-                category["supercategory"] = "";
-                categories.append(category);
-            }
-        }
+    if (doc.isNull()) {
+        qDebug() << "Parse failed";
     }
 
-    QJsonObject info;
-    info["year"] = QDate::currentDate().year();
-    info["version"] = "";
-    info["description"] = "";
-    info["contributor"] = "";
-    info["url"] = "";
-    info["date_created"] = QDate::currentDate().toString("yyyy-MM-dd");
+    QJsonObject rootObj = doc.object();
+    QJsonArray categoryArray = rootObj.value("categories").toArray();
+    QJsonArray imgArray = rootObj.value("images").toArray();
+    QJsonArray annotationArray = rootObj.value("annotations").toArray();
 
-    QJsonArray licenses;
-    QJsonObject license;
-    license["id"] = 0;
-    license["name"] = "";
-    license["url"] = "";
-    licenses.append(license);
+    std::map<int, QString> imageIds {};
+    std::map<int, QString> classMap {};
+    std::map<QString, std::vector<Annotation>> importedAnnotations {};
 
-    jsonData["categories"] = categories;
-    jsonData["info"] = info;
-    jsonData["licenses"] = licenses;
-    jsonData["images"] = jsonImages;
-    jsonData["annotations"] = jsonAnnotations;
+    foreach(const QJsonValue& category, categoryArray){
+        int id = category.toObject().value("id").toInt();
+        QString name = category.toObject().value("name").toString();
 
-    QJsonDocument jsonDoc(jsonData);
-    QFile jsonFile(saveLocation);
-    if (!jsonFile.open(QIODevice::WriteOnly)) {
-        return; // Failed to open file
+        classMap.insert({id, name});
     }
 
-    jsonFile.write(jsonDoc.toJson());
-    jsonFile.close();
+    foreach(const QJsonValue& image, imgArray){
+        int id = image.toObject().value("id").toInt();
+        QString fileName = image.toObject().value("file_name").toString();
+        imageIds.insert({id, fileName});
+        importedAnnotations.insert({fileName, {}});
+    }
 
-    */
+    foreach(const QJsonValue& annotation, annotationArray){
+        int imgId = annotation.toObject().value("image_id").toInt();
+        QString fileName = imageIds.at(imgId);
+
+        int classId = annotation.toObject().value("category_id").toInt();
+
+        QJsonArray jsonBbox = annotation.toObject().value("bbox").toArray();
+
+        QPoint boxCoords {
+            jsonBbox.at(0).toInt(),
+            jsonBbox.at(1).toInt()
+        };
+
+        QSize boxSize {
+            jsonBbox.at(2).toInt(),
+            jsonBbox.at(3).toInt()
+        };
+
+        QRect box {boxCoords, boxSize};
+
+        Annotation image_annotation {
+            classId,
+            classMap.at(classId),
+            1.0,
+            box
+        };
+
+        importedAnnotations.at(fileName).push_back(image_annotation);
+    }
+
+    for (auto const& [filename, annotations] : importedAnnotations) {
+        currentProject->media.push_back(filename);
+        currentProject->setAnnotation(filename, annotations);
+        currentProject->saveMedia();
+    }
 }
 
 /** Import Window
@@ -141,8 +116,10 @@ void importCOCO() {
  */
 void ImportDialog::doImport() {
     if (ui->formatCombo->currentText() == "COCO") {
-        importCOCO();
+        importCOCO(currentProject);
     }
+
+    // TODO emit signal to reload media
 }
 
 

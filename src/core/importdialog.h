@@ -24,7 +24,7 @@ public:
     explicit ImportDialog(std::shared_ptr<Project>& project, QWidget *parent = nullptr);
 
 public slots:
-    void doExport();
+    void doImport();
 
 
 signals:
