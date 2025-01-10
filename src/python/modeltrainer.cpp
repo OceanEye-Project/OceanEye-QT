@@ -19,6 +19,10 @@ void ModelTrainer::startTraining() {
     py::scoped_interpreter guard{}; // start the interpreter and keep it alive
 
     try {
+        py::exec(R"(
+            print("Starting Training")
+        )");
+
         // Disable build of __pycache__ folders
         py::exec(R"(
             import sys
@@ -32,7 +36,7 @@ void ModelTrainer::startTraining() {
         sys.attr("path").attr("append")(exeDir.string());
 
         py::module installer = py::module::import("install_packages");
-        installer.attr("setup")();
+        installer.attr("setup")(exeDir.string());
         //installer.attr("get_pip")();
         //installer.attr("install")("ultralytics");
 
@@ -42,11 +46,14 @@ void ModelTrainer::startTraining() {
 
         py::module trainer = py::module::import("train");
         trainer.attr("run_checks")();
-        trainer.attr("train")(project->projectPath.toStdString());
+
+        py::exec(R"(
+            print("Starting Training")
+        )");
+
+        trainer.attr("train")(currentProject->projectPath.toStdString());
 
     } catch (py::error_already_set & e) {
         std::cout << e.what() << std::endl;
     }
-
-    return 0;
 }

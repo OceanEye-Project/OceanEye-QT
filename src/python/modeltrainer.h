@@ -2,7 +2,10 @@
 #define MODELTRAINER_H
 
 #include <QObject>
+#include <QCoreApplication>
+#include <iostream>
 #include <filesystem>
+
 #include "project.h"
 
 // python and QT both use the macro "slots"

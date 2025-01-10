@@ -5,7 +5,7 @@ import yaml
 import json
 import random
 
-from custom_yolo import CustomDataset
+from custom_yolo import CustomTrainer
 from pathlib import Path
 
 def run_checks():
@@ -18,6 +18,7 @@ def train(project_dir):
     print("Starting model training......")
 
     training_dir = Path(project_dir) / "train"
+    training_dir.mkdir(parents=True, exist_ok=True)
     print(f"Training directory: {training_dir}")
 
     dataset_config_path = training_dir / "dataset.yaml"
@@ -35,7 +36,7 @@ def train(project_dir):
     split_files(training_dir, image_paths)
 
     # TODO class names
-    yolo_data = {f
+    yolo_data = {
         "path": "",
         "train": "train.txt",
         "test": "test.txt",
@@ -49,7 +50,6 @@ def train(project_dir):
     with open(dataset_config_path, 'w') as outfile:
         yaml.dump(yolo_data, outfile, default_flow_style=False)
 
-
     model = YOLO("yolo11n.pt")
 
     results = model.train(
@@ -57,9 +57,8 @@ def train(project_dir):
         project=str(training_dir),
         epochs=5,
         imgsz=640,
-        trainer=CustomDataset
+        trainer=CustomTrainer
     )
-
 
 def split_files(training_dir, image_paths, VALIDATE_SPLIT = 0.15, TEST_SPLIT = 0):
     # Create test/train/validation split

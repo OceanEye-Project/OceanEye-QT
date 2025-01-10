@@ -53,11 +53,12 @@ def verify_image_label(args):
 
             with open(lb_file) as f:
                 data = yaml.safe_load(f)
+
                 annotations = data.get("annotations", {})
                 size = annotations.get("size", 0)
 
                 for i in range(size):
-                    annotation = annotations.get(str(i + 1))
+                    annotation = annotations.get(i + 1)
 
                     if annotation is None:
                         continue
@@ -68,13 +69,14 @@ def verify_image_label(args):
                     width = annotation.get("w")
                     height = annotation.get("h")
 
-                    x /= im_height
-                    y /= im_width
-                    width /= im_height
-                    height /= im_width
+                    x /= im_width
+                    y /= im_height
+                    width /= im_width
+                    height /= im_height
 
-                    x += width / 2
-                    y += height / 2
+                    #TODO invesitgate if labels need this; causes out of bounds
+                    #x += width / 2
+                    #y += height / 2
 
                     lb.append([annotation_class, x, y, width, height])
 
@@ -113,8 +115,9 @@ def verify_image_label(args):
         return [None, None, None, None, None, nm, nf, ne, nc, msg]
 
 class CustomDataset(YOLODataset):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, hyp={}, **kwargs):
+        self.project = hyp.project
+        super().__init__(*args, hyp=hyp, **kwargs)
 
     def cache_labels(self, path=Path("./labels.cache")):
         """
@@ -186,17 +189,21 @@ class CustomDataset(YOLODataset):
     def get_labels(self):
         """Returns dictionary of labels for YOLO training."""
         self.label_files = [
-           str(Path(self.args.project).parent / Path(im_file).with_suffix(".yaml").name) for im_file in self.im_files
+           str(Path(self.project).parent / Path(im_file + ".yaml").name) for im_file in self.im_files
         ]
 
-        cache_path = Path(self.args.project) / "labels.cache"
+        cache_path = Path(self.project) / "labels.cache"
 
+        """
         try:
             cache, exists = load_dataset_cache_file(cache_path), True  # attempt to load a *.cache file
             assert cache["version"] == DATASET_CACHE_VERSION  # matches current version
             assert cache["hash"] == get_hash(self.label_files + self.im_files)  # identical hash
         except (FileNotFoundError, AssertionError, AttributeError):
             cache, exists = self.cache_labels(cache_path), False  # run cache ops
+        """
+
+        cache, exists = self.cache_labels(cache_path), False  # run cache ops
 
         # Display cache
         nf, nm, ne, nc, n = cache.pop("results")  # found, missing, empty, corrupt, total
@@ -210,7 +217,7 @@ class CustomDataset(YOLODataset):
         [cache.pop(k) for k in ("hash", "version", "msgs")]  # remove items
         labels = cache["labels"]
         if not labels:
-            LOGGER.warning(f"WARNING ⚠️ No images found in {cache_path}, training may not work correctly. {HELP_URL}")
+            LOGGER.warning(f"WARNING ⚠️ No images found in {cache_path}, training may not work correctly.")
         self.im_files = [lb["im_file"] for lb in labels]  # update im_files
 
         # Check if the dataset is all boxes or all segments
@@ -225,7 +232,7 @@ class CustomDataset(YOLODataset):
             for lb in labels:
                 lb["segments"] = []
         if len_cls == 0:
-            LOGGER.warning(f"WARNING ⚠️ No labels found in {cache_path}, training may not work correctly. {HELP_URL}")
+            LOGGER.warning(f"WARNING ⚠️ No labels found in {cache_path}, training may not work correctly.")
         return labels
 
 class CustomTrainer(DetectionTrainer):
