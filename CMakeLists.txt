@@ -38,7 +38,9 @@ endif ()
 
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(external/yaml-cpp)
+set_target_properties(yaml-cpp PROPERTIES COMPILE_FLAGS "-w")
 set(YAML_CPP_BUILD_TESTS OFF)
+
 add_subdirectory(external/QtAwesome)
 
 set(PROJECT_SOURCES
@@ -65,7 +67,6 @@ set(PROJECT_SOURCES
     src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
 
-    src/python/python.h src/python/python.cpp
     src/python/modeltrainer.h src/python/modeltrainer.cpp
 
     src/resources/resources.qrc

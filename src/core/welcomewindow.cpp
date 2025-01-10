@@ -14,13 +14,6 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     ui->settingsBtn->setProperty("type", "welcomeWindowButton");
     ui->aboutBtn->setProperty("type", "welcomeWindowButton");
 
-    QPushButton* pythonBtn = new QPushButton("Run Python");
-    pythonBtn->setProperty("type", "welcomeWindowButton");
-    ui->groupBox->layout()->addWidget(pythonBtn);
-    connect(pythonBtn, &QPushButton::clicked, this, [this]() {
-        run_python();
-    });
-
     connect(ui->openProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     connect(ui->openProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     connect(ui->lineEdit, &QLineEdit::textChanged, [this]() {
