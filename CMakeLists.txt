@@ -92,6 +92,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/resources/about.md
         src/core/importdialog.ui
         src/python/modeltrainer.h src/python/modeltrainer.cpp
+        src/python/python/custom_yolo.py
     )
     
 # Define target properties for Android with Qt 6 as:

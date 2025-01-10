@@ -5,66 +5,110 @@ import yaml
 import json
 import random
 
+from custom_yolo import CustomDataset
+from pathlib import Path
+
 def run_checks():
     # TODO maybe some other things
     ultralytics.checks()
 
 
-def train():
-    COCO_JSON = '/kaggle/input/urchin/dataset.json'
-    ANNOTATIONS_DIR = 'datasets'
-    VALIDATE_SPLIT = 0.15
-    TEST_SPLIT = 0
-    TRAIN_SPLIT = 1 - TEST_SPLIT - VALIDATE_SPLIT
-    BACKGROUND_PERCENT = 0.1
 
-    # YOLO config file
-    coco_data = None
-    with open(COCO_JSON, "r") as file:
-        coco_data = json.load(file)
+def train(project_dir):
+    print("Starting model training......")
 
+    training_dir = Path(project_dir) / "train"
+    print(f"Training directory: {training_dir}")
+
+    dataset_config_path = training_dir / "dataset.yaml"
+
+    image_paths = []
+    with open(Path(project_dir) / "oceaneye_project_settings.yaml", "r") as file:
+        data = yaml.safe_load(file)
+
+        for i in range(data["media"]["size"]):
+            image_paths.append(
+                data["media"][i+1]["path"]
+            )
+
+    print(f"Found {len(image_paths)} images....")
+    split_files(training_dir, image_paths)
+
+    # TODO class names
     yolo_data = {f
         "path": "",
         "train": "train.txt",
         "test": "test.txt",
         "val": "val.txt",
-        "names": dict((int(key["id"]) - 1, key["name"]) for key in coco_data["categories"])
+        "names": {
+            0: "Sea Urchin",
+            1: "Sea Star"
+        }
     }
 
-    with open('data.yaml', 'w') as outfile:
+    with open(dataset_config_path, 'w') as outfile:
         yaml.dump(yolo_data, outfile, default_flow_style=False)
 
-    # Extract data from COCO JSON
-    data = {}
-    for image in coco_data["images"]:
-        data[image["id"]] = {
-            "name": ".".join(image["file_name"].split(".")[:-1]),
-            "width": image["width"],
-            "height": image["height"],
-            "annotations": []
-        }
-
-    for annotation in coco_data["annotations"]:
-        image = data[annotation["image_id"]]
-        box = annotation["bbox"]
-        box[0] /= image["width"]
-        box[1] /= image["height"]
-        box[2] /= image["width"]
-        box[3] /= image["height"]
-
-        box[0] += box[2] / 2
-        box[1] += box[3] / 2
-
-        image["annotations"].append({
-            "type": int(annotation["category_id"]) - 1,
-            "box": box
-        })
-
-    # Write annotation files in YOLO format
-    for image in data.values():
-        with open(f"{ANNOTATIONS_DIR}/labels/{image['name']}.txt", "w") as file:
-            file.write("\n".join(
-                f"{a['type']} {a['box'][0]} {a['box'][1]} {a['box'][2]} {a['box'][3]}" for a in image["annotations"]))
 
     model = YOLO("yolo11n.pt")
-    results = model.train(data="coco8.yaml", epochs=5, imgsz=640)
+
+    results = model.train(
+        data=str(dataset_config_path),
+        project=str(training_dir),
+        epochs=5,
+        imgsz=640,
+        trainer=CustomDataset
+    )
+
+
+def split_files(training_dir, image_paths, VALIDATE_SPLIT = 0.15, TEST_SPLIT = 0):
+    # Create test/train/validation split
+    print("Creating test/train/validation split......")
+    TRAIN_SPLIT = 1 - TEST_SPLIT - VALIDATE_SPLIT
+
+    files = image_paths.copy()
+    random.shuffle(files)
+
+    # TODO
+    """
+    BACKGROUND_PERCENT = 0.1
+
+    background_images = list(os.listdir(f"{ANNOTATIONS_DIR}/background/"))
+    requested_background_images = int(BACKGROUND_PERCENT * len(data.values()))
+    background_images_to_remove = len(background_images) - requested_background_images
+
+    print(f"removing {background_images_to_remove} background images")
+    print(len(filenames))
+    while background_images_to_remove > 0:
+        for file in filenames:
+            if file+'.jpg' in background_images:
+                filenames.remove(file)
+                break
+        else:
+            break
+
+    """
+
+    """
+    files = []
+    for f in images:
+        if f + '.jpg' in background_images:
+            files.append((f, 'background'))
+        else:
+            files.append((f, 'images'))
+    """
+
+    index = lambda s: int((len(files) + 1) * s)
+
+    train_data = files[:index(TRAIN_SPLIT)]
+    test_data = files[index(TRAIN_SPLIT):index(TRAIN_SPLIT + TEST_SPLIT)]
+    validate_data = files[index(TRAIN_SPLIT + TEST_SPLIT):]
+
+    with open(training_dir / "train.txt", "w") as file:
+        file.write("\n".join(train_data))
+
+    with open(training_dir / "test.txt", "w") as file:
+        file.write("\n".join(test_data))
+
+    with open(training_dir / "val.txt", "w") as file:
+        file.write("\n".join(validate_data))
