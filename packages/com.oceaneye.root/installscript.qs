@@ -5,19 +5,10 @@ function Component()
 
 Component.prototype.createOperations = function()
 {
-    try {
-        // call the base create operations function
-        console.log("BEGIN");
-        component.createOperations();
-        console.log("START");
-    } catch (e) {
-        console.log(e);
-    }
+    component.createOperations();
 
     if (systemInfo.productType === "windows") {
-        console.log("CREATE SHORTCUT");
-        component.addOperation("CreateShortcut", "@TargetDir@/OceanEye.exe", "@StartMenuDir@/OceanEye.lnk",
-            "workingDirectory=@TargetDir@");
-        component.addOperation("CreateShortcut", "@TargetDir@/OceanEye.exe", "@HomeDir@/Desktop/OceanEye.lnk");
+        component.addOperation("CreateShortcut", "@TargetDir@/bin/OceanEye.exe", "@StartMenuDir@/OceanEye.lnk");
+        component.addOperation("CreateShortcut", "@TargetDir@/OceanEye Configuration.exe", "@StartMenuDir@/OceanEye Configuration.lnk");
     }
 }

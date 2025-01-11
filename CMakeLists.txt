@@ -157,6 +157,8 @@ if (WIN32)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
     install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/external/python3.12-embed/ TYPE BIN)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/python/python TYPE BIN)
 
     add_custom_command(TARGET OceanEye POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -238,5 +240,4 @@ include(CPACK)
 include(CPackIFW)
 
 CPACK_ADD_COMPONENT(${COMPONENT_NAME_MAIN} REQUIRED)
-
 cpack_ifw_configure_component(${COMPONENT_NAME_MAIN} ESSENTIAL FORCED_INSTALLATION)

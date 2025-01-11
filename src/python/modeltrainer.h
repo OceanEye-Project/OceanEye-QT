@@ -26,7 +26,7 @@
 
 namespace py = pybind11;
 
-
+// Displays python output in the GUI
 class LogWindow : public QPlainTextEdit {
     Q_OBJECT
 public:
@@ -52,6 +52,7 @@ signals:
     void message_written(std::string value);
 };
 
+// Captures python output and sends to the GUI
 class PythonLogger {
 public:
     LogWindow* log_window;
@@ -68,6 +69,7 @@ public:
     }
 };
 
+// The popup for model training
 class PythonDialog : public QDialog {
     Q_OBJECT
 public:
@@ -110,16 +112,17 @@ class ModelTrainer : public QObject
     QFutureWatcher<void> watcher;
     QFuture<void> future;
 
-    //std::ostringstream python_output_stream;
     PythonLogger python_logger;
 
     std::shared_ptr<Project>& currentProject;
+
+    void setup_python_env();
+    void train(std::string project_path);
 
 public:
     explicit ModelTrainer(std::shared_ptr<Project>& project);
 
     void startTraining();
-    void train(std::string project_path);
 };
 
 #endif // MODELTRAINER_H

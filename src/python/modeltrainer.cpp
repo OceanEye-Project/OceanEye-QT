@@ -31,50 +31,60 @@ PYBIND11_EMBEDDED_MODULE(embeded_logger, module)
         .def("flush", &PythonLogger::flush);
 }
 
-void ModelTrainer::train(std::string project_path) {
+void ModelTrainer::setup_python_env() {
     std::filesystem::path exeDir = QCoreApplication::applicationDirPath().toStdString();
 
-    py::scoped_interpreter guard{}; // start the interpreter and keep it alive
+    py::module os = py::module::import("os");
+    os.attr("chdir")((exeDir / "python").string());
 
-    try {
-        // Disable build of __pycache__ folders
-        py::exec(R"(
-            import sys
-            sys.dont_write_bytecode = True
-        )");
+    py::module sys = py::module::import("sys");
+    sys.attr("path").attr("append")(exeDir.string());
 
-        py::module os = py::module::import("os");
-        os.attr("chdir")((exeDir / "python").string());
+    py::module::import("embeded_logger");
+    py::module::import("sys").attr("stdout") = python_logger;
 
-        py::module sys = py::module::import("sys");
-        sys.attr("path").attr("append")(exeDir.string());
+    py::module installer = py::module::import("install_packages");
+    installer.attr("setup")(exeDir.string());
+}
 
-        py::module::import("embeded_logger");
-        py::module::import("sys").attr("stdout") = python_logger;
+void ModelTrainer::train(std::string project_path) {
+    {
+        py::scoped_interpreter guard{};
 
-        py::exec(R"(
-            print("Starting Training")
-        )");
+        try {
+            setup_python_env();
 
-        py::exec(R"(
-            print("Checking dependancies")
-        )");
+            py::print("========== New Training Session ==========");
+            py::print("Checking dependancies");
 
-        py::module installer = py::module::import("install_packages");
-        installer.attr("setup")(exeDir.string());
-        installer.attr("ensure_pip")();
-        installer.attr("install")("ultralytics");
+            py::module installer = py::module::import("install_packages");
 
-        py::module trainer = py::module::import("train");
-        trainer.attr("run_checks")();
+            installer.attr("ensure_pip")();
+            installer.attr("install")("ultralytics==8.3.59");
 
-        py::exec(R"(
-            print("Starting Training")
-        )");
-
-        trainer.attr("train")(project_path);
-
-    } catch (py::error_already_set & e) {
-        std::cout << e.what() << std::endl;
+        } catch (py::error_already_set & e) {
+            std::cout << e.what() << std::endl;
+        }
     }
+
+    {
+        py::scoped_interpreter guard{};
+
+        try {
+            setup_python_env();
+
+            py::print("Running Checks");
+
+            py::module trainer = py::module::import("train");
+            trainer.attr("run_checks")();
+
+            py::print("Starting Training");
+
+            trainer.attr("train")(project_path);
+
+        } catch (py::error_already_set & e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+
 }

@@ -2,6 +2,7 @@
 #include "core/mainwindow.h"
 #include <QApplication>
 #include <QSettings>
+#include <QtGlobal>
 #include "util/project.h"
 #include "logger.h"
 #include "util/settings.h"
@@ -20,8 +21,14 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("oceaneye");
 
     auto format = registerYAMLFormat();
-    QSettings::setPath(format, QSettings::Scope::UserScope, QDir::homePath() + QDir::separator() + ".oceaneye");
+    QString oceaneye_user_dir = QDir::homePath() + QDir::separator() + ".oceaneye";
+    QSettings::setPath(format, QSettings::Scope::UserScope, oceaneye_user_dir);
     QSettings::setDefaultFormat(format);
+
+    qunsetenv("PYTHONNOUSERSITE");
+    qunsetenv("PYTHONSTARTUP");
+    qputenv("PYTHONDONTWRITEBYTECODE", "true");
+    qputenv("PYTHONUSERBASE", (oceaneye_user_dir + QDir::separator() + "python").toUtf8());
 
     QSettings settings {QSettings::Scope::UserScope};
     auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
