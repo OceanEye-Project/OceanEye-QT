@@ -50,7 +50,7 @@ def train(project_dir):
     with open(dataset_config_path, 'w') as outfile:
         yaml.dump(yolo_data, outfile, default_flow_style=False)
 
-    model = YOLO("yolo11n.pt")
+    model = YOLO(str(training_dir / "weights" / "yolo11n.pt"))
 
     results = model.train(
         data=str(dataset_config_path),
