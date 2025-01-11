@@ -4,6 +4,7 @@ from ultralytics import YOLO
 import yaml
 import json
 import random
+import sys
 
 from custom_yolo import CustomTrainer
 from pathlib import Path
@@ -12,9 +13,18 @@ def run_checks():
     # TODO maybe some other things
     ultralytics.checks()
 
-
+class NullWriter:
+    def write(self, data):
+        pass
 
 def train(project_dir):
+    # for TQDM in headless mode
+    if sys.stdout is None:
+        sys.stdout = NullWriter()
+
+    if sys.stderr is None:
+        sys.stderr = NullWriter()
+
     print("Starting model training......")
 
     training_dir = Path(project_dir) / "train"
