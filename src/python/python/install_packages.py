@@ -10,7 +10,7 @@ def install(package):
             [sys.executable, "-m", "pip", "install", package, "--no-warn-script-location", "--user"],
         )
 
-        print(f"Installed {package}")s
+        print(f"Installed {package}")
 
     except subprocess.CalledProcessError:
         print(f"Failed to install {package}")
