@@ -60,7 +60,7 @@ void ModelTrainer::train(std::string project_path) {
             py::module installer = py::module::import("install_packages");
 
             installer.attr("ensure_pip")();
-            installer.attr("install")("ultralytics==8.3.59");
+            installer.attr("install_dependencies")();
 
         } catch (py::error_already_set & e) {
             std::cout << e.what() << std::endl;
@@ -98,7 +98,7 @@ void ModelTrainer::train(std::string project_path) {
 
             py::print("Starting Training");
 
-            trainer.attr("train")(project_path);
+            // trainer.attr("train")(project_path);
 
         } catch (py::error_already_set & e) {
             std::cout << e.what() << std::endl;
