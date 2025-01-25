@@ -240,3 +240,5 @@ tests/build/
 .vscode
 .idea
 log.txt
+
+!/external/python3.12-embed/*

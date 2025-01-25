@@ -67,6 +67,24 @@ void ModelTrainer::train(std::string project_path) {
         }
     }
 
+    // {
+    //     py::scoped_interpreter guard{};
+
+    //     try {
+    //         setup_python_env();
+
+    //         py::print("========== New Training Session ==========");
+    //         py::print("Checking dependancies");
+
+    //         py::module installer = py::module::import("install_packages");
+
+    //         installer.attr("find_cuda")();
+
+    //     } catch (py::error_already_set & e) {
+    //         std::cout << e.what() << std::endl;
+    //     }
+    // }
+
     {
         py::scoped_interpreter guard{};
 
