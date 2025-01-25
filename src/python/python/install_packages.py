@@ -112,3 +112,5 @@ def setup(python_path):
     sys.argv = [python_path]
     multiprocessing.set_executable(str(Path(python_path) / python_exe))
     sys.executable = str(Path(python_path) / python_exe)
+
+    print(f"Using {sys.executable}")
