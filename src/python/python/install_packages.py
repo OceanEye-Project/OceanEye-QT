@@ -110,7 +110,8 @@ def setup(python_path):
     """ makes sure everything works smoothly in this enviroment """
     python_exe = 'pythonw.exe' # 'python.exe'
     sys.argv = [python_path]
-    multiprocessing.set_executable(str(Path(python_path) / python_exe))
     sys.executable = str(Path(python_path) / python_exe)
+    sys._base_executable = str(sys.executable)
+    multiprocessing.set_executable(sys.executable)
 
     print(f"Using {sys.executable}")

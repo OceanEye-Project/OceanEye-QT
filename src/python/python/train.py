@@ -26,6 +26,8 @@ def train(project_dir):
         sys.stderr = NullWriter()
 
     print("Starting model training......")
+    print(sys.executable)
+    print(sys.exec_prefix)
 
     training_dir = Path(project_dir) / "train"
     training_dir.mkdir(parents=True, exist_ok=True)

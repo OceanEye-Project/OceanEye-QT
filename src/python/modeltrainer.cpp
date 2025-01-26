@@ -98,7 +98,7 @@ void ModelTrainer::train(std::string project_path) {
 
             py::print("Starting Training");
 
-            // trainer.attr("train")(project_path);
+            trainer.attr("train")(project_path);
 
         } catch (py::error_already_set & e) {
             std::cout << e.what() << std::endl;
