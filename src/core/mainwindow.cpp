@@ -65,10 +65,12 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     connect(ui->actionExport, &QAction::triggered, &exportDialog, &ExportDialog::show);
     connect(ui->actionEditMedia, &QAction::triggered, &editMediaDialog, &EditMediaDialog::show);
     connect(ui->editMediaBtn, &QPushButton::clicked, &editMediaDialog, &EditMediaDialog::show);
-    connect(ui->actionOpenSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(ui->actionOpenFile, &QAction::triggered, [this]() {
         WelcomeWindow *welcomeWindow = new WelcomeWindow(currentProject);
         welcomeWindow->openProject();
+    });
+    connect(ui->actionOpenProjectFolder, &QAction::triggered, [this]() {
+        QDesktopServices::openUrl(currentProject->projectPath);
     });
     connect(ui->actionSettings, &QAction::triggered, &settingsDialog, &Settings::show);
     connect(&settingsDialog.projectSettings, &ProjectSettings::updateImageUI, this, &MainWindow::updateImageUI);

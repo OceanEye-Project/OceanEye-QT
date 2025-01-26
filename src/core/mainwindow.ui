@@ -357,27 +357,21 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOceanEye">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionExport"/>
-    <addaction name="actionEditMedia"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionEditMedia"/>
+    <addaction name="actionExport"/>
     <addaction name="actionOpenFile"/>
     <addaction name="actionImport"/>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-    <addaction name="actionOpenSettings"/>
+    <addaction name="actionOpenProjectFolder"/>
    </widget>
    <addaction name="menuOceanEye"/>
-   <addaction name="menuSettings"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">
@@ -439,19 +433,24 @@
     <string>Things</string>
    </property>
   </action>
-  <action name="actionOpenSettings">
-   <property name="text">
-    <string>Open Settings</string>
-   </property>
-  </action>
   <action name="actionOpenFile">
    <property name="text">
-    <string>Open File</string>
+    <string>Open Project</string>
    </property>
   </action>
   <action name="actionImport">
    <property name="text">
-    <string>Import</string>
+    <string>Import Annotations</string>
+   </property>
+  </action>
+  <action name="actionOpenProjectFolder">
+   <property name="text">
+    <string>Open Project Folder</string>
+   </property>
+  </action>
+  <action name="actionOpen_Settings_Folder">
+   <property name="text">
+    <string>Open Settings Folder</string>
    </property>
   </action>
  </widget>

@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QDesktopServices>
 
 // Third-party libraries
 #include "opencv2/opencv.hpp"
