@@ -13,7 +13,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     , editMediaDialog(project)
     , settingsDialog(project)
     , videoSlicer(project)
-    , modelTrainer(project)
+    , trainDialog(project)
 {
     ui->setupUi(this);
     awesome = new fa::QtAwesome(this);
@@ -50,7 +50,7 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     // Connect detection-related signals and slots
     // connect(ui->detectBtn, &QPushButton::clicked, &detectOptions, &DetectOptions::show);
     connect(ui->detectBtn, &QPushButton::clicked, this, &MainWindow::runDetection);
-    connect(ui->trainBtn, &QPushButton::clicked, &modelTrainer, &ModelTrainer::startTraining);
+    connect(ui->trainBtn, &QPushButton::clicked, &trainDialog, &TrainDialog::show);
     connect(&detectOptions, &DetectOptions::runDetection, this, &MainWindow::runDetection);
     connect(&detectOptions, &DetectOptions::runSpecificDetection, this, &MainWindow::runSpecificDetection);
     connect(&videoSlicer, &VideoSlicer::doneSlicing, this, &MainWindow::doneSlicing);

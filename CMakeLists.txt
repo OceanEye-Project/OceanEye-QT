@@ -67,7 +67,7 @@ set(PROJECT_SOURCES
     src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
 
-    src/python/modeltrainer.h src/python/modeltrainer.cpp
+    src/train/modeltrainer.h src/train/modeltrainer.cpp
 
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
@@ -92,8 +92,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/resources/licence.txt
         src/resources/about.md
         src/core/importdialog.ui
-        src/python/modeltrainer.h src/python/modeltrainer.cpp
-        src/python/python/custom_yolo.py
+        src/train/modeltrainer.h src/train/modeltrainer.cpp
+        src/train/python/custom_yolo.py
+        src/train/traindialog.h src/train/traindialog.cpp src/train/traindialog.ui
     )
     
 # Define target properties for Android with Qt 6 as:
@@ -158,7 +159,7 @@ if (WIN32)
     install(FILES ${MINGW_DIR}/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
     install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/external/python3.12-embed/ TYPE BIN)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/python/python TYPE BIN)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/train/python TYPE BIN)
 
     add_custom_command(TARGET OceanEye POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -195,7 +196,7 @@ endif ()
 
 add_custom_command(TARGET OceanEye POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${PROJECT_SOURCE_DIR}/src/python/python"
+        "${PROJECT_SOURCE_DIR}/src/train/python"
         $<TARGET_FILE_DIR:OceanEye>/python)
 
 # TO CREATE INSTALLER RUN COMMANDS IN THIS ORDER

@@ -23,7 +23,7 @@
 #include "importdialog.h"
 #include "editmediadialog.h"
 #include "detectoptions.h"
-#include "../python/modeltrainer.h"
+#include "../train/traindialog.h"
 #include "../util/videoslicer.h"
 #include "../util/yolov8.h"
 #include "welcomewindow.h"
@@ -68,7 +68,7 @@ private:
     // Utility for slicing video into frames
     VideoSlicer videoSlicer;
     // Utility for training models
-    ModelTrainer modelTrainer;
+    TrainDialog trainDialog;
 
     // Pointer to the UI components
     Ui::MainWindow *ui;

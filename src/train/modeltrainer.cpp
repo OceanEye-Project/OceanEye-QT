@@ -10,14 +10,19 @@ ModelTrainer::ModelTrainer(std::shared_ptr<Project>& project)
     connect(&watcher, &QFutureWatcher<void>::finished, this, [this]{
         qInfo() << "Python Finished";
         dialog.hide();
+
+        QMessageBox msgBox;
+        msgBox.setText("Training Finished");
+        msgBox.exec();
     });
 }
 
-void ModelTrainer::startTraining() {
+void ModelTrainer::startTraining(TrainArgs& trainArgs) {
     dialog.show();
 
-    std::function<void()> trainWithProject = [this]() {
-        return train(currentProject->projectPath.toStdString());
+    std::function<void()> trainWithProject = [this, trainArgs]() {
+        return train(
+        currentProject->projectPath.toStdString(), trainArgs);
     };
 
     future = QtConcurrent::run(trainWithProject);
@@ -47,7 +52,7 @@ void ModelTrainer::setup_python_env() {
     installer.attr("setup")(exeDir.string());
 }
 
-void ModelTrainer::train(std::string project_path) {
+void ModelTrainer::train(std::string project_path, TrainArgs trainArgs) {
     {
         py::scoped_interpreter guard{};
 
@@ -67,23 +72,6 @@ void ModelTrainer::train(std::string project_path) {
         }
     }
 
-    // {
-    //     py::scoped_interpreter guard{};
-
-    //     try {
-    //         setup_python_env();
-
-    //         py::print("========== New Training Session ==========");
-    //         py::print("Checking dependancies");
-
-    //         py::module installer = py::module::import("install_packages");
-
-    //         installer.attr("find_cuda")();
-
-    //     } catch (py::error_already_set & e) {
-    //         std::cout << e.what() << std::endl;
-    //     }
-    // }
 
     {
         py::scoped_interpreter guard{};
@@ -98,7 +86,13 @@ void ModelTrainer::train(std::string project_path) {
 
             py::print("Starting Training");
 
-            trainer.attr("train")(project_path);
+            py::dict pythonTrainArgs;
+            pythonTrainArgs["model"] = trainArgs.model;
+            pythonTrainArgs["patience"] = trainArgs.patience;
+            if (trainArgs.epochs > 0) pythonTrainArgs["epochs"] = trainArgs.epochs;
+            if (trainArgs.time > 0) pythonTrainArgs["time"] = trainArgs.time;
+
+            trainer.attr("train")(project_path, pythonTrainArgs);
 
         } catch (py::error_already_set & e) {
             std::cout << e.what() << std::endl;

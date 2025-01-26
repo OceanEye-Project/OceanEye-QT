@@ -17,7 +17,7 @@ class NullWriter:
     def write(self, data):
         pass
 
-def train(project_dir):
+def train(project_dir, train_args):
     # for TQDM in headless mode
     if sys.stdout is None:
         sys.stdout = NullWriter()
@@ -26,8 +26,7 @@ def train(project_dir):
         sys.stderr = NullWriter()
 
     print("Starting model training......")
-    print(sys.executable)
-    print(sys.exec_prefix)
+    print(f"Arguments: {train_args}")
 
     training_dir = Path(project_dir) / "train"
     training_dir.mkdir(parents=True, exist_ok=True)
@@ -62,14 +61,15 @@ def train(project_dir):
     with open(dataset_config_path, 'w') as outfile:
         yaml.dump(yolo_data, outfile, default_flow_style=False)
 
-    model = YOLO(str(training_dir / "weights" / "yolo11n.pt"))
+    model_type = train_args.pop("model", "yolo11n.pt")
 
-    results = model.train(
+    model = YOLO(str(training_dir / "weights" / model_type))
+
+    model.train(
         data=str(dataset_config_path),
         project=str(training_dir),
-        epochs=5,
-        imgsz=640,
-        trainer=CustomTrainer
+        trainer=CustomTrainer,
+        **train_args
     )
 
 def split_files(training_dir, image_paths, VALIDATE_SPLIT = 0.15, TEST_SPLIT = 0):

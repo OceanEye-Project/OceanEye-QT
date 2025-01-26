@@ -3,18 +3,20 @@
 
 #include <QObject>
 #include <QtConcurrent/QtConcurrent>
-#include "../gui/waitingdialog.h"
 #include <QCoreApplication>
 #include <QDialog>
 #include <QLabel>
 #include <QFont>
 #include <QPlainTextEdit>
 #include <QScrollBar>
+#include <QMessageBox>
 
 #include <iostream>
 #include <filesystem>
 
 #include "project.h"
+
+#include "../gui/waitingdialog.h"
 
 // python and QT both use the macro "slots"
 #pragma push_macro("slots")
@@ -25,6 +27,13 @@
 #pragma pop_macro("slots")
 
 namespace py = pybind11;
+
+struct TrainArgs {
+    std::string model;
+    double time;
+    int epochs;
+    int patience;
+};
 
 // Displays python output in the GUI
 class LogWindow : public QPlainTextEdit {
@@ -77,8 +86,10 @@ public:
     bool prepareToClose = false;
 
     PythonDialog() {
+        setWindowTitle("Training Output");
+
         const auto layout = new QVBoxLayout(this);
-        layout->addWidget(new QLabel("Python Output"));
+        layout->addWidget(new QLabel("Training Output"));
 
         log_window = new LogWindow();
         layout->addWidget(log_window);
@@ -117,12 +128,12 @@ class ModelTrainer : public QObject
     std::shared_ptr<Project>& currentProject;
 
     void setup_python_env();
-    void train(std::string project_path);
+    void train(std::string project_path, TrainArgs trainArgs);
 
 public:
     explicit ModelTrainer(std::shared_ptr<Project>& project);
 
-    void startTraining();
+    void startTraining(TrainArgs& trainArgs);
 };
 
 #endif // MODELTRAINER_H
