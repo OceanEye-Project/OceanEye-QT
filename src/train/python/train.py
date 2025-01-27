@@ -72,6 +72,8 @@ def train(project_dir, train_args):
         **train_args
     )
 
+    return model
+
 def split_files(training_dir, image_paths, VALIDATE_SPLIT = 0.15, TEST_SPLIT = 0):
     # Create test/train/validation split
     print("Creating test/train/validation split......")

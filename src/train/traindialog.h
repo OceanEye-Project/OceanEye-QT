@@ -2,6 +2,7 @@
 #define TRAINDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 #include "project.h"
 #include "modeltrainer.h"

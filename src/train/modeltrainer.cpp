@@ -92,7 +92,18 @@ void ModelTrainer::train(std::string project_path, TrainArgs trainArgs) {
             if (trainArgs.epochs > 0) pythonTrainArgs["epochs"] = trainArgs.epochs;
             if (trainArgs.time > 0) pythonTrainArgs["time"] = trainArgs.time;
 
-            trainer.attr("train")(project_path, pythonTrainArgs);
+            py::object model = trainer.attr("train")(project_path, pythonTrainArgs);
+
+            py::object py_onnx_path = model.attr("export")(
+                "format"_a="onnx"
+            );
+
+            std::string onnx_path = py_onnx_path.cast<std::string>();
+
+            QFile::rename(
+                QString::fromStdString(onnx_path),
+                trainArgs.saveFilePath
+            );
 
         } catch (py::error_already_set & e) {
             std::cout << e.what() << std::endl;

@@ -74,9 +74,8 @@ def verify_image_label(args):
                     width /= im_width
                     height /= im_height
 
-                    #TODO invesitgate if labels need this; causes out of bounds
-                    #x += width / 2
-                    #y += height / 2
+                    x += width / 2
+                    y += height / 2
 
                     lb.append([annotation_class, x, y, width, height])
 

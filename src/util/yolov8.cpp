@@ -136,7 +136,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
             double maxClassScore;
 
             minMaxLoc(scores, 0, &maxClassScore, 0, &class_id);
-            if (maxClassScore > modelScoreThreshold)
+            if (maxClassScore > modelScoreThreshold * 1000)
             {
                 confidences.push_back(maxClassScore);
                 class_ids.push_back(class_id.x);

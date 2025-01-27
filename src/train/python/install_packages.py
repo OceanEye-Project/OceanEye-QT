@@ -7,9 +7,9 @@ import re
 def install(package):
     print(f"Installing {package} (this may take a few minutes)")
     try:
-        args = [sys.executable, "-m", "pip", "install"]
+        args = [sys.gui_executable, "-m", "pip", "install"]
         args += package
-        args += ["--no-warn-script-location", "--user"]
+        args += ["--no-warn-script-location", "--user", "--no-cache-dir"]
 
         result = subprocess.run(args)
 
@@ -78,8 +78,8 @@ def install_dependencies():
         torch_install_args += ["--index-url", torch_index_url]
 
     install(torch_install_args)
-
     install(["ultralytics==8.3.59"])
+    install(["onnx>=1.12.0", "onnxslim", "onnxruntime-gpu"])
 
 
 def ensure_pip():
@@ -108,9 +108,12 @@ def ensure_pip():
 
 def setup(python_path):
     """ makes sure everything works smoothly in this enviroment """
-    python_exe = 'pythonw.exe' # 'python.exe'
+    pythonw_exe = 'pythonw.exe' # 'python.exe'
+    python_exe = 'python.exe' # 'python.exe'
+
     sys.argv = [python_path]
-    sys.executable = str(Path(python_path) / python_exe)
+    sys.executable = str(Path(python_path) / pythonw_exe)
+    sys.gui_executable = str(Path(python_path) / python_exe)
     sys._base_executable = str(sys.executable)
     multiprocessing.set_executable(sys.executable)
 

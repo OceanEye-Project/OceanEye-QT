@@ -27,9 +27,11 @@
 #pragma pop_macro("slots")
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 struct TrainArgs {
     std::string model;
+    QString saveFilePath;
     double time;
     int epochs;
     int patience;
