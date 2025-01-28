@@ -1,7 +1,4 @@
 #include "project.h"
-#include <QDebug>
-#include <QString>
-#include <stdexcept>
 
 Project::Project(QString project_path) : 
     settings(

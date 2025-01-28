@@ -3,11 +3,15 @@
 
 #include <filesystem>
 #include <vector>
+#include <stdexcept>
 
 #include <QSettings>
 #include <QString>
 #include <QDir>
 #include <QListWidgetItem>
+#include <QDebug>
+#include <QString>
+#include <QMessageBox>
 
 #include "yolov8.h"
 #include "settings.h"
