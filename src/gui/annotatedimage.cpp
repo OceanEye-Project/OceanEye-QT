@@ -42,8 +42,8 @@ AnnotatedImage::AnnotatedImage(
         &QShortcut::activated, this, [this]() {
             if (selectedAnnotation >= 0) {
                 auto& annotation = annotations.at(selectedAnnotation);
-                annotation.classId = (annotation.classId + 1) % model_classes.size();
-                annotation.className = QString::fromStdString(model_classes.at(annotation.classId));
+                annotation.classId = (annotation.classId + 1) % currentProject->classes.size();
+                annotation.className = currentProject->classes.at(annotation.classId);
                 emit annotationsChanged();
                 repaint();
             }
@@ -154,7 +154,7 @@ void AnnotatedImage::paintEvent(QPaintEvent* e) {
     for (int i=0; i<annotations.size(); i++) {
         auto& annotation = annotations.at(i);
 
-        int hue = (255 * annotation.classId) / model_classes.size();
+        int hue = (255 * annotation.classId) / currentProject->classes.size();
 
         pen.setColor(QColor::fromHsv(hue, 245, 245, 255));
         painter.setPen(pen);

@@ -87,9 +87,13 @@ void ModelTrainer::train(std::string project_path, TrainArgs trainArgs) {
             py::print("Starting Training");
 
             py::dict pythonTrainArgs;
+            pythonTrainArgs["classes"] = currentProject->classes;
             pythonTrainArgs["model"] = trainArgs.model;
             pythonTrainArgs["patience"] = trainArgs.patience;
+
             if (trainArgs.epochs > 0) pythonTrainArgs["epochs"] = trainArgs.epochs;
+            else pythonTrainArgs["epochs"] = 5000;
+
             if (trainArgs.time > 0) pythonTrainArgs["time"] = trainArgs.time;
 
             py::object model = trainer.attr("train")(project_path, pythonTrainArgs);

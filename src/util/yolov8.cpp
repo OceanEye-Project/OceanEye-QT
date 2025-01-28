@@ -22,7 +22,24 @@ std::string scanUntil(std::ifstream &inputFile, const char pattern, int& i, int 
     return scanUntil(inputFile, pattern, i, length, [](char c) { return true; });
 }
 
-void YOLOv8::loadClasses() {
+std::string scanUntil(std::string s, int& i, const std::function <bool (char)>& f) {
+    std::string value {};
+    while (f(s[i])) {
+        value += s[i];
+        i++;
+    }
+    return value;
+}
+
+std::string scanUntil(std::string s, int& i, char c) {
+    return scanUntil(s, i, [&](char n) { return n != c; });
+}
+
+std::vector<QString> YOLOv8::loadClasses() {
+    return loadClasses(modelPath);
+}
+
+std::vector<QString> YOLOv8::loadClasses(std::string path) {
     qInfo() << "Beginning to load classes... ";
 
     bool match = false;
@@ -30,61 +47,70 @@ void YOLOv8::loadClasses() {
     // https://protobuf.dev/programming-guides/encoding/
     // https://onnx.ai/onnx/api/classes.html#modelproto
     // "Names", plus the start of the next item
-    std::array<uint8_t, 6> magicNumber = {0x6e, 0x61, 0x6d, 0x65, 0x73, 0x12};
-    std::array<uint8_t, 6> fileMagicNumber;
+    std::vector<char> magicNumber = {0x6e, 0x61, 0x6d, 0x65, 0x73, 0x12};
     
-    classMap.clear();
+    std::vector<QString> classes {};
+    std::map<int, std::string> classMap {};
 
-    std::ifstream inputFile(modelPath);
-    qInfo() << "Attempting to open model: " << QString::fromStdString(modelPath);
+    qInfo() << "Attempting to open model to read classes: " << QString::fromStdString(path);
 
+    std::ifstream inputFile(path, std::ios_base::in | std::ios::binary);
 
-    if (inputFile.is_open()) {
-        qInfo()<< "Successfully Opened Model: " << QString::fromStdString(modelPath);
-        inputFile.read(reinterpret_cast<char*>(fileMagicNumber.data()), 6);
-
-        while (inputFile) {
-            if (fileMagicNumber == magicNumber) {
-                match = true;
-                uint8_t length;
-                inputFile.read(reinterpret_cast<char*>(&length), 1);
-                inputFile.seekg(1, std::ios::cur);
-                // skip one byte "{"
-                // dont read the last byte "}"
-                int i = 1;
-                while (i < length-1) {
-                    auto key = scanUntil(inputFile, ':', i, length, [](char c) { return ('0' <= c && c <= '9'); });
-                    scanUntil(inputFile, '\'', i, length);
-                    auto value = scanUntil(inputFile, '\'', i, length);
-                    classMap[std::stoi(key)] = value;
-                    // Print classes and values
-                    qInfo() << "Class " << QString::fromStdString(key) << ": " << QString::fromStdString(value);
-                }
-                break;
-            }
-            uint8_t byte;
-            inputFile.read(reinterpret_cast<char*>(&byte), 1);
-            for (int i = 0; i < 5; i++) {
-                fileMagicNumber[i] = fileMagicNumber[i+1];
-            }
-            fileMagicNumber[5] = byte;
-        }
-        inputFile.close();
-    } else {
-        qCritical() << "Error opening the file" << QString::fromStdString(modelPath);
+    if (!inputFile.is_open()) {
+        qCritical() << "Error opening the file" << QString::fromStdString(path);
+        return {};
     }
+
+    qInfo() << "Successfully Opened Model";
+
+    std::istreambuf_iterator<char> fileBegin{inputFile}, fileEnd{};
+
+    auto n = std::search(fileBegin, fileEnd, magicNumber.begin(), magicNumber.end());
+
+    bool found = n != fileEnd;
+
+    if (!found) {
+        qInfo() << "Could not find classes";
+        return {};
+    }
+
+    std::string classesString(n, fileEnd);
+
+    auto jsonStart = classesString.find('{');
+    auto jsonEnd = classesString.find('}');
+    
+    classesString = classesString.substr(jsonStart, jsonEnd - jsonStart);
+
+    for (int i = 0; i < classesString.size(); ++i) {
+        scanUntil(classesString, i, [](char c) { return !isdigit(c); });
+        std::string classId = scanUntil(classesString, i, ':');
+        scanUntil(classesString, i, '\'');
+        std::string className = scanUntil(classesString, ++i, '\'');
+        classMap[std::stoi(classId)] = className;
+    }
+    
+    inputFile.close();
+
+    classes.resize(classMap.size());
+    for (auto const& [key, value] : classMap) {
+        classes[key] = QString::fromStdString(value);
+        qInfo() << "Class: " << key << " " << value;
+    }
+
+    return classes;
+
+
 }
 
-YOLOv8::YOLOv8(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile, const bool &runWithCuda)
+YOLOv8::YOLOv8(const std::string &onnxModelPath, const cv::Size &modelInputShape, const bool &runWithCuda)
 {
     modelPath = onnxModelPath;
     modelShape = modelInputShape;
-    classesPath = classesTxtFile;
     cudaEnabled = runWithCuda;
     // loadClassesFromFile(); The classes are hard-coded for this example
 }
 
-std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
+std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input, const std::vector<QString>& model_classes) {
     if (!loaded) {
         qWarning() << "Error: Model is not loaded";
         return {};
@@ -136,7 +162,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
             double maxClassScore;
 
             minMaxLoc(scores, 0, &maxClassScore, 0, &class_id);
-            if (maxClassScore > modelScoreThreshold * 1000)
+            if (maxClassScore > modelScoreThreshold)
             {
                 confidences.push_back(maxClassScore);
                 class_ids.push_back(class_id.x);
@@ -205,7 +231,7 @@ std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input) {
 
         Annotation result {};
         result.classId = class_ids[idx];
-        result.className = QString::fromStdString(model_classes[class_ids[idx]]);
+        result.className = model_classes[class_ids[idx]];
 
         result.confidence = confidences[idx];
 
@@ -249,8 +275,6 @@ void YOLOv8::loadOnnxNetwork() {
 
     loaded = true;
     qInfo() << "Model loaded successfully.";
-
-    loadClasses();
 }
 
 cv::Mat YOLOv8::formatToSquare(const cv::Mat &source) {

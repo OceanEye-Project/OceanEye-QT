@@ -253,7 +253,7 @@ class CustomTrainer(DetectionTrainer):
             imgsz=self.args.imgsz,
             batch_size=batch,
             augment=mode == "train",  # augmentation
-            hyp=self.args,  # TODO: probably add a get_hyps_from_cfg function
+            hyp=self.args, 
             rect=self.args.rect or (mode == "val"),  # rectangular batches
             cache=self.args.cache or None,
             single_cls=self.args.single_cls or False,

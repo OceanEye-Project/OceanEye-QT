@@ -3,10 +3,56 @@
 #include <QString>
 #include <stdexcept>
 
+Project::Project(QString project_path) : 
+    settings(
+        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"),
+        registerYAMLFormat()
+    )
+{
+    classes = {};
+    int count = 0;
+    int size = settings.beginReadArray("classes");
 
-Project::Project(const QString project_path)
-    : settings(QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"), registerYAMLFormat())
-    , projectPath(project_path) {
+    for (int i = 0; i < size; ++i) {
+        ++count;
+        settings.setArrayIndex(i);
+        classes.push_back(settings.value("name").toString());
+        qInfo() << "Loading Class: " << classes.at(i);
+    }
+    qInfo() << "Done loading classes. Loaded " << count << " items";
+    settings.endArray();
+
+    projectName = settings.value("Project Name").toString();
+
+    construct(project_path, classes, projectName);
+}
+
+Project::Project(QString project_path, std::vector<QString> classes, QString project_name) :
+    settings(
+        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"),
+        registerYAMLFormat()
+    )
+{
+    construct(project_path, classes, project_name);
+}
+
+void Project::construct(QString project_path, std::vector<QString> annotationClasses, QString project_name) {
+    settings.beginWriteArray("classes");
+    settings.setValue("size", 0);
+    settings.remove("");
+    int count = 0;
+
+    for (int i=0; i<annotationClasses.size(); i++) {
+        ++count;
+        settings.setArrayIndex(i);
+        settings.setValue("name", annotationClasses.at(i));
+    }
+    settings.endArray();
+
+    classes = annotationClasses;
+
+    settings.setValue("Project Name", project_name);
+    projectName = project_name;
 
     loadModel(settings.value("Model Path").toString());
 
@@ -14,7 +60,6 @@ Project::Project(const QString project_path)
         setModelConf(settings.value("Model Confidence").toInt());
 
     loadMedia();
-
 }
 
 std::vector<Annotation> Project::getAnnotation(const QString image_path) {
@@ -105,6 +150,24 @@ void Project::loadModel(const QString modelPath) {
     if (modelPath.isEmpty())
         return;
 
+    std::vector<QString> classes = YOLOv8::loadClasses(modelPath.toStdString());
+
+    if (!std::equal(classes.begin(), classes.end(), this->classes.begin())) {
+        QMessageBox msgBox;
+        QString info = "Model classes do not match project classes";
+        info += "\n\nProject Classes:\n";
+        for (auto &c : this->classes) {
+            info += c + "\n";
+        }
+        info += "\nModel Classes:\n";
+        for (auto &c : classes) {
+            info += c + "\n";
+        }
+        msgBox.setText(info);
+        msgBox.exec();
+        return;
+    }
+
     model = std::make_unique<YOLOv8>(YOLOv8());
 
     try{
@@ -136,7 +199,7 @@ bool Project::runDetection(const QString imagePath) {
 
         cv::Mat img = cv::imread(imagePath.toStdString());
 
-        auto annotations = model->runInference(img);
+        auto annotations = model->runInference(img, classes);
 
         if (annotations.size() > 0) {
             setAnnotation(imagePath, annotations);
@@ -162,7 +225,7 @@ void Project::runSpecificDetection(const QString imagePath, const QList<QListWid
 
         cv::Mat img = cv::imread(imagePath.toStdString());
 
-        auto annotations = model->runInference(img);
+        auto annotations = model->runInference(img, classes);
 
         for (auto classType: classTypes) {
             QString className = classType->text();
@@ -208,7 +271,6 @@ void Project::saveMedia() {
 }
 
 void Project::loadMedia() {
-
     try{
         media = {};
         int count = 0;
@@ -228,5 +290,3 @@ void Project::loadMedia() {
         qErrnoWarning("Error loading media. Check error logs for more information");
     }
 }
-
-

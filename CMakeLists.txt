@@ -39,7 +39,7 @@ endif ()
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(external/yaml-cpp)
 set_target_properties(yaml-cpp PROPERTIES COMPILE_FLAGS "-w")
-set(YAML_CPP_BUILD_TESTS OFF)
+# set(YAML_CPP_BUILD_TESTS OFF)
 
 add_subdirectory(external/QtAwesome)
 
@@ -95,6 +95,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/train/modeltrainer.h src/train/modeltrainer.cpp
         src/train/python/custom_yolo.py
         src/train/traindialog.h src/train/traindialog.cpp src/train/traindialog.ui
+        src/core/newprojectdialog.h src/core/newprojectdialog.cpp src/core/newprojectdialog.ui
+
     )
     
 # Define target properties for Android with Qt 6 as:

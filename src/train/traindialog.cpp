@@ -25,7 +25,10 @@ TrainDialog::TrainDialog(std::shared_ptr<Project>& project)
 void TrainDialog::startTraining() {
     QFileInfo saveLocation { ui->saveLocation->text() };
 
-    if (saveLocation.suffix() != "onnx" || saveLocation.exists()) {
+    if (saveLocation.suffix() != "onnx"
+        || saveLocation.exists()
+        || !saveLocation.dir().exists()
+    ) {
         ui->saveLocation->setStyleSheet("border: 1px solid red");
         return;
     } else {

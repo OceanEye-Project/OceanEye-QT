@@ -133,9 +133,9 @@ MainWindow::MainWindow(std::shared_ptr<Project>& project, QWidget *parent)
     );
 
     // Populate annotation class combo box
-    for (int i=0; i<model_classes.size();i++) {
+    for (int i=0; i<currentProject->classes.size();i++) {
         ui->annotationClassCombo->addItem(
-            QString::fromStdString(model_classes.at(i)),
+            currentProject->classes.at(i),
             QVariant(i)
             );
     }

@@ -46,22 +46,25 @@ def train(project_dir, train_args):
     print(f"Found {len(image_paths)} images....")
     split_files(training_dir, image_paths)
 
-    # TODO class names
     yolo_data = {
         "path": "",
         "train": "train.txt",
         "test": "test.txt",
         "val": "val.txt",
-        "names": {
-            0: "Sea Urchin",
-            1: "Sea Star"
-        }
+        "names": {}
     }
+
+    classes = train_args.pop("classes", {})
+
+    print(f"Classes: {classes}")
+
+    for i, name in classes.items():
+        yolo_data["names"][i] = name
 
     with open(dataset_config_path, 'w') as outfile:
         yaml.dump(yolo_data, outfile, default_flow_style=False)
 
-    model_type = train_args.pop("model", "yolo11n.pt")
+    model_type = train_args.pop("model", "yolov8m.pt")
 
     model = YOLO(str(training_dir / "weights" / model_type))
 

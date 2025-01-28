@@ -17,12 +17,15 @@ class Project : public QObject
     Q_OBJECT
 
 public:
-    Project(const QString project_path);
+    Project(QString project_path);
+    Project(QString project_path, std::vector<QString> classes, QString project_name);
 
     QString projectPath;
+    QString projectName;
     std::vector<Annotation> getAnnotation(const QString image_path);
     std::vector<QString> media {};
     std::unique_ptr<YOLOv8> model {nullptr};
+    std::vector<QString> classes {};
     QList<QListWidgetItem*> selectedItems;
 
     void setAnnotation(const QString image_path, const std::vector<Annotation>& annotations);
@@ -33,11 +36,15 @@ public:
     void loadMedia();
     void saveMedia();
     void setModelConf(int conf);
+    void setClasses(std::vector<QString> classes);
+    void setProjectName(QString newName);
     QSettings settings;
 
 signals:
     void modelLoaded(QString modelPath);
 
+private:
+    void construct(QString project_path, std::vector<QString> annotationClasses, QString project_name);
 };
 
 #endif // PROJECT_H

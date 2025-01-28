@@ -7,6 +7,7 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     : QMainWindow(parent)
     , ui(new Ui::WelcomeWindow)
     , currentProject(currentProject)
+    , newProjectDialog(currentProject)
 {
     ui->setupUi(this);
 
@@ -77,7 +78,27 @@ void WelcomeWindow::openProject(bool isNewProject) {
 }
 
 void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) {
-    currentProject = std::make_shared<Project>(projectPath);
+    if (isNewProject) {
+        newProjectDialog.show(projectPath, [&]() {
+            mainWindow = new MainWindow(currentProject);
+            mainWindow->setWindowTitle("OceanEye");
+            mainWindow->show();
+
+            close();
+            emit projectOpened();
+        });
+
+    } else {
+        currentProject = std::make_shared<Project>(projectPath);
+
+        mainWindow = new MainWindow(currentProject);
+        mainWindow->setWindowTitle("OceanEye");
+        mainWindow->show();
+
+        close();
+        emit projectOpened();
+    }
+
 
     auto projectPos = std::find(projects.begin(), projects.end(), projectPath);
 
@@ -88,17 +109,6 @@ void WelcomeWindow::loadProjectFromPath(QString projectPath, bool isNewProject) 
     projects.push_back(projectPath);
 
     saveProjectPaths();
-
-    mainWindow = new MainWindow(currentProject);
-    mainWindow->setWindowTitle("OceanEye");
-    mainWindow->show();
-    
-    if (isNewProject)
-        mainWindow->settingsDialog.show();
-
-    close();
-    
-    emit projectOpened();
 }
 
 void WelcomeWindow::loadProjectPaths() {
