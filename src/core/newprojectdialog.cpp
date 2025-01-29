@@ -60,24 +60,22 @@ void NewProjectDialog::createProject() {
         ui->annotationClassList->setStyleSheet("");
     }
 
-    std::set<QString> classSet {};
+    std::vector<QString> classes {};
 
     for (int i=0; i<ui->annotationClassList->count(); i++) {
         auto item = ui->annotationClassList->item(i);
 
-        if (classSet.count(item->text()) != 0 || item->text().isEmpty()) {
+        if (std::find(classes.begin(), classes.end(), item->text()) != classes.end()) {
             item->setBackground({"red"});
             errors = true;
         } else {
             item->setBackground({});
-            classSet.insert(item->text());
+            classes.push_back(item->text());
         }
     }
 
     if (errors)
         return;
-
-    std::vector<QString> classes {classSet.begin(), classSet.end()};
 
     currentProject = std::make_shared<Project>(
         ui->projectFolder->text(),

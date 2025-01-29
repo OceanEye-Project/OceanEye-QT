@@ -2,7 +2,7 @@
 
 Project::Project(QString project_path) : 
     settings(
-        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"),
+        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_settings.yaml"),
         registerYAMLFormat()
     )
 {
@@ -26,7 +26,7 @@ Project::Project(QString project_path) :
 
 Project::Project(QString project_path, std::vector<QString> classes, QString project_name) :
     settings(
-        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_project_settings.yaml"),
+        QDir::cleanPath(project_path + QDir::separator() + "oceaneye_settings.yaml"),
         registerYAMLFormat()
     )
 {
@@ -34,6 +34,11 @@ Project::Project(QString project_path, std::vector<QString> classes, QString pro
 }
 
 void Project::construct(QString project_path, std::vector<QString> annotationClasses, QString project_name) {
+    projectPath = project_path;
+
+    QDir projectDir(projectPath);
+    projectDir.mkdir("annotations");
+
     settings.beginWriteArray("classes");
     settings.setValue("size", 0);
     settings.remove("");
@@ -63,7 +68,15 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
     std::vector<Annotation> annotations {};
 
     const QFileInfo file_info(image_path);
-    QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
+
+    QDir projectDir(projectPath);
+    projectDir.mkdir("annotations");
+    projectDir.cd("annotations");
+    
+    QSettings image_settings(
+        projectDir.absoluteFilePath(file_info.fileName() + ".yaml"),
+        registerYAMLFormat()
+    );
 
     int size = image_settings.beginReadArray("annotations");
 
@@ -107,9 +120,16 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
 }
 
 void Project::setAnnotation(const QString image_path, const std::vector<Annotation>& annotations) {
-
     const QFileInfo file_info(image_path);
-    QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
+
+    QDir projectDir(projectPath);
+    projectDir.mkdir("annotations");
+    projectDir.cd("annotations");
+
+    QSettings image_settings(
+        projectDir.absoluteFilePath(file_info.fileName() + ".yaml"),
+        registerYAMLFormat()
+    );
 
     image_settings.beginWriteArray("annotations");
     image_settings.remove("");
@@ -154,11 +174,11 @@ void Project::loadModel(const QString modelPath) {
         QString info = "Model classes do not match project classes";
         info += "\n\nProject Classes:\n";
         for (auto &c : this->classes) {
-            info += c + "\n";
+            info += "- " + c + "\n";
         }
         info += "\nModel Classes:\n";
         for (auto &c : classes) {
-            info += c + "\n";
+            info += "- " + c + "\n";
         }
         msgBox.setText(info);
         msgBox.exec();
@@ -253,12 +273,12 @@ void Project::saveMedia() {
 
         for (int i=0; i<media.size(); i++) {
             ++count;
-            qInfo() << "Saving media: " << media.at(i);
+            // qInfo() << "Saving media: " << media.at(i);
             settings.setArrayIndex(i);
             settings.setValue("path", media.at(i));
         }
         
-        qInfo() << "Done saving media. Saved " << count << " items";
+        // qInfo() << "Done saving media. Saved " << count << " items";
         settings.endArray();        
     }catch(const std::exception &exec){
         qInfo() << "Error saving media.";

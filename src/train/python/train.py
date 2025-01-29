@@ -35,7 +35,7 @@ def train(project_dir, train_args):
     dataset_config_path = training_dir / "dataset.yaml"
 
     image_paths = []
-    with open(Path(project_dir) / "oceaneye_project_settings.yaml", "r") as file:
+    with open(Path(project_dir) / "oceaneye_settings.yaml", "r") as file:
         data = yaml.safe_load(file)
 
         for i in range(data["media"]["size"]):
@@ -58,7 +58,7 @@ def train(project_dir, train_args):
 
     print(f"Classes: {classes}")
 
-    for i, name in classes.items():
+    for i, name in enumerate(classes):
         yolo_data["names"][i] = name
 
     with open(dataset_config_path, 'w') as outfile:

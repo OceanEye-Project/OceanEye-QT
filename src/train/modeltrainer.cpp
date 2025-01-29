@@ -86,8 +86,14 @@ void ModelTrainer::train(std::string project_path, TrainArgs trainArgs) {
 
             py::print("Starting Training");
 
+            py::list pythonClasses;
+
+            for (const auto& c : currentProject->classes) {
+                pythonClasses.append(c.toStdString());
+            }
+            
             py::dict pythonTrainArgs;
-            pythonTrainArgs["classes"] = currentProject->classes;
+            pythonTrainArgs["classes"] = pythonClasses;
             pythonTrainArgs["model"] = trainArgs.model;
             pythonTrainArgs["patience"] = trainArgs.patience;
 
