@@ -10,7 +10,7 @@ from custom_yolo import CustomTrainer
 from pathlib import Path
 
 def run_checks():
-    # TODO maybe some other things
+    # TODO maybe some other checks
     ultralytics.checks()
 
 class NullWriter:
@@ -85,7 +85,7 @@ def split_files(training_dir, image_paths, VALIDATE_SPLIT = 0.15, TEST_SPLIT = 0
     files = image_paths.copy()
     random.shuffle(files)
 
-    # TODO
+    # TODO background images
     """
     BACKGROUND_PERCENT = 0.1
 

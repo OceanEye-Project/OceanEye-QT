@@ -29,6 +29,8 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+// TODO model progress chart / better output
+
 struct TrainArgs {
     std::string model;
     QString saveFilePath;

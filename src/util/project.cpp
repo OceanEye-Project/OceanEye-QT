@@ -1,5 +1,7 @@
 #include "project.h"
 
+// TODO handle missing images
+
 Project::Project(QString project_path) : 
     settings(
         QDir::cleanPath(project_path + QDir::separator() + "oceaneye_settings.yaml"),

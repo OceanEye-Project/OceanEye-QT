@@ -188,7 +188,7 @@ class CustomDataset(YOLODataset):
     def get_labels(self):
         """Returns dictionary of labels for YOLO training."""
         self.label_files = [
-           str(Path(self.project).parent / Path(im_file + ".yaml").name) for im_file in self.im_files
+           str(Path(self.project).parent / "annotations" / Path(im_file + ".yaml").name) for im_file in self.im_files
         ]
 
         cache_path = Path(self.project) / "labels.cache"

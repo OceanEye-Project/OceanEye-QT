@@ -1,6 +1,8 @@
 #include "traindialog.h"
 #include "ui_traindialog.h"
 
+// TODO detect python installation
+
 TrainDialog::TrainDialog(std::shared_ptr<Project>& project)
     : QDialog()
     , ui(new Ui::TrainDialog)
