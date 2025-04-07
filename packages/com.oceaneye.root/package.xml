@@ -1,8 +1,0 @@
-<Package>
-    <DisplayName>OceanEye</DisplayName>
-    <Description>OceanEye</Description>
-    <Version>0.3</Version>
-    <ReleaseDate>2025-01-11</ReleaseDate>
-    <Default>true</Default>
-    <Script>installscript.qs</Script>
-</Package>
