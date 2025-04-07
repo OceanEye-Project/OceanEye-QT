@@ -155,7 +155,7 @@ if (WIN32)
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
     find_program(WINDEPLOYQT windeployqt HINTS "${_qt_bin_dir}")
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/installer/eploy-qt-windows.cmake" @ONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake" @ONLY)
 
     set(CPACK_PRE_BUILD_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake)
 
