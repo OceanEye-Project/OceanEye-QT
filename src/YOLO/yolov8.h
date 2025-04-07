@@ -12,7 +12,7 @@
 #include <QString>
 #include <QRect>
 #include <QShortcut>
-
+#include <BYTETracker.h>
 
 struct Annotation {
     int classId;

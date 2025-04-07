@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QFileDialog>
 
-#include "project.h"
+#include "../util/project.h"
 #include "modeltrainer.h"
 
 namespace Ui {

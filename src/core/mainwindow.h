@@ -25,7 +25,7 @@
 #include "detectoptions.h"
 #include "../train/traindialog.h"
 #include "../util/videoslicer.h"
-#include "../util/yolov8.h"
+#include "../YOLO/yolov8.h"
 #include "welcomewindow.h"
 #include "QtAwesome.h"
 

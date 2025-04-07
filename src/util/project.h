@@ -13,7 +13,7 @@
 #include <QString>
 #include <QMessageBox>
 
-#include "yolov8.h"
+#include "../YOLO/yolov8.h"
 #include "settings.h"
 
 class Project : public QObject

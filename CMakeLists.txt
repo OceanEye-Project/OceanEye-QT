@@ -16,9 +16,11 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CPACK_GENERATOR "IFW")
 
+set(CMAKE_PREFIX_PATH "C:/Qt/6.9.0/mingw_64/lib/cmake")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/opencv/build")
+
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
-
 # set(PYTHON_EXECUTABLE "${CMAKE_SOURCE_DIR}/python3.12-embed/python.exe")
 # set(PYTHON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/python3.12-embed/Include")
 
@@ -29,12 +31,8 @@ set(PYBIND_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/pybind11/include)
 
 link_directories(${CPYTHON_LIBRARY_DIR})
 
-if (WIN32)
-    # you can put your own install path, or add OpenCV to the global path if you really want
-    find_package(OpenCV REQUIRED PATHS "C:/opencv/build")
-else ()
-    find_package(OpenCV REQUIRED)
-endif ()
+find_package(OpenCV REQUIRED)
+message(OPENCV_VERSION ${OpenCV_VERSION})
 
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(external/yaml-cpp)
@@ -42,8 +40,17 @@ set_target_properties(yaml-cpp PROPERTIES COMPILE_FLAGS "-w")
 set(YAML_CPP_BUILD_TESTS OFF)
 
 add_subdirectory(external/QtAwesome)
-# add_subdirectory(external/eigen)
-# add_library(Eigen3)
+set(EIGEN_BUILD_CMAKE_PACKAGE ON)
+add_subdirectory(external/eigen)
+add_subdirectory(external/byte-track-eigen)
+
+
+# cmake .. -DBOOST_ROOT="C:\Program Files\boost\boost_1_71_0" -DBOOST_LIBRARYDIR="C:\Program Files\boost\boost_1_71_0"
+# set(Boost_USE_STATIC_LIBS OFF)
+# SET(BOOST_ROOT ${CMAKE_INCLUDE_PATH} "C:/boost_1_87_0")
+# SET(CMAKE_LIBRARY_PATH "C:/boost_1_87_0/libs")
+# find_package(Boost REQUIRED COMPONENTS filesystem)
+# find_package(Boost REQUIRED PATHS "C:/boost_1_87_0")
 # add_subdirectory(external/BoTSORT-cpp)
 
 set(PROJECT_SOURCES
@@ -60,7 +67,8 @@ set(PROJECT_SOURCES
     src/gui/flowlayout.cpp src/gui/flowlayout.h
     src/gui/waitingdialog.cpp src/gui/waitingdialog.h
 
-    src/util/yolov8.cpp src/util/yolov8.h
+    src/YOLO/yolov8.cpp src/YOLO/yolov8.h
+
     src/util/project.cpp src/util/project.h
     src/util/videoslicer.cpp src/util/videoslicer.h
 
@@ -76,8 +84,10 @@ set(PROJECT_SOURCES
     qdarkstyle/dark/darkstyle.qrc
     qdarkstyle/light/lightstyle.qrc
 )
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/resources/icon.rc")
 
-include_directories(${OpenCV_INCLUDE_DIRS} src/util yaml-cpp/include)
+include_directories(${OpenCV_INCLUDE_DIRS} external/yaml-cpp/include external/byte-track-eigen/include)
+
 if(APPLE)
     execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
                     OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
@@ -89,6 +99,7 @@ endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(OceanEye
+        ${app_icon_resource_windows}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         src/resources/licence.txt
@@ -98,6 +109,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/train/python/custom_yolo.py
         src/train/traindialog.h src/train/traindialog.cpp src/train/traindialog.ui
         src/core/newprojectdialog.h src/core/newprojectdialog.cpp src/core/newprojectdialog.ui
+        src/resources/icon.rc
     )
 endif()
 
@@ -107,6 +119,9 @@ target_link_libraries(OceanEye PRIVATE pybind11::embed)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
+target_link_libraries(OceanEye PRIVATE Eigen3::Eigen)
+target_link_libraries(OceanEye PRIVATE ByteTrackEigen)
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -207,7 +222,9 @@ set(CPACK_IFW_PACKAGE_PUBLISHER "SOLIDS Lab, UVic")
 set(CPACK_IFW_PACKAGE_MAINTENANCE_TOOL_NAME "OceanEye Configuration")
 set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
 set(CPACK_IFW_ADMIN_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
-
+set(CPACK_IFW_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.ico")
+set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
+set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
 
 CPACK_ADD_COMPONENT(${COMPONENT_NAME_MAIN}
     REQUIRED

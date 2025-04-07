@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include "../util/project.h"
-#include "../util/yolov8.h"
+#include "../YOLO/yolov8.h"
 
 namespace Ui {
 class NewProjectDialog;

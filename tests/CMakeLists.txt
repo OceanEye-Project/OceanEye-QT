@@ -38,7 +38,7 @@ set(ALL_FILES
     ../src/gui/flowlayout.cpp ../src/gui/flowlayout.h
     ../src/gui/waitingdialog.cpp ../src/gui/waitingdialog.h
 
-    ../src/util/yolov8.cpp ../src/util/yolov8.h
+    ../src/YOLO/yolov8.cpp ../src/YOLO/yolov8.h
     ../src/util/project.cpp ../src/util/project.h
     ../src/util/videoslicer.cpp ../src/util/videoslicer.h
 

@@ -1,4 +1,4 @@
-set(WINDEPLOYQT "C:/Qt/6.7.2/mingw_64/bin/windeployqt.exe")
+set(WINDEPLOYQT "WINDEPLOYQT-NOTFOUND")
 set(COMPONENT_NAME_MAIN "OceanEye")
 set(CMAKE_CURRENT_SOURCE_DIR "C:/Users/Ethan/Desktop/OceanEye-QT")
 

@@ -8,9 +8,9 @@
 	path = external/pybind11
 	url = https://github.com/pybind/pybind11.git
 	branch = stable
-[submodule "external/BoTSORT-cpp"]
-	path = external/BoTSORT-cpp
-	url = https://github.com/viplix3/BoTSORT-cpp.git
 [submodule "external/eigen"]
 	path = external/eigen
 	url = https://gitlab.com/libeigen/eigen.git
+[submodule "external/byte-track-eigen"]
+	path = external/byte-track-eigen
+	url = https://github.com/cj-mills/byte-track-eigen.git

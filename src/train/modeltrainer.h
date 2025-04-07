@@ -14,7 +14,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "project.h"
+#include "../util/project.h"
 
 #include "../gui/waitingdialog.h"
 
