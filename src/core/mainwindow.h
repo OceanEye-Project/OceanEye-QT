@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QDesktopServices>
 
 // Third-party libraries
 #include "opencv2/opencv.hpp"
@@ -19,10 +20,12 @@
 #include "../gui/settings/settings.h"
 #include "../util/project.h"
 #include "exportdialog.h"
+#include "importdialog.h"
 #include "editmediadialog.h"
 #include "detectoptions.h"
+#include "../train/traindialog.h"
 #include "../util/videoslicer.h"
-#include "../util/yolov8.h"
+#include "../YOLO/yolov8.h"
 #include "welcomewindow.h"
 #include "QtAwesome.h"
 
@@ -54,6 +57,8 @@ private:
     QStandardItemModel* model {new QStandardItemModel()};
     // Dialog for exporting project data
     ExportDialog exportDialog;
+    // Dialog for importing project data
+    ImportDialog importDialog;
     // Dialog for editing media files
     EditMediaDialog editMediaDialog;
     // Dialog for configuring detection options
@@ -62,6 +67,8 @@ private:
     Settings settingsDialog;
     // Utility for slicing video into frames
     VideoSlicer videoSlicer;
+    // Utility for training models
+    TrainDialog trainDialog;
 
     // Pointer to the UI components
     Ui::MainWindow *ui;
