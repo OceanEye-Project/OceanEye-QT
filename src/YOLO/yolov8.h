@@ -12,7 +12,7 @@
 #include <QString>
 #include <QRect>
 #include <QShortcut>
-#include <BYTETracker.h>
+// #include <BYTETracker.h>
 
 struct Annotation {
     int classId;
@@ -36,6 +36,7 @@ public:
     float modelConfidenceThreshold {0.25};
     float modelScoreThreshold      {0.45};
     float modelNMSThreshold        {0.50};
+    // BYTETracker tracker {0.23, 30, 0.8, 30};
     std::vector<QString> loadClasses();
     static std::vector<QString> loadClasses(std::string path);
 

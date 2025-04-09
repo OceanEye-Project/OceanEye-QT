@@ -14,6 +14,7 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     ui->projectBtn->setProperty("type", "welcomeWindowButton");
     ui->settingsBtn->setProperty("type", "welcomeWindowButton");
     ui->aboutBtn->setProperty("type", "welcomeWindowButton");
+    ui->exitBtn->setProperty("type", "welcomeWindowButton");
 
     connect(ui->openProjectBtn, &QPushButton::clicked, this, &WelcomeWindow::openProject);
     connect(ui->openProjectBtn2, &QPushButton::clicked, this, &WelcomeWindow::openProject);
@@ -42,6 +43,7 @@ WelcomeWindow::WelcomeWindow(std::shared_ptr<Project>& currentProject, QWidget *
     connect(ui->projectBtn, &QPushButton::clicked, this, [this, project_index]{ui->welcomeStack->setCurrentIndex(project_index);});
     connect(ui->settingsBtn, &QPushButton::clicked, this, [this]{ui->welcomeStack->setCurrentIndex(2);});
     connect(ui->aboutBtn, &QPushButton::clicked, this, [this]{ui->welcomeStack->setCurrentIndex(3);});
+    connect(ui->exitBtn, &QPushButton::clicked, QApplication::instance(), &QApplication::quit);
 
     GlobalSettings* globalSettings = new GlobalSettings();
     ui->settingsPage->layout()->addWidget(globalSettings);

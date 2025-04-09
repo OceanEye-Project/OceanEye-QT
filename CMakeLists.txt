@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
-project(OceanEye VERSION 0.5 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.6)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -19,10 +18,13 @@ set(CPACK_GENERATOR "IFW")
 set(CMAKE_PREFIX_PATH "C:/Qt/6.9.0/mingw_64/lib/cmake")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/opencv/build")
 
+project(OceanEye VERSION 0.5 LANGUAGES CXX)
+
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
 # set(PYTHON_EXECUTABLE "${CMAKE_SOURCE_DIR}/python3.12-embed/python.exe")
 # set(PYTHON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/python3.12-embed/Include")
+
 
 set(PYBIND11_TEST OFF)
 
@@ -32,7 +34,7 @@ set(PYBIND_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/pybind11/include)
 link_directories(${CPYTHON_LIBRARY_DIR})
 
 find_package(OpenCV REQUIRED)
-message(OPENCV_VERSION ${OpenCV_VERSION})
+message(OPENCV_VERSION: ${OpenCV_VERSION})
 
 set(YAML_CPP_BUILD_TESTS OFF)
 add_subdirectory(external/yaml-cpp)
@@ -40,18 +42,9 @@ set_target_properties(yaml-cpp PROPERTIES COMPILE_FLAGS "-w")
 set(YAML_CPP_BUILD_TESTS OFF)
 
 add_subdirectory(external/QtAwesome)
-set(EIGEN_BUILD_CMAKE_PACKAGE ON)
+# set(EIGEN_BUILD_CMAKE_PACKAGE ON)
 add_subdirectory(external/eigen)
 add_subdirectory(external/byte-track-eigen)
-
-
-# cmake .. -DBOOST_ROOT="C:\Program Files\boost\boost_1_71_0" -DBOOST_LIBRARYDIR="C:\Program Files\boost\boost_1_71_0"
-# set(Boost_USE_STATIC_LIBS OFF)
-# SET(BOOST_ROOT ${CMAKE_INCLUDE_PATH} "C:/boost_1_87_0")
-# SET(CMAKE_LIBRARY_PATH "C:/boost_1_87_0/libs")
-# find_package(Boost REQUIRED COMPONENTS filesystem)
-# find_package(Boost REQUIRED PATHS "C:/boost_1_87_0")
-# add_subdirectory(external/BoTSORT-cpp)
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -81,8 +74,6 @@ set(PROJECT_SOURCES
     src/train/modeltrainer.h src/train/modeltrainer.cpp
 
     src/resources/resources.qrc
-    qdarkstyle/dark/darkstyle.qrc
-    qdarkstyle/light/lightstyle.qrc
 )
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/resources/icon.rc")
 

@@ -107,7 +107,6 @@ YOLOv8::YOLOv8(const std::string &onnxModelPath, const cv::Size &modelInputShape
     modelPath = onnxModelPath;
     modelShape = modelInputShape;
     cudaEnabled = runWithCuda;
-    // loadClassesFromFile(); The classes are hard-coded for this example
 }
 
 std::vector<Annotation> YOLOv8::runInference(const cv::Mat &input, const std::vector<QString>& model_classes) {
