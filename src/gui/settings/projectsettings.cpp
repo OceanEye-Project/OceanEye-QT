@@ -16,17 +16,30 @@ ProjectSettings::ProjectSettings(std::shared_ptr<Project>& project)
     setLayout(mainLayout);
 
     // GroupBox for the "Apply" button section with a border
-    QGroupBox* applyGroupBox = new QGroupBox("Apply Section");
-    QHBoxLayout* applyLayout = new QHBoxLayout();
+    QGroupBox* applyGroupBox = new QGroupBox();
+    QFormLayout* applyLayout = new QFormLayout();
     applyGroupBox->setLayout(applyLayout);
     mainLayout->addWidget(applyGroupBox);
 
     // "Apply" button placed in the group box
     QPushButton* applyButton = new QPushButton("Apply", this);
-    applyLayout->addWidget(applyButton, 0, Qt::AlignLeft);  // Align the button to the left
+    applyLayout->addWidget(applyButton);  // Align the button to the left
+
+    QSettings appSettings {QSettings::Scope::UserScope};
+    QDir appSettingsDir = QFileInfo(appSettings.fileName()).dir();
+    appSettingsDir.cdUp();
+    QString appSettingsPath = appSettingsDir.path();
+
+    QLabel* appSettingsPathLabel = new QLabel(appSettingsPath);
+    QPushButton* openSettingsPathButton = new QPushButton("Open");
+    applyLayout->addRow(appSettingsPathLabel, openSettingsPathButton);
+
+    connect(openSettingsPathButton, &QPushButton::clicked, [appSettingsPath]() {
+        QDesktopServices::openUrl(appSettingsPath);
+    });
 
     // GroupBox for the settings section with a border
-    QGroupBox* settingsGroupBox = new QGroupBox("Settings Section");
+    QGroupBox* settingsGroupBox = new QGroupBox("Settings");
     QFormLayout* settingsLayout = new QFormLayout();
     settingsGroupBox->setLayout(settingsLayout);
     mainLayout->addWidget(settingsGroupBox);
