@@ -23,17 +23,24 @@ AnnotatedImage::AnnotatedImage(
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     setMouseTracking(true);
 
-    // Delete key deletes the selected annotation
+    // Delete or Backspace deletes the selected annotation
+    auto deleteAnnotation = [this]() {
+        if (selectedAnnotation >= 0) {
+            annotations.erase(annotations.begin() + selectedAnnotation);
+            selectedAnnotation = -1;
+            emit annotationsChanged();
+            repaint();
+        }
+    };
+
     connect(
         new QShortcut(QKeySequence(Qt::Key_Delete), this), 
-        &QShortcut::activated, this, [this]() {
-            if (selectedAnnotation >= 0) {
-                annotations.erase(annotations.begin() + selectedAnnotation);
-                selectedAnnotation = -1;
-                emit annotationsChanged();
-                repaint();
-            }
-        }
+        &QShortcut::activated, this, deleteAnnotation
+    );
+
+    connect(
+        new QShortcut(QKeySequence(Qt::Key_Backspace), this), 
+        &QShortcut::activated, this, deleteAnnotation
     );
 
     // Space key changes the class of the selected annotation
@@ -315,6 +322,11 @@ void AnnotatedImage::mouseMoveEvent(QMouseEvent* event) {
         repaint();
 
     } else if (selectedAnnotation >= 0) {
+        if (selectedAnnotation < 0 || selectedAnnotation >= annotations.size()) {
+            selectedAnnotation = -1;
+            return;
+        }
+        
         QPointF imageMousePos = worldToImageTransform.map(event->position());
         
         for (auto& handle : annotationHandles) {
