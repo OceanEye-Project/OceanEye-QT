@@ -83,7 +83,7 @@ OceanEye is a C++ desktop application built with Qt for computer aided image ann
 
 ### Requirements
 
-Requires `Qt6` and `OpenCv`. On MacOs, both can be installed with `brew install opencv qt6`. This is a bit more challenging 
+Requires `Qt6` and `OpenCv`. On MacOs, both can be installed with `brew install opencv qt6`. This is a bit more challenging on Windows systems, as OpenCV must be built on the system.
 
 ### Building & Running
 
