@@ -23,6 +23,8 @@ std::vector<Annotation> Project::getAnnotation(const QString image_path) {
     const QFileInfo file_info(image_path);
     QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
 
+
+
     int size = image_settings.beginReadArray("annotations");
 
     for (int i = 0; i < size; ++i) {
@@ -68,6 +70,11 @@ void Project::setAnnotation(const QString image_path, const std::vector<Annotati
 
     const QFileInfo file_info(image_path);
     QSettings image_settings(QDir::cleanPath(projectPath + QDir::separator() + file_info.fileName() + ".yaml"), registerYAMLFormat());
+
+    // Retrieve the image's source media name
+    QString source_name = file_info.fileName();
+    source_name = source_name.left(source_name.lastIndexOf('_'));
+    image_settings.setValue("source", source_name);
 
     image_settings.beginWriteArray("annotations");
     image_settings.remove("");
