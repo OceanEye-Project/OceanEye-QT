@@ -70,11 +70,20 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/logo.png&quot; width=&quot;40&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="textFormat">
             <enum>Qt::TextFormat::RichText</enum>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources/resources.qrc">:/logo.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -83,19 +92,31 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="leftMargin">
             <number>0</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
            </property>
            <item>
             <widget class="QLabel" name="label">
+             <property name="font">
+              <font>
+               <family>Segoe UI</family>
+               <pointsize>13</pointsize>
+              </font>
+             </property>
              <property name="text">
-              <string>### OceanEye</string>
+              <string>OceanEye</string>
              </property>
              <property name="textFormat">
-              <enum>Qt::TextFormat::MarkdownText</enum>
+              <enum>Qt::TextFormat::PlainText</enum>
              </property>
             </widget>
            </item>
@@ -149,6 +170,13 @@
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exitBtn">
+         <property name="text">
+          <string>Exit</string>
          </property>
         </widget>
        </item>
@@ -404,8 +432,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>621</width>
-             <height>559</height>
+             <width>88</width>
+             <height>140</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -465,23 +493,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
-   <addaction name="menuFile"/>
-  </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

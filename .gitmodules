@@ -1,6 +1,16 @@
 [submodule "yaml-cpp"]
-	path = yaml-cpp
+	path = external/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
 [submodule "QtAwesome"]
-	path = QtAwesome
+	path = external/QtAwesome
 	url = https://github.com/gamecreature/QtAwesome.git
+[submodule "pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = stable
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "external/byte-track-eigen"]
+	path = external/byte-track-eigen
+	url = https://github.com/cj-mills/byte-track-eigen.git
