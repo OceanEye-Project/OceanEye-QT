@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+
+# set(CMAKE_C_COMPILER "gcc")
+# set(CMAKE_CXX_COMPILER "g++")
+# set(CMAKE_MAKE_PROGRAM "ninja")
+
 project(OceanEye VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -17,20 +23,16 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CPACK_GENERATOR "IFW")
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Test)
+# find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 
-if (WIN32)
-    # you can put your own install path, or add OpenCV to the global path if you really want
-    find_package(OpenCV REQUIRED PATHS "C:/opencv/build")
-else ()
-    find_package(OpenCV REQUIRED)
-endif ()
-
-set(YAML_CPP_BUILD_TESTS OFF)
-add_subdirectory(yaml-cpp)
-set(YAML_CPP_BUILD_TESTS OFF)
-add_subdirectory(QtAwesome)
+find_package(OpenCV REQUIRED)
+find_package(yaml-cpp REQUIRED)
+# add_subdirectory(QtAwesome)
+# include_directories(${OpenCV_INCLUDE_DIRS})
+# include_directories(${Qt6Core_INCLUDE_DIRS})
+# include_directories(${Qt6Gui_INCLUDE_DIRS})
+# include_directories(${Qt6Widgets_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -56,11 +58,8 @@ set(PROJECT_SOURCES
     src/util/logger.h src/util/logger.cpp
 
     src/resources/resources.qrc
-    qdarkstyle/dark/darkstyle.qrc
-    qdarkstyle/light/lightstyle.qrc
 )
 
-include_directories(${OpenCV_INCLUDE_DIRS} src/util yaml-cpp/include)
 if(APPLE)
     execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
                     OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
@@ -70,45 +69,21 @@ if(APPLE)
     endif()
 endif()
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(OceanEye
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        packages/com.oceaneye.root/package.xml
-        src/resources/licence.txt
-        src/resources/about.md
-    )
-    
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET OceanEye APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(OceanEye SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(OceanEye
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+qt_add_executable(OceanEye
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+    packages/com.oceaneye.root/package.xml
+    src/resources/licence.txt
+    src/resources/about.md
+)
 
-target_link_libraries(OceanEye PRIVATE QtAwesome)
-target_link_libraries(OceanEye PRIVATE yaml-cpp)
+# target_link_libraries(OceanEye PRIVATE QtAwesome)
+target_link_libraries(OceanEye PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
+
+target_link_libraries(OceanEye PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
-target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(OceanEye PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.OceanEye)
-endif()
+
 set_target_properties(OceanEye PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -122,18 +97,17 @@ install(TARGETS OceanEye
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT ${COMPONENT_NAME_MAIN}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(OceanEye)
-endif()
+qt_finalize_executable(OceanEye)
 
 if (WIN32)
     install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
-    install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
-    install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
+    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
+    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
+    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
+    #install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
@@ -170,7 +144,7 @@ endif ()
 
 # FOR EXAMPLE
 # "C:\Program Files\CMake\bin\cmake.exe" --build C:/Users/Ethan/Desktop/OceanEye-QT/build/Desktop_Qt_6_7_2_MinGW_64_bit-MinSizeRel --target all
-
+# Removed duplicate install(TARGETS OceanEye ...) to avoid install errors
 install(TARGETS OceanEye DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${COMPONENT_NAME_MAIN})
 
 include(InstallRequiredSystemLibraries)

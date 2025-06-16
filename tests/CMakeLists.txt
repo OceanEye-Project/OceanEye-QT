@@ -48,8 +48,6 @@ set(ALL_FILES
     ../src/util/settings.h
 
     ../src/resources/resources.qrc
-    ../qdarkstyle/dark/darkstyle.qrc
-    ../qdarkstyle/light/lightstyle.qrc
 )
 
 if(APPLE)

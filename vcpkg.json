@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    "opencv",
+    "yaml-cpp",
+    {
+      "name": "qtbase",
+      "features": [
+        "gui",
+        "widgets",
+        "concurrent"
+      ]
+    }
+  ]
+}

@@ -117,3 +117,21 @@ OceanEye
 │   └── util       - Non-Qt specific code
 └── tests          - QTest files
 ```
+
+{
+  "name": "qtbase",
+  "features": [
+    "widgets",
+    "concurrent"
+  ]
+}
+
+
+{
+    "name": "qtbase",
+    "features": [
+    "gui",
+    "widgets",
+    "concurrent"
+    ]
+}

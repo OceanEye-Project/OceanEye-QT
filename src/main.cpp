@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QSettings>
 #include "util/project.h"
-#include "logger.h"
+#include "util/logger.h"
 #include "util/settings.h"
 
 std::shared_ptr<Project> project = nullptr;
