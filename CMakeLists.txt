@@ -18,21 +18,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+
 set(COMPONENT_NAME_MAIN OceanEye)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CPACK_GENERATOR "IFW")
 
-# find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent Test)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
-
 find_package(OpenCV REQUIRED)
 find_package(yaml-cpp REQUIRED)
-# add_subdirectory(QtAwesome)
-# include_directories(${OpenCV_INCLUDE_DIRS})
-# include_directories(${Qt6Core_INCLUDE_DIRS})
-# include_directories(${Qt6Gui_INCLUDE_DIRS})
-# include_directories(${Qt6Widgets_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -60,26 +55,20 @@ set(PROJECT_SOURCES
     src/resources/resources.qrc
 )
 
-if(APPLE)
-    execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
-                    OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
-        message(FATAL_ERROR "The detected macOS SDK path does not exist: ${CMAKE_OSX_SYSROOT}")
-    endif()
-endif()
+set(RESOURCE_FILES
+    src/resources/licence.txt
+    src/resources/about.md
+    src/resources/logo.rc
+)
 
 qt_add_executable(OceanEye
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    ${RESOURCE_FILES}
     packages/com.oceaneye.root/package.xml
-    src/resources/licence.txt
-    src/resources/about.md
 )
 
-# target_link_libraries(OceanEye PRIVATE QtAwesome)
 target_link_libraries(OceanEye PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
-
 target_link_libraries(OceanEye PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 
@@ -104,10 +93,6 @@ qt_finalize_executable(OceanEye)
 
 if (WIN32)
     install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
-    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libstdc++-6.dll TYPE BIN)
-    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libgcc_s_seh-1.dll TYPE BIN)
-    #install(FILES C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/libwinpthread-1.dll TYPE BIN)
-    #install(FILES C:/opencv/build/install/x64/mingw/bin/opencv_videoio_ffmpeg490_64.dll TYPE BIN)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
