@@ -39,12 +39,12 @@ public:
         f.setStyleHint(QFont::Monospace);
         setFont(f);
 
-        connect(this, &LogWindow::message_written, this, &LogWindow::appendMessage);
+        // connect(this, &LogWindow::message_written, this, &LogWindow::appendMessage);
     }
 
-    void appendMessage(std::string str) {
+    void appendMessage(QString str) {
         moveCursor(QTextCursor::End);
-        insertPlainText(QString::fromStdString(str));
+        insertPlainText(str);
         verticalScrollBar()->setValue(verticalScrollBar()->maximum());
         QCoreApplication::processEvents();
     }
@@ -62,7 +62,7 @@ public:
 
     void write(std::string str){
         std::cout << str;
-        emit log_window->message_written(str);
+        // emit log_window->message_written(str);
     }
 
     void flush() {
@@ -114,6 +114,8 @@ class ModelTrainer : public QObject
 
     QFutureWatcher<void> watcher;
     QFuture<void> future;
+
+    QProcess* python_process;
 
     PythonLogger python_logger;
 

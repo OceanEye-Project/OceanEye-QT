@@ -7,26 +7,58 @@ ModelTrainer::ModelTrainer(std::shared_ptr<Project>& project)
     , dialog()
     , python_logger(dialog.log_window)
 {
-    connect(&watcher, &QFutureWatcher<void>::finished, this, [this]{
-        qInfo() << "Python Finished";
-        dialog.hide();
+    // connect(&watcher, &QFutureWatcher<void>::finished, this, [this]{
+    //     qInfo() << "Python Finished";
+    //     dialog.hide();
 
-        QMessageBox msgBox;
-        msgBox.setText("Training Finished");
-        msgBox.exec();
-    });
+    //     QMessageBox msgBox;
+    //     msgBox.setText("Training Finished");
+    //     msgBox.exec();
+    // });
 }
 
 void ModelTrainer::startTraining(TrainArgs& trainArgs) {
     dialog.show();
 
-    std::function<void()> trainWithProject = [this, trainArgs]() {
-        return train(
-        currentProject->projectPath.toStdString(), trainArgs);
-    };
+    // std::function<void()> trainWithProject = [this, trainArgs]() {
+    //     return train(
+    //     currentProject->projectPath.toStdString(), trainArgs);
+    // };
 
-    future = QtConcurrent::run(trainWithProject);
-    watcher.setFuture(future);
+    // future = QtConcurrent::run(trainWithProject);
+    // watcher.setFuture(future);
+    python_process = new QProcess(this);
+    connect(python_process, &QProcess::readyReadStandardOutput, this, [this]() {
+        QString output = python_process->readAllStandardOutput();
+        dialog.log_window->appendMessage(output);
+    });
+
+    connect(python_process, &QProcess::readyReadStandardError, this, [this]() {
+        QString output = python_process->readAllStandardError();
+        dialog.log_window->appendMessage(output);
+    });
+
+    connect(python_process, &QProcess::finished, this, [this](int exitCode, QProcess::ExitStatus exitStatus) {
+        if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+            dialog.log_window->appendMessage("Training completed successfully.");
+        } else {
+            dialog.log_window->appendMessage("Training failed with exit code: " + exitCode);
+        }
+        // dialog.hide();
+    });
+
+    QString pythonPath = QCoreApplication::applicationDirPath() + "/python/python.exe";
+    QString scriptPath = QCoreApplication::applicationDirPath() + "/python_scripts/train.py";
+
+    QStringList arguments;
+    arguments << "--project_path" << currentProject->projectPath
+                << "--model" << QString::fromStdString(trainArgs.model)
+                << "--save_file_path" << trainArgs.saveFilePath
+                << "--time" << QString::number(trainArgs.time)
+                << "--epochs" << QString::number(trainArgs.epochs)
+                << "--patience" << QString::number(trainArgs.patience);
+
+    python_process->start(pythonPath, QStringList() << scriptPath << arguments);
 }
 
 // PYBIND11_EMBEDDED_MODULE(embeded_logger, module)

@@ -71,6 +71,13 @@ target_link_libraries(OceanEye PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Conc
 target_link_libraries(OceanEye PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
 
+set_target_properties(OceanEye PROPERTIES
+    ${BUNDLE_ID_OPTION}
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
 
 include(GNUInstallDirs)
 install(TARGETS OceanEye
