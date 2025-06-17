@@ -52,9 +52,8 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
-
-# Created by https://www.toptal.com/developers/gitignore/api/qt,qtcreator,qml,windows,macos,c++
-# Edit at https://www.toptal.com/developers/gitignore?templates=qt,qtcreator,qml,windows,macos,c++
+# Created by https://www.toptal.com/developers/gitignore/api/qt,c++,qml,macos,windows,qtcreator,vcpkg,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=qt,c++,qml,macos,windows,qtcreator,vcpkg,visualstudiocode
 
 ### C++ ###
 # Prerequisites
@@ -191,8 +190,6 @@ compile_commands.json
 
 # Project configuration settings like predefined Macros
 *.config
-.qtc_clangd
-.qtcreator
 
 # Qt Creator settings
 *.creator
@@ -206,6 +203,33 @@ compile_commands.json
 *.cxxflags
 *.cflags
 
+
+### vcpkg ###
+# Vcpkg
+
+vcpkg-manifest-install.log
+
+## Manifest Mode
+vcpkg_installed/
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -233,10 +257,16 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/qt,qtcreator,qml,windows,macos,c++
+# End of https://www.toptal.com/developers/gitignore/api/qt,c++,qml,macos,windows,qtcreator,vcpkg,visualstudiocode
 
 build/
 tests/build/
 .vscode
 .idea
 log.txt
+
+CMakeUserPresets.json
+
+!/external/python3.12-embed/*
+
+.cache

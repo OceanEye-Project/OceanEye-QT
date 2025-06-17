@@ -51,7 +51,7 @@ class EditMediaDialog : public QWidget
     void showEvent(QShowEvent* event);
     void loadMoreMedia();
 
-    int loadedItems; // Tracks the number of currently loaded items
+    int loadedItems {}; // Tracks the number of currently loaded items
     const int itemsPerLoad = 20; // Number of items to load at once
 
 public:

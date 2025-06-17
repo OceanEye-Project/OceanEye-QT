@@ -11,7 +11,7 @@
 #include <QComboBox>
 #include <algorithm>
 #include "../util/project.h"
-#include "../util/yolov8.h"
+#include "../YOLO/yolov8.h"
 #include "qcombobox.h"
 
 struct AnnotationHandle {
