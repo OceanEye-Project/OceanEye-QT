@@ -27,7 +27,7 @@
 #include "../util/videoslicer.h"
 #include "../YOLO/yolov8.h"
 #include "welcomewindow.h"
-#include "QtAwesome.h"
+// #include "QtAwesome.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -73,7 +73,7 @@ private:
     // Pointer to the UI components
     Ui::MainWindow *ui;
     // For Icons
-    fa::QtAwesome* awesome;
+    // fa::QtAwesome* awesome;
 
     // Method for highlighting annotation when a row in the table is clicked
     void handleTableClick(const QModelIndex &index);
