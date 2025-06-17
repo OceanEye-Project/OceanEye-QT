@@ -17,18 +17,6 @@
 #include "../util/project.h"
 
 #include "../gui/waitingdialog.h"
-
-// python and QT both use the macro "slots"
-#pragma push_macro("slots")
-#undef slots
-#include <Python.h>
-#include <pybind11/embed.h>
-#include <pybind11/iostream.h>
-#pragma pop_macro("slots")
-
-namespace py = pybind11;
-using namespace pybind11::literals;
-
 // TODO model progress chart / better output
 
 struct TrainArgs {

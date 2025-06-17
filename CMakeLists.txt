@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 
-# set(CMAKE_C_COMPILER "gcc")
-# set(CMAKE_CXX_COMPILER "g++")
-# set(CMAKE_MAKE_PROGRAM "ninja")
-
-project(OceanEye VERSION 0.2 LANGUAGES CXX)
-
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -15,27 +9,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 
 set(COMPONENT_NAME_MAIN OceanEye)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
-set(CPACK_GENERATOR "IFW")
-
-set(CMAKE_PREFIX_PATH "C:/Qt/6.9.0/mingw_64/lib/cmake")
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/opencv/build")
-
 project(OceanEye VERSION 0.5 LANGUAGES CXX)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 find_package(OpenCV REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(pybind11 REQUIRED)
-find_package(eigen3  REQUIRED)
-
 
 set(PROJECT_SOURCES
     src/main.cpp
@@ -81,28 +65,12 @@ qt_add_executable(OceanEye
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
     ${RESOURCE_FILES}
-    packages/com.oceaneye.root/package.xml
 )
 
 target_link_libraries(OceanEye PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
 target_link_libraries(OceanEye PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
-target_link_libraries(OceanEye PRIVATE Eigen3::Eigen)
-target_link_libraries(OceanEye PRIVATE pybind11::embed)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.OceanEye)
-endif()
-set_target_properties(OceanEye PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
 
 include(GNUInstallDirs)
 install(TARGETS OceanEye
@@ -115,17 +83,22 @@ install(TARGETS OceanEye
 qt_finalize_executable(OceanEye)
 
 if (WIN32)
-    cmake_path(GET CMAKE_C_COMPILER PARENT_PATH MINGW_BIN_DIR)
-    cmake_path(GET MINGW_BIN_DIR PARENT_PATH MINGW_DIR)
+    # cmake_path(GET CMAKE_C_COMPILER PARENT_PATH MINGW_BIN_DIR)
+    # cmake_path(GET MINGW_BIN_DIR PARENT_PATH MINGW_DIR)
 
-    install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/external/python3.12-embed/ TYPE BIN)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/train/python TYPE BIN)
+    # install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
+    # install(DIRECTORY ${PROJECT_SOURCE_DIR}/external/python3.12-embed/ TYPE BIN)
+    # install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/train/python TYPE BIN)
 
     add_custom_command(TARGET OceanEye POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${PROJECT_SOURCE_DIR}/external/python3.12-embed"
-            $<TARGET_FILE_DIR:OceanEye>)
+            $<TARGET_FILE_DIR:OceanEye>/python)
+
+    add_custom_command(TARGET OceanEye POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${PROJECT_SOURCE_DIR}/src/train/python"
+            $<TARGET_FILE_DIR:OceanEye>/python_scripts)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
@@ -133,8 +106,6 @@ if (WIN32)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake" @ONLY)
 
     set(CPACK_PRE_BUILD_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake)
-
-    set(CPACK_GENERATOR "IFW")
 endif ()
 
 if (APPLE)    
@@ -155,11 +126,6 @@ if (APPLE)
     set(CPACK_GENERATOR "DragNDrop")
 endif ()
 
-add_custom_command(TARGET OceanEye POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${PROJECT_SOURCE_DIR}/src/train/python"
-        $<TARGET_FILE_DIR:OceanEye>/python)
-
 # TO CREATE INSTALLER RUN COMMANDS IN THIS ORDER
 # cmake --build . --target all
 # cmake  --build  . --target install
@@ -168,30 +134,4 @@ add_custom_command(TARGET OceanEye POST_BUILD
 # FOR EXAMPLE
 # "C:\Program Files\CMake\bin\cmake.exe" --build C:/Users/Ethan/Desktop/OceanEye-QT/build/Desktop_Qt_6_7_2_MinGW_64_bit-MinSizeRel --target all
 # Removed duplicate install(TARGETS OceanEye ...) to avoid install errors
-install(TARGETS OceanEye DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${COMPONENT_NAME_MAIN})
 
-include(CPACK)
-include(CPackComponent)
-include(CPackIFW)
-
-include(InstallRequiredSystemLibraries)
-
-set(CPACK_IFW_PACKAGE_NAME "OceanEye")
-set(CPACK_IFW_PACKAGE_TITLE "OceanEye")
-set(CPACK_IFW_PACKAGE_PUBLISHER "SOLIDS Lab, UVic")
-set(CPACK_IFW_PACKAGE_MAINTENANCE_TOOL_NAME "OceanEye Configuration")
-set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
-set(CPACK_IFW_ADMIN_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
-set(CPACK_IFW_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.ico")
-set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
-set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
-
-CPACK_ADD_COMPONENT(${COMPONENT_NAME_MAIN}
-    REQUIRED
-)
-cpack_ifw_configure_component(${COMPONENT_NAME_MAIN}
-    FORCED_INSTALLATION
-    DEFAULT
-    LICENSES "License" "${CMAKE_SOURCE_DIR}/LICENSE.md"
-    SCRIPT "${CMAKE_SOURCE_DIR}/installer/installscript.qs"
-)

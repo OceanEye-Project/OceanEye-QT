@@ -26,15 +26,9 @@ int main(int argc, char *argv[])
     QSettings::setPath(format, QSettings::Scope::UserScope, oceaneye_user_dir);
     QSettings::setDefaultFormat(format);
 
-    qunsetenv("PYTHONNOUSERSITE");
-    qunsetenv("PYTHONSTARTUP");
-    qputenv("PYTHONDONTWRITEBYTECODE", "true");
-    qputenv("PYTHONUSERBASE", (oceaneye_user_dir + QDir::separator() + "python").toUtf8());
-
     QSettings settings {QSettings::Scope::UserScope};
     auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     settings.setValue("lastOpenedProject", timestamp);
-
 
     WelcomeWindow window(project);
     window.setWindowTitle("OceanEye");
