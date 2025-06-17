@@ -9,6 +9,7 @@
 #include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QDesktopServices>
 
 #include "../../util/project.h"
 #include "../../util/settings.h"

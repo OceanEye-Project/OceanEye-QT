@@ -24,9 +24,9 @@ DetectOptions::DetectOptions(std::shared_ptr<Project>& project)
         currentProject->selectedItems.append(allItem);  // Add "All" to selectedItems
     }
     
-    for (int i=0; i<model_classes.size();i++) {
+    for (int i=0; i<currentProject->classes.size();i++) {
         ui->classList->addItem(
-            QString::fromStdString(model_classes.at(i))
+            currentProject->classes.at(i)
         );
     }
 

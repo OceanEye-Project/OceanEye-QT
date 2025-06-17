@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "../util/project.h"
 #include "../gui/settings/globalsettings.h"
+#include "newprojectdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -38,6 +39,8 @@ private:
     void loadProjectPaths();
     void loadProjectFromPath(QString projectPath, bool isNewProject = false);
     void saveProjectPaths();
+
+    NewProjectDialog newProjectDialog;
 
 public slots:
     void openProject(bool isNewProject = false);

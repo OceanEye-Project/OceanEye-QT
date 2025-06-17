@@ -25,15 +25,24 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CPACK_GENERATOR "IFW")
 
+set(CMAKE_PREFIX_PATH "C:/Qt/6.9.0/mingw_64/lib/cmake")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/opencv/build")
+
+project(OceanEye VERSION 0.5 LANGUAGES CXX)
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 find_package(OpenCV REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(eigen3  REQUIRED)
+
 
 set(PROJECT_SOURCES
     src/main.cpp
 
     src/core/mainwindow.cpp src/core/mainwindow.h src/core/mainwindow.ui
     src/core/exportdialog.cpp src/core/exportdialog.h src/core/exportdialog.ui
+    src/core/importdialog.cpp src/core/importdialog.h src/core/importdialog.ui
     src/core/editmediadialog.h src/core/editmediadialog.cpp src/core/editmedia.ui
     src/core/welcomewindow.cpp src/core/welcomewindow.h src/core/welcomewindow.ui
     src/core/detectoptions.h src/core/detectoptions.cpp src/core/detectoptions.ui
@@ -42,7 +51,8 @@ set(PROJECT_SOURCES
     src/gui/flowlayout.cpp src/gui/flowlayout.h
     src/gui/waitingdialog.cpp src/gui/waitingdialog.h
 
-    src/util/yolov8.cpp src/util/yolov8.h
+    src/YOLO/yolov8.cpp src/YOLO/yolov8.h
+
     src/util/project.cpp src/util/project.h
     src/util/videoslicer.cpp src/util/videoslicer.h
 
@@ -51,6 +61,12 @@ set(PROJECT_SOURCES
     src/gui/settings/globalsettings.h src/gui/settings/globalsettings.cpp
     src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
+
+    src/core/importdialog.ui
+    src/train/modeltrainer.h src/train/modeltrainer.cpp
+    src/train/python/custom_yolo.py
+    src/train/traindialog.h src/train/traindialog.cpp src/train/traindialog.ui
+    src/core/newprojectdialog.h src/core/newprojectdialog.cpp src/core/newprojectdialog.ui
 
     src/resources/resources.qrc
 )
@@ -71,8 +87,15 @@ qt_add_executable(OceanEye
 target_link_libraries(OceanEye PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
 target_link_libraries(OceanEye PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(OceanEye PRIVATE ${OpenCV_LIBS})
+target_link_libraries(OceanEye PRIVATE Eigen3::Eigen)
+target_link_libraries(OceanEye PRIVATE pybind11::embed)
 
-
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# If you are developing for iOS or macOS you should consider setting an
+# explicit, fixed bundle identifier manually though.
+if(${QT_VERSION} VERSION_LESS 6.1.0)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.OceanEye)
+endif()
 set_target_properties(OceanEye PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -92,14 +115,24 @@ install(TARGETS OceanEye
 qt_finalize_executable(OceanEye)
 
 if (WIN32)
+    cmake_path(GET CMAKE_C_COMPILER PARENT_PATH MINGW_BIN_DIR)
+    cmake_path(GET MINGW_BIN_DIR PARENT_PATH MINGW_DIR)
+
     install(FILES $<TARGET_RUNTIME_DLLS:OceanEye> TYPE BIN)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/external/python3.12-embed/ TYPE BIN)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/train/python TYPE BIN)
+
+    add_custom_command(TARGET OceanEye POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${PROJECT_SOURCE_DIR}/external/python3.12-embed"
+            $<TARGET_FILE_DIR:OceanEye>)
 
     set(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/4.8")
 
     find_program(WINDEPLOYQT windeployqt HINTS "${_qt_bin_dir}")
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake" @ONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake.in" "${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake" @ONLY)
 
-    set(CPACK_PRE_BUILD_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/deploy-qt-windows.cmake)
+    set(CPACK_PRE_BUILD_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/installer/deploy-qt-windows.cmake)
 
     set(CPACK_GENERATOR "IFW")
 endif ()
@@ -122,6 +155,11 @@ if (APPLE)
     set(CPACK_GENERATOR "DragNDrop")
 endif ()
 
+add_custom_command(TARGET OceanEye POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/src/train/python"
+        $<TARGET_FILE_DIR:OceanEye>/python)
+
 # TO CREATE INSTALLER RUN COMMANDS IN THIS ORDER
 # cmake --build . --target all
 # cmake  --build  . --target install
@@ -132,37 +170,28 @@ endif ()
 # Removed duplicate install(TARGETS OceanEye ...) to avoid install errors
 install(TARGETS OceanEye DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${COMPONENT_NAME_MAIN})
 
+include(CPACK)
+include(CPackComponent)
+include(CPackIFW)
+
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "2")
-set(CPACK_MONOLITHIC_INSTALL TRUE)
-set(CPACK_PACKAGE_DIRECTORY dist)
-set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-set(CPACK_PACKAGE_HOMEPAGE_URL https://github.com/OceanEye-Project/OceanEye-QT)
-set(CPACK_VERBATIM_VARIABLES TRUE)
-# set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}-installer)
-# set(CPACK_PACKAGE_EXECUTABLES "OceanEye" "OceanEye")
-# set(CPACK_CREATE_DESKTOP_LINKS "OceanEye")
 
 set(CPACK_IFW_PACKAGE_NAME "OceanEye")
 set(CPACK_IFW_PACKAGE_TITLE "OceanEye")
 set(CPACK_IFW_PACKAGE_PUBLISHER "SOLIDS Lab, UVic")
-set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Aero")
 set(CPACK_IFW_PACKAGE_MAINTENANCE_TOOL_NAME "OceanEye Configuration")
-set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT "${CMAKE_SOURCE_DIR}/packages/com.oceaneye.root/installscript.qs")
+set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
+set(CPACK_IFW_ADMIN_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
+set(CPACK_IFW_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.ico")
+set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
+set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_SOURCE_DIR}/installer/icons/logo.png")
 
-set (CPACK_IFW_PACKAGE_START_MENU_DIRECTORY "OceanEye")
-set (CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
-set (CPACK_IFW_ADMIN_TARGET_DIRECTORY "@ApplicationsDir@/OceanEye")
-
-# set(CPACK_IFW_PACKAGE_RUN_PROGRAM "@TargetDir@/OceanEye")
-# set(CPACK_IFW_PACKAGE_RUN_PROGRAM_DESCRIPTION "Start OceanEye")
-# set(CPACK_IFW_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/ScreenPlay/assets/icons/app.ico")
-# set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_SOURCE_DIR}/ScreenPlay/assets/icons/app.ico")
-
-include(CPACK)
-include(CPackIFW)
-
-CPACK_ADD_COMPONENT(${COMPONENT_NAME_MAIN} REQUIRED)
-
-cpack_ifw_configure_component(${COMPONENT_NAME_MAIN} ESSENTIAL FORCED_INSTALLATION)
+CPACK_ADD_COMPONENT(${COMPONENT_NAME_MAIN}
+    REQUIRED
+)
+cpack_ifw_configure_component(${COMPONENT_NAME_MAIN}
+    FORCED_INSTALLATION
+    DEFAULT
+    LICENSES "License" "${CMAKE_SOURCE_DIR}/LICENSE.md"
+    SCRIPT "${CMAKE_SOURCE_DIR}/installer/installscript.qs"
+)
