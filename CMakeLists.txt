@@ -55,6 +55,14 @@ set(PROJECT_SOURCES
     src/util/settings.h src/util/settings.cpp
     src/util/logger.h src/util/logger.cpp
 
+    ByteTrack-TensorRT/src/BYTETracker.cpp ByteTrack-TensorRT/src/BYTETracker.h
+    ByteTrack-TensorRT/src/kalmanFilter.cpp ByteTrack-TensorRT/src/kalmanFilter.h
+    ByteTrack-TensorRT/src/lapjv.cpp ByteTrack-TensorRT/src/lapjv.h
+    ByteTrack-TensorRT/src/STrack.cpp ByteTrack-TensorRT/src/STrack.h
+    ByteTrack-TensorRT/src/utils.cpp
+    ByteTrack-TensorRT/src/logging.h
+    ByteTrack-TensorRT/src/dataType.h
+
     src/resources/resources.qrc
     qdarkstyle/dark/darkstyle.qrc
     qdarkstyle/light/lightstyle.qrc
