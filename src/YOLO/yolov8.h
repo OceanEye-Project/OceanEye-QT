@@ -26,7 +26,7 @@ public:
     YOLOv8(
         const std::string &onnxModelPath = "",
         const cv::Size &modelInputShape = {640, 640},            
-        const bool &runWithCuda = true);
+        const bool &runWithCuda = false);
         
     std::vector<Annotation> runInference(const cv::Mat &input, const std::vector<QString>& model_classes);
     void drawDetections(const std::vector<Annotation>& annotations, cv::Mat &input);
