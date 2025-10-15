@@ -10,5 +10,6 @@
       ]
     },
     "yaml-cpp"
-  ]
+  ],
+  "builtin-baseline": "c59b04f668d20c7dd83f478835e8266a3cc51270"
 }
